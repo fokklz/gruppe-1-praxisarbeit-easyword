@@ -21,10 +21,10 @@ jobs:
           dotnet-version: "7.0.x"
 
       - name: Publish WPF App x64
-        run: dotnet publish -c Release -r win-x64 --self-contained true
+        run: dotnet publish -r win-x64 -c Release /p:PublishSingleFile=true /p:PublishTrimmed=false --self-contained true
 
       - name: Publish WPF App x86
-        run: dotnet publish -c Release -r win-x86 --self-contained true
+        run: dotnet publish -r win-x86 -c Release /p:PublishSingleFile=true /p:PublishTrimmed=false --self-contained true
 
       - name: Load version from file
         run: echo "APP_VERSION=$(cat VERSION.txt)" >> $GITHUB_ENV
