@@ -17,7 +17,8 @@ namespace EasyWord.Common
         /// <summary>
         /// Developer information
         /// </summary>
-        public string[] Developer { get; } = new string[4]{
+        public string[] Developer { get; } = new string[5]{
+            "Arda Dursun",
             "Bobby Bilali",
             "Robin Ruf",
             "Fokko Vos",
