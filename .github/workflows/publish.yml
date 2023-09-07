@@ -1,0 +1,62 @@
+name: Publish ClickOnce Profiles
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "VERSION.txt"
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: "6.0.x"
+
+      - name: Publish WPF App x64
+        run: dotnet publish -c Release -r win-x64 --self-contained true
+
+      - name: Publish WPF App x86
+        run: dotnet publish -c Release -r win-x86 --self-contained true
+
+      - name: Load version from file
+        run: echo "APP_VERSION=$(cat VERSION.txt)" >> $GITHUB_ENV
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.G_PAT }}
+        with:
+          tag_name: v${{ env.APP_VERSION }}
+          release_name: Release ${{ env.APP_VERSION }}
+          body: ${{ steps.changelog.outputs.changelog }}
+          draft: false
+          prerelease: false
+
+      - name: Upload x64 Executable to Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.G_PAT }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./EasyWord/bin/Release/net6.0-windows/win-x64/publish/EasyWord.exe
+          asset_name: EasyWord-x64.exe
+          asset_content_type: application/octet-stream
+
+      - name: Upload x86 Executable to Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.G_PAT }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./EasyWord/bin/Release/net6.0-windows/win-x86/publish/EasyWord.exe
+          asset_name: EasyWord-x86.exe
+          asset_content_type: application/octet-stream
