@@ -30,5 +30,7 @@ namespace EasyWord.Common
         /// 1: DE -> EN
         /// </summary>
         public int TranslationDirection { get; set; } = 0;
+
+        public WordList Words { get; set; } = new WordList();
     }
 }

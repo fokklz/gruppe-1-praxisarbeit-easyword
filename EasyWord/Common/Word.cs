@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EasyWord.Common
 {
-    internal class Word
+    public class Word
     {
         /// <summary>
         /// english translation

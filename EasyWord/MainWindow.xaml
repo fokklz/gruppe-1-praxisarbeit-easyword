@@ -7,6 +7,20 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="80*"/>
+            <ColumnDefinition Width="245*"/>
+            <ColumnDefinition Width="80*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="205*"/>
+            <RowDefinition Height="95*"/>
+            <RowDefinition Height="95*"/>
+            <RowDefinition Height="131*"/>
+        </Grid.RowDefinitions>
+        <Label Name="title" Grid.Column="1" Content="Bitte csv importieren" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="40" Height="63" Width="374"/>
+        <Label Name="deWordOutput"  Grid.Column="1" Content="" FontSize="25" Width="454" Height="44" HorizontalAlignment="Center" BorderThickness="1" BorderBrush="Black" VerticalAlignment="Center" Grid.Row="1"/>
+        <TextBox Name="enWordInput" Grid.Column="1" FontSize="25" HorizontalAlignment="Center" Grid.Row="2" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Center" Width="454" Height="44"/>
+        <Button Name="btnCsvImport" Click="btnCsvImport_Click" Grid.Column="2" Content="Import" HorizontalAlignment="Center" VerticalAlignment="Center" Height="42" Width="40"/>
     </Grid>
 </Window>

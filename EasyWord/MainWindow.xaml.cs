@@ -1,4 +1,6 @@
-﻿using System;
+﻿using EasyWord.Common;
+using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -33,6 +35,35 @@ namespace EasyWord
         {
             base.OnClosed(e);
             App.SaveSettings();
+        }
+
+        /// <summary>
+        /// Event handler for the "btnCsvImport" button click
+        /// </summary>
+        /// <param name="sender">The object that triggered the event</param>
+        /// <param name="e">Additional event data</param>
+        private void btnCsvImport_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "CSV Dateien (*.csv) |*.csv";
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                // Store the selected file path
+                string selectedFilePath = openFileDialog.FileName;
+                App.Config.Words = WordList.ImportFromCSV(selectedFilePath);
+
+                //Extract just the file name from the full path
+                string fileName = System.IO.Path.GetFileName(selectedFilePath);
+
+                //Update the label "title" with the selected file name
+                title.Content = fileName;
+            }
+            else
+            {
+                //show message
+                title.Content = "Bitte csv Datei importieren";
+            }
         }
     }
 }

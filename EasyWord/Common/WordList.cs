@@ -10,9 +10,17 @@ namespace EasyWord.Common
     /// <summary>
     /// Wordlists with parameters
     /// </summary>
-    internal class WordList
+    public class WordList
     {
         private List<Word> _words;
+
+        /// <summary>
+        /// Fallback for config
+        /// </summary>
+        public WordList()
+        {
+            _words = new List<Word>();
+        }
 
         public WordList(List<Word> words)
         {
