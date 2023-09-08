@@ -136,5 +136,17 @@ namespace EasyWord.Common
             Word[] words = getIterationWords();
             return words.Length != 0 ? words.First() : new Word();
         }
+
+        public void ResetWordsAndStatistics()
+        {
+            foreach (var word in _words)
+            {
+                word.Iteration = 0;
+                word.Valid = 0;
+                word.Bucket = 3;
+            }
+            _words.Clear();
+            _iteration = 1;
+        }
     }
 }
