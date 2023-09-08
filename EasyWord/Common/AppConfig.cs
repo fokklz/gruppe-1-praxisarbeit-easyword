@@ -26,10 +26,10 @@ namespace EasyWord.Common
         };
 
         /// <summary>
-        /// false: DE -> EN
         /// true: EN -> DE
+        /// false: DE -> EN
         /// </summary>
-        public bool TranslationDirection { get; set; } = false;
+        public bool TranslationDirection { get; set; } = true;
 
         /// <summary>
         /// Switch between case sensitive checking
