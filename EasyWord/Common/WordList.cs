@@ -105,6 +105,13 @@ namespace EasyWord.Common
                 throw new Exception("The CSV file contains invalid characters or does " +
                     "not use the expected semicolon delimiter.");
             }
+
+            // Remove duplicates based on both German and English translations
+            list = list
+                .GroupBy(w => new { w.German, w.English })
+                .Select(group => group.First())
+                .ToList();
+
             return new WordList(list, Path.GetFileNameWithoutExtension(path));
         }
 
@@ -126,7 +133,8 @@ namespace EasyWord.Common
 
         public Word GetNextWord()
         {
-            return getIterationWords().First();
+            Word[] words = getIterationWords();
+            return words.Length != 0 ? words.First() : new Word();
         }
     }
 }
