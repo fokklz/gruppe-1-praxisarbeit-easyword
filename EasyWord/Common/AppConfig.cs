@@ -12,7 +12,7 @@ namespace EasyWord.Common
         /// <summary>
         /// Version of the Application
         /// </summary>
-        public string Version { get; } = "0.0.0.1";
+        public string Version { get; set; }
 
         /// <summary>
         /// Developer information
@@ -31,6 +31,9 @@ namespace EasyWord.Common
         /// </summary>
         public int TranslationDirection { get; set; } = 0;
 
+        /// <summary>
+        /// Imported words
+        /// </summary>
         public WordList Words { get; set; } = new WordList();
     }
 }

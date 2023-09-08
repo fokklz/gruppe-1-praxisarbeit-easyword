@@ -11,8 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Data\Models\" />
-    <Folder Include="ViewModels\" />
+	  <EmbeddedResource Include="VERSION" />
   </ItemGroup>
 
 </Project>

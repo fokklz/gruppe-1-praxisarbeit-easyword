@@ -14,14 +14,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
 
-namespace EasyWord
+namespace EasyWord.Windows
 {
     /// <summary>
     /// Interaction for devVersion.xaml
     /// </summary>
-    public partial class devVersion : Window
+    public partial class DevVersion : Window
     {
-        public devVersion()
+        public DevVersion()
         {
             InitializeComponent();
             // Access the AppConfig information

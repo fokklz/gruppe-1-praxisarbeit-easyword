@@ -28,7 +28,7 @@ namespace EasyWord.Data.Repository
         /// <param name="filePath">relative path</param>
         public static void SaveConfig<T>(T config, string filePath)
         {
-            if (!File.Exists(_basePath))
+            if (!Directory.Exists(_basePath))
             {
                 Directory.CreateDirectory(_basePath);
             }

@@ -1,11 +1,5 @@
 ﻿using EasyWord.Common;
 using EasyWord.Data.Repository;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace EasyWord
@@ -25,9 +19,11 @@ namespace EasyWord
             try
             {
                 Config = ConfigurationHandler.LoadConfig<AppConfig>("config.xml");
+                Config.Version = VersionProvider.getVersion();
             } catch {
                 // Use default if any errors while import
-                Config = new AppConfig();
+                Config = new AppConfig(); 
+                Config.Version = "unknown";
             }
         }
 
