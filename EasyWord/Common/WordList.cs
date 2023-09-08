@@ -143,20 +143,37 @@ namespace EasyWord.Common
         /// </summary>
         public int Iteration { get { return _iteration; } set { _iteration = value; } } 
 
-
+        /// <summary>
+        /// Switch to the next word in the list and increment 
+        /// the iteration stat of the word which was lately done
+        /// </summary>
+        /// <returns></returns>
         public Word GetNextWord()
         {
             Word[] words = _getIterationWords();
             return words.Length != 0 ? words.First() : new Word();
         }
 
+        /// <summary>
+        /// Reset the bucket value of all words in the list to 3
+        /// </summary>
+        public void ResetAllBuckets()
+        {
+            foreach (var word in _words)
+            {
+                word.ResetBucket();
+            }
+        }
+
+
+        /// <summary>
+        /// Resets the statistics of every word in the list and clears the whole list.
+        /// </summary>
         public void ResetWordsAndStatistics()
         {
             foreach (var word in _words)
             {
-                word.Iteration = 0;
-                word.Valid = 0;
-                word.Bucket = 3;
+                word.ResetStatistic();
             }
             _words.Clear();
             _iteration = 1;

@@ -97,6 +97,23 @@ namespace EasyWord.Data.Models
             return false;
         }
 
+        /// <summary>
+        /// Set the Value of Bucket to 3
+        /// </summary>
+        public void ResetBucket()
+        {
+            _bucket = 3;
+        }
+
+        /// <summary>
+        /// Reset all the statistics
+        /// </summary>
+        public void ResetStatistic()
+        {
+            _iteration = 0;
+            _valid = 0;
+            _bucket = 3;
+        }
 
         /// <summary>
         /// Get/Set english translation
