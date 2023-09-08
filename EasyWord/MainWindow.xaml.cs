@@ -30,9 +30,14 @@ namespace EasyWord
 
         private void UpdateView()
         {
-            title.Content = App.Config.Words.Title ?? "Bitte csv Datei importieren";
-            WordOutput.Content = App.Config.Words.GetNextWord().Question;
-            WordInput.Text = "";
+            string titleContent = "Bitte csv Datei importieren";
+            if (App.Config.Words.Title.Length > 0)
+            {
+                titleContent = App.Config.Words.Title;
+            }
+            title.Content = titleContent;
+            wordOutput.Content = App.Config.Words.GetNextWord().Question;
+            wordInput.Text = "";
         }
 
 
@@ -74,7 +79,7 @@ namespace EasyWord
         private void btnCheck_Click(object sender, RoutedEventArgs e)
         {
             CheckWordMatch();
-            WordInput.IsReadOnly = true;
+            wordInput.IsReadOnly = true;
             btnNext.Visibility = Visibility.Visible;
             btnCheck.Visibility = Visibility.Hidden;
             btnNext.Focus();
@@ -86,12 +91,12 @@ namespace EasyWord
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void WordInput_KeyDown(object sender, KeyEventArgs e)
+        private void wordInput_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
                 CheckWordMatch();
-                WordInput.IsReadOnly = true;
+                wordInput.IsReadOnly = true;
                 btnNext.Visibility = Visibility.Visible;
                 btnCheck.Visibility = Visibility.Hidden;
                 btnNext.Focus();
@@ -106,12 +111,12 @@ namespace EasyWord
         /// <param name="e"></param>
         private void btnNext_Click(object sender, RoutedEventArgs e)
         {
-            WordInput.IsReadOnly = false;
+            wordInput.IsReadOnly = false;
             btnNext.Visibility = Visibility.Hidden;
             btnCheck.Visibility = Visibility.Visible;
-            WordInput.Focus();
-            WordInput.BorderBrush = Brushes.Black;
-            WordInput.Background = Brushes.White;
+            wordInput.Focus();
+            wordInput.BorderBrush = Brushes.Black;
+            wordInput.Background = Brushes.White;
             UpdateView();
 
         }
@@ -124,15 +129,15 @@ namespace EasyWord
 
         private void CheckWordMatch()
         {
-            if (App.Config.Words.GetNextWord().CheckAnswer(WordInput.Text))
+            if (App.Config.Words.GetNextWord().CheckAnswer(wordInput.Text))
             {
-                WordInput.BorderBrush = Brushes.Green;
-                WordInput.Background = new SolidColorBrush(Color.FromArgb(50, 0, 255, 0));
+                wordInput.BorderBrush = Brushes.Green;
+                wordInput.Background = new SolidColorBrush(Color.FromArgb(50, 0, 255, 0));
             }
             else
             {
-                WordInput.BorderBrush = Brushes.Red;
-                WordInput.Background = new SolidColorBrush(Color.FromArgb(50, 255, 0, 0));
+                wordInput.BorderBrush = Brushes.Red;
+                wordInput.Background = new SolidColorBrush(Color.FromArgb(50, 255, 0, 0));
             }
         }
     }

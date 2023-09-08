@@ -26,10 +26,15 @@ namespace EasyWord.Common
         };
 
         /// <summary>
-        /// 0: EN -> DE
-        /// 1: DE -> EN
+        /// false: DE -> EN
+        /// true: EN -> DE
         /// </summary>
-        public int TranslationDirection { get; set; } = 0;
+        public bool TranslationDirection { get; set; } = false;
+
+        /// <summary>
+        /// Switch between case sensitive checking
+        /// </summary>
+        public bool CaseSensitive { get; set; } = false;
 
         /// <summary>
         /// Imported words
