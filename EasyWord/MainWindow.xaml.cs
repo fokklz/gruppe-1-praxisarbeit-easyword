@@ -65,5 +65,13 @@ namespace EasyWord
                 title.Content = "Bitte csv Datei importieren";
             }
         }
+
+        private void infoDev_click(object sender, RoutedEventArgs e)
+        {
+            devVersion customDialog = new devVersion();
+
+            // Show the dialog as a modal dialog
+            customDialog.ShowDialog();
+        }
     }
 }
