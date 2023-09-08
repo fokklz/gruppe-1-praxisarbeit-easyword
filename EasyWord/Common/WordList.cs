@@ -72,8 +72,6 @@ namespace EasyWord.Common
             _words = _words.OrderBy(x => random.Next()).ToList();
         }
 
-
-
         /// <summary>
         /// ImportFromCSV needs an <b>path</b>. 
         /// After you typed the path it creates an new list with validation
@@ -162,6 +160,37 @@ namespace EasyWord.Common
             }
             _words.Clear();
             _iteration = 1;
+        }
+
+        /// <summary>
+        /// Extends the imported CSV Wordlist
+        /// </summary>
+        /// <param name="path"></param>
+        public void ExtendFromCSV(string path)
+        {
+            try
+            {
+                WordList importedWordList = WordList.ImportFromCSV(path);
+                if (importedWordList != null)
+                {
+                    // Merge the imported word list into the existing word list
+                    this.Words.AddRange(importedWordList.Words);
+
+                    // Optionally, remove duplicates based on both German and English translations
+                    this.Words = this.Words
+                        .GroupBy(w => new { w.German, w.English })
+                        .Select(group => group.First())
+                        .ToList();
+                }
+                else
+                {
+                    Console.WriteLine("Error importing words from CSV.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error extending word list from CSV: {ex.Message}");
+            }
         }
     }
 }

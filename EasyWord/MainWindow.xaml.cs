@@ -65,10 +65,30 @@ namespace EasyWord
             {
                 // Store the selected file path
                 string filePath = openFileDialog.FileName;
-                App.Config.Words = WordList.ImportFromCSV(filePath);
+                // User confirmed, proceed with import
+                if (App.Config.Words.Words.Count == 0)
+                {
+                    // If the word list is null, simply import the CSV
+                    App.Config.Words = WordList.ImportFromCSV(filePath);
+                }
+                else
+                {
+                    var confirmResult = MessageBox.Show("Willst du die aktuelle Liste überschreiben?", "Confirmation", MessageBoxButton.YesNo);
+                    if (confirmResult == MessageBoxResult.Yes)
+                    {
+                        // If the word list is null, simply import the CSV
+                        App.Config.Words = WordList.ImportFromCSV(filePath);
+                    }
+                    else
+                    {
+                        // If the word list already exists, extend it
+                        WordList importedWords = WordList.ImportFromCSV(filePath);
+                        App.Config.Words.ExtendFromCSV(filePath);
+                    }
+                }                
+                    // Update the view to reflect the changes
+                    UpdateView();
             }
-
-            UpdateView();
         }
 
         /// <summary>
