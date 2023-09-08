@@ -47,7 +47,11 @@ namespace EasyWord.Common
             _title = title;
         }
 
-        private Word[] getIterationWords()
+        /// <summary>
+        /// Get all words in the current iteration and return a shuffled list of these
+        /// </summary>
+        /// <returns></returns>
+        private Word[] _getIterationWords()
         {
             Word[] words = _words.Where((word) => _iteration > word.Valid).ToArray();
             if(words.Length == 0)
@@ -55,7 +59,8 @@ namespace EasyWord.Common
                 _iteration++;
                 words = _words.Where((word) => _iteration > word.Valid).ToArray();
             }
-            return words;
+            // shuffle word list before return
+            return words.OrderBy(w => Guid.NewGuid()).ToArray();
         }
 
 
@@ -133,7 +138,7 @@ namespace EasyWord.Common
 
         public Word GetNextWord()
         {
-            Word[] words = getIterationWords();
+            Word[] words = _getIterationWords();
             return words.Length != 0 ? words.First() : new Word();
         }
 
