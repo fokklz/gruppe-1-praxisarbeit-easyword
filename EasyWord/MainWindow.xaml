@@ -7,6 +7,7 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
+<<<<<<< Updated upstream
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="80*"/>
             <ColumnDefinition Width="245*"/>
@@ -24,5 +25,8 @@
         <Button Name="btnCsvImport" Click="btnCsvImport_Click" Grid.Column="2" Content="Import" HorizontalAlignment="Center" VerticalAlignment="Center" Height="42" Width="90"/>
         <Button Name="btnCheck" Click="btnCheck_Click" Grid.Column="2" Content="Check" HorizontalAlignment="Center" Grid.Row="2" VerticalAlignment="Center" Height="42" Width="90" Visibility="Visible"/>
         <Button Name="btnNext" Click="btnNext_Click" Grid.Column="1" Content="Next" HorizontalAlignment="Center" Margin="0,37,0,0" Grid.Row="3" VerticalAlignment="Top" Height="42" Width="90" Visibility="Hidden"/>
+=======
+        <Frame Name="MainFrame" NavigationUIVisibility="Hidden" />
+>>>>>>> Stashed changes
     </Grid>
 </Window>

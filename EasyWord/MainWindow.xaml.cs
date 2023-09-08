@@ -25,21 +25,9 @@ namespace EasyWord
         public MainWindow()
         {
             InitializeComponent();
-            UpdateView();
+            ViewHandler.MainFrame = MainFrame;
+            ViewHandler.NavigateToPage();
         }
-
-        private void UpdateView()
-        {
-            string titleContent = "Bitte csv Datei importieren";
-            if (App.Config.Words.Title.Length > 0)
-            {
-                titleContent = App.Config.Words.Title;
-            }
-            title.Content = titleContent;
-            wordOutput.Content = App.Config.Words.GetNextWord().Question;
-            wordInput.Text = "";
-        }
-
 
         /// <summary>
         /// built in hook
@@ -50,6 +38,7 @@ namespace EasyWord
             base.OnClosed(e);
             App.SaveSettings();
         }
+<<<<<<< Updated upstream
 
         /// <summary>
         /// Event handler for the "btnCsvImport" button click
@@ -160,5 +149,7 @@ namespace EasyWord
                 wordInput.Background = new SolidColorBrush(Color.FromArgb(50, 255, 0, 0));
             }
         }
+=======
+>>>>>>> Stashed changes
     }
 }
