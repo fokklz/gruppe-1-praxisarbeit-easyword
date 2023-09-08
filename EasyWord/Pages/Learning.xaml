@@ -49,6 +49,6 @@
                 TextWrapping="Wrap" />
         </StackPanel>
         <!--Button Check-->
-        <Button Name="btnCheck" Click="btnCheck_Click" Grid.Column="2" Content="Check" HorizontalAlignment="Center" Grid.Row="2" VerticalAlignment="Top" Height="42" Width="102" Visibility="Visible" Margin="0,27,0,0" />
+        <Button Name="btnCheck" Grid.Column="2" Content="Check" HorizontalAlignment="Center" Grid.Row="2" VerticalAlignment="Top" Height="42" Width="102" Visibility="Visible" Margin="0,27,0,0" />
     </Grid>
 </Page>
