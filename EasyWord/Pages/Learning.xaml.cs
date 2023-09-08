@@ -24,5 +24,10 @@ namespace EasyWord.Pages
         {
             InitializeComponent();
         }
+
+        private void btnCheck_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

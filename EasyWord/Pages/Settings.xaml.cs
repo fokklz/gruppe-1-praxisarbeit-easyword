@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EasyWord.Windows;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,17 @@ namespace EasyWord.Pages
         public Settings()
         {
             InitializeComponent();
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void DevInfoVersion_click(object sender, RoutedEventArgs e)
+        {
+            DevVersion DevInfoWindow = new DevVersion();
+            DevInfoWindow.ShowDialog();
         }
     }
 }
