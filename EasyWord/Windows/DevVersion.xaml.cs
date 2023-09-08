@@ -24,14 +24,11 @@ namespace EasyWord.Windows
         public DevVersion()
         {
             InitializeComponent();
-            // Access the AppConfig information
-            AppConfig appConfig = new AppConfig();
-
             // Create a multiline string with each developer's name on a new line
-            string developerInfo = string.Join("\n", appConfig.Developer);
+            string developerInfo = string.Join("\n", App.Config.Developer);
 
             // Set the content of the label with developer information and version
-            devInfoLabel.Content = $"Developers:\n{developerInfo}\n\nVersion: {appConfig.Version}";
+            devInfoLabel.Content = $"Developers:\n{developerInfo}\n\nVersion: {App.Config.Version}";
         }
     }
 }
