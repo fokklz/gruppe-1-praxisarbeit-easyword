@@ -65,7 +65,7 @@ namespace EasyWord.Data.Models
         public string Question {
             get
             {
-                string word = App.Config.TranslationDirection == 0 ? _english : _german;
+                string word = App.Config.TranslationDirection ? _english : _german;
                 return word;
             }
         }
@@ -77,15 +77,23 @@ namespace EasyWord.Data.Models
         /// <returns></returns>
         public bool CheckAnswer(string awnser)
         {
-            _iteration++;
-            string translation = App.Config.TranslationDirection == 0 ? _german : _english;
-            if (string.Equals(awnser, translation, StringComparison.OrdinalIgnoreCase))
+            // false: DE -> EN, true: EN -> DE
+            string translation = App.Config.TranslationDirection ? _german : _english;
+            if (string.Equals(awnser, translation, 
+                App.Config.CaseSensitive ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase))
             {
                 _valid++;
-                _bucket++;
+                _iteration++;
+                if(_bucket < 5)
+                {
+                    _bucket++;
+                }
                 return true;
             }
-            _bucket--;
+            if(_bucket > 0)
+            {
+                _bucket--;
+            }
             return false;
         }
 

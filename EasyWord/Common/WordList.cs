@@ -47,16 +47,31 @@ namespace EasyWord.Common
             _title = title;
         }
 
-        private Word[] getIterationWords()
+        /// <summary>
+        /// Get all words in the current iteration
+        /// </summary>
+        /// <returns></returns>
+        private Word[] _getIterationWords()
         {
             Word[] words = _words.Where((word) => _iteration > word.Valid).ToArray();
-            if(words.Length == 0)
+            if (words.Length == 0)
             {
                 _iteration++;
                 words = _words.Where((word) => _iteration > word.Valid).ToArray();
+
+                
+                _shuffleWordList();
             }
+
             return words;
         }
+
+        private void _shuffleWordList()
+        {
+            var random = new Random();
+            _words = _words.OrderBy(x => random.Next()).ToList();
+        }
+
 
 
         /// <summary>
@@ -133,8 +148,20 @@ namespace EasyWord.Common
 
         public Word GetNextWord()
         {
-            Word[] words = getIterationWords();
+            Word[] words = _getIterationWords();
             return words.Length != 0 ? words.First() : new Word();
+        }
+
+        public void ResetWordsAndStatistics()
+        {
+            foreach (var word in _words)
+            {
+                word.Iteration = 0;
+                word.Valid = 0;
+                word.Bucket = 3;
+            }
+            _words.Clear();
+            _iteration = 1;
         }
     }
 }
