@@ -25,7 +25,16 @@ namespace EasyWord
         public MainWindow()
         {
             InitializeComponent();
+            UpdateView();
         }
+
+        private void UpdateView()
+        {
+            title.Content = App.Config.Words.Title ?? "Bitte csv Datei importieren";
+            WordOutput.Content = App.Config.Words.GetNextWord().Question;
+            WordInput.Text = "";
+        }
+
 
         /// <summary>
         /// built in hook
@@ -45,25 +54,16 @@ namespace EasyWord
         private void btnCsvImport_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "CSV Dateien (*.csv) |*.csv";
+            openFileDialog.Filter = "CSV Dateien (*.csv)|*.csv";
 
             if (openFileDialog.ShowDialog() == true)
             {
                 // Store the selected file path
-                string selectedFilePath = openFileDialog.FileName;
-                App.Config.Words = WordList.ImportFromCSV(selectedFilePath);
-
-                //Extract just the file name from the full path
-                string fileName = System.IO.Path.GetFileName(selectedFilePath);
-
-                //Update the label "title" with the selected file name
-                title.Content = fileName;
+                string filePath = openFileDialog.FileName;
+                App.Config.Words = WordList.ImportFromCSV(filePath);
             }
-            else
-            {
-                //show message
-                title.Content = "Bitte csv Datei importieren";
-            }
+
+            UpdateView();
         }
 
         /// <summary>
@@ -74,7 +74,7 @@ namespace EasyWord
         private void btnCheck_Click(object sender, RoutedEventArgs e)
         {
             CheckWordMatch();
-            enWordInput.IsReadOnly = true;
+            WordInput.IsReadOnly = true;
             btnNext.Visibility = Visibility.Visible;
             btnCheck.Visibility = Visibility.Hidden;
             btnNext.Focus();
@@ -86,12 +86,12 @@ namespace EasyWord
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void enWordInput_KeyDown(object sender, KeyEventArgs e)
+        private void WordInput_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
                 CheckWordMatch();
-                enWordInput.IsReadOnly = true;
+                WordInput.IsReadOnly = true;
                 btnNext.Visibility = Visibility.Visible;
                 btnCheck.Visibility = Visibility.Hidden;
                 btnNext.Focus();
@@ -106,13 +106,13 @@ namespace EasyWord
         /// <param name="e"></param>
         private void btnNext_Click(object sender, RoutedEventArgs e)
         {
-            enWordInput.Text = "";
-            enWordInput.IsReadOnly = false;
+            WordInput.IsReadOnly = false;
             btnNext.Visibility = Visibility.Hidden;
             btnCheck.Visibility = Visibility.Visible;
-            enWordInput.Focus();
-            enWordInput.BorderBrush = Brushes.Black;
-            enWordInput.Background = Brushes.White;
+            WordInput.Focus();
+            WordInput.BorderBrush = Brushes.Black;
+            WordInput.Background = Brushes.White;
+            UpdateView();
 
         }
 
@@ -124,15 +124,15 @@ namespace EasyWord
 
         private void CheckWordMatch()
         {
-            if (enWordInput.Text == deWordOutput.Content.ToString())
+            if (App.Config.Words.GetNextWord().CheckAnswer(WordInput.Text))
             {
-                enWordInput.BorderBrush = Brushes.Green;
-                enWordInput.Background = new SolidColorBrush(Color.FromArgb(50, 0, 255, 0));
+                WordInput.BorderBrush = Brushes.Green;
+                WordInput.Background = new SolidColorBrush(Color.FromArgb(50, 0, 255, 0));
             }
             else
             {
-                enWordInput.BorderBrush = Brushes.Red;
-                enWordInput.Background = new SolidColorBrush(Color.FromArgb(50, 255, 0, 0));
+                WordInput.BorderBrush = Brushes.Red;
+                WordInput.Background = new SolidColorBrush(Color.FromArgb(50, 255, 0, 0));
             }
         }
     }

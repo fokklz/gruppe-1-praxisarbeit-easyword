@@ -19,20 +19,43 @@ namespace EasyWord.Common
         private List<Word> _words;
 
         /// <summary>
+        /// Title of the list
+        /// </summary>
+        private string _title;
+
+        /// <summary>
+        /// Iteration of the list
+        /// </summary>
+        private int _iteration = 1;
+
+        /// <summary>
         /// Empty Ctor for Config & XML serialization
         /// </summary>
         public WordList()
         {
             _words = new List<Word>();
+            _title = String.Empty;
         }
 
         /// <summary>
         /// Init with Predefined list
         /// </summary>
         /// <param name="words"></param>
-        public WordList(List<Word> words)
+        public WordList(List<Word> words, string title)
         {
             _words = words;
+            _title = title;
+        }
+
+        private Word[] getIterationWords()
+        {
+            Word[] words = _words.Where((word) => _iteration > word.Valid).ToArray();
+            if(words.Length == 0)
+            {
+                _iteration++;
+                words = _words.Where((word) => _iteration > word.Valid).ToArray();
+            }
+            return words;
         }
 
 
@@ -82,12 +105,28 @@ namespace EasyWord.Common
                 throw new Exception("The CSV file contains invalid characters or does " +
                     "not use the expected semicolon delimiter.");
             }
-            return new WordList(list);
+            return new WordList(list, Path.GetFileNameWithoutExtension(path));
         }
 
         /// <summary>
         /// Get/Set word list
         /// </summary>
         public List<Word> Words { get { return _words; } set { _words = value; } }
+
+        /// <summary>
+        /// Get/Set title of the list
+        /// </summary>
+        public string Title { get { return _title; } set { _title = value; } }
+
+        /// <summary>
+        /// Current iteration of the list
+        /// </summary>
+        public int Iteration { get { return _iteration; } set { _iteration = value; } } 
+
+
+        public Word GetNextWord()
+        {
+            return getIterationWords().First();
+        }
     }
 }
