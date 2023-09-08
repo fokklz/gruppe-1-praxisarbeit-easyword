@@ -48,20 +48,30 @@ namespace EasyWord.Common
         }
 
         /// <summary>
-        /// Get all words in the current iteration and return a shuffled list of these
+        /// Get all words in the current iteration
         /// </summary>
         /// <returns></returns>
         private Word[] _getIterationWords()
         {
             Word[] words = _words.Where((word) => _iteration > word.Valid).ToArray();
-            if(words.Length == 0)
+            if (words.Length == 0)
             {
                 _iteration++;
                 words = _words.Where((word) => _iteration > word.Valid).ToArray();
+
+                
+                _shuffleWordList();
             }
-            // shuffle word list before return
-            return words.OrderBy(w => Guid.NewGuid()).ToArray();
+
+            return words;
         }
+
+        private void _shuffleWordList()
+        {
+            var random = new Random();
+            _words = _words.OrderBy(x => random.Next()).ToList();
+        }
+
 
 
         /// <summary>
