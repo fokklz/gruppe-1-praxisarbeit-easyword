@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using EasyWord;
+
 
 namespace EasyWord.Data.Models
 {
@@ -117,6 +119,33 @@ namespace EasyWord.Data.Models
             _valid = 0;
             _bucket = 3;
         }
+
+        /// <summary>
+        /// Get the changed values and then set these to the correct variable
+        /// deoending on the translation direction in AppConfig.cs
+        /// </summary>
+        /// <param name="direction"></param>
+        /// <param name="changeWordInput"></param>
+        /// <param name="changeTranslationInput"></param>
+        public void EditWord(string changeWordInput, string changeTranslationInput)
+        {
+            // Access the TranslationDirection property from the global AppConfig instance
+            bool direction = App.Config.TranslationDirection;
+
+            if (direction)
+            {
+                English = changeWordInput;
+                German = changeTranslationInput;
+            }
+            else
+            {
+                English = changeTranslationInput;
+                German = changeWordInput;
+            }
+        }
+
+
+
 
         /// <summary>
         /// Get/Set english translation
