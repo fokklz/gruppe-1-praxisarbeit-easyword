@@ -1,4 +1,5 @@
-﻿using EasyWord.Windows;
+﻿using EasyWord.Common;
+using EasyWord.Windows;
 using System;
 using System.Collections.Generic;
 using System.Linq;

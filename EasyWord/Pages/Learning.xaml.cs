@@ -1,5 +1,8 @@
 ﻿using EasyWord.Common;
+using EasyWord.Data.Models;
+using Microsoft.Win32;
 using System;
+using System.Globalization;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -67,7 +70,7 @@ namespace EasyWord.Pages
                 !App.Config.Words.HasTitle ? "Bitte csv Datei importieren" : App.Config.Words.Title;
             WordOutput.Text = App.Config.Words.GetNextWord().Question;
 
-            if (App.Config.Words.HasWords > 0)
+            if (App.Config.Words.HasWords)
             {
                 SubmitButton.IsEnabled = true;
                 WordInput.IsEnabled = true;
