@@ -67,8 +67,19 @@ namespace EasyWord.Data.Models
         public string Question {
             get
             {
-                string word = App.Config.TranslationDirection ? _english : _german;
-                return word;
+                return App.Config.TranslationDirection ? _english : _german;
+            }
+        }
+
+        /// <summary>
+        /// get translation
+        /// </summary>
+        /// <returns></returns>
+        public string Translation
+        {
+            get
+            {
+                return App.Config.TranslationDirection ? _german : _english;
             }
         }
 
@@ -79,15 +90,14 @@ namespace EasyWord.Data.Models
         /// <returns></returns>
         public bool CheckAnswer(string awnser)
         {
+            _iteration++;
             // false: DE -> EN, true: EN -> DE
-            string translation = App.Config.TranslationDirection ? _german : _english;
-            if (string.Equals(awnser, translation, 
+            if (string.Equals(awnser, Translation, 
                 App.Config.CaseSensitive ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase))
             {
                 // if answer was correct, increment the valid stat and the iteration stat
                 // also decrement the bucket (bucket 1 == learned completely
                 _valid++;
-                _iteration++;
                 if(_bucket > 1)
                 {
                     _bucket--;

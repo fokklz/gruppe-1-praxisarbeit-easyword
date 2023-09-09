@@ -137,9 +137,19 @@ namespace EasyWord.Common
         public List<Word> Words { get { return _words; } set { _words = value; } }
 
         /// <summary>
+        /// Utility to check for Empty word list
+        /// </summary>
+        public bool HasWords { get { return _words.Count > 0; } }
+
+        /// <summary>
         /// Get/Set title of the list
         /// </summary>
         public string Title { get { return _title; } set { _title = value; } }
+
+        /// <summary>
+        /// Utility to check for Empty title
+        /// </summary>
+        public bool HasTitle { get { return _title != String.Empty; } }
 
         /// <summary>
         /// Current iteration of the list
@@ -151,15 +161,14 @@ namespace EasyWord.Common
         /// the iteration stat of the word which was lately done
         /// </summary>
         /// <returns></returns>
-        public (Word word, int bucket) GetNextWord()
+        public Word GetNextWord()
         {
             Word[] words = _getIterationWords();
             if (words.Length != 0)
             {
-                Word nextWord = words.First();
-                return (nextWord, nextWord.Bucket);
+                return words.First();
             }
-            return (new Word(), -1);
+            return new Word();
         }
 
 
