@@ -57,5 +57,17 @@ namespace EasyWord.Pages
             DevVersion DevInfoWindow = new DevVersion();
             DevInfoWindow.ShowDialog();
         }
+
+        
+
+        private void ResetAll_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ResetStats_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
