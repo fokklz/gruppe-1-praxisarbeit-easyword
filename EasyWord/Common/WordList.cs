@@ -176,14 +176,21 @@ namespace EasyWord.Common
 
 
         /// <summary>
-        /// Resets the statistics of every word in the list and clears the whole list.
+        /// Resets the statistics of every word in the list.
         /// </summary>
-        public void ResetWordsAndStatistics()
+        public void ResetAllStatistics()
         {
             foreach (var word in _words)
             {
                 word.ResetStatistic();
             }
+        }
+
+        /// <summary>
+        /// Deletes the whole WordList, so the User can start again with a clean and empty app.
+        /// </summary>
+        public void ClearWords()
+        {
             _words.Clear();
             _iteration = 1;
         }
