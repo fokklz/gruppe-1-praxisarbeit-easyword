@@ -53,19 +53,22 @@ namespace EasyWord.Common
         /// <returns></returns>
         private Word[] _getIterationWords()
         {
-            Word[] words = _words.Where((word) => _iteration > word.Valid).ToArray();
+            Word[] words = _words.Where(word => word.Bucket > 1 && _iteration > word.Valid).ToArray();
             if (words.Length == 0)
             {
                 _iteration++;
-                words = _words.Where((word) => _iteration > word.Valid).ToArray();
+                words = _words.Where(word => word.Bucket > 1 && _iteration > word.Valid).ToArray();
 
-                
+
                 _shuffleWordList();
             }
 
             return words;
         }
 
+        /// <summary>
+        /// Shuffle the Wordlist to randomize the order
+        /// </summary>
         private void _shuffleWordList()
         {
             var random = new Random();
@@ -148,11 +151,17 @@ namespace EasyWord.Common
         /// the iteration stat of the word which was lately done
         /// </summary>
         /// <returns></returns>
-        public Word GetNextWord()
+        public (Word word, int bucket) GetNextWord()
         {
             Word[] words = _getIterationWords();
-            return words.Length != 0 ? words.First() : new Word();
+            if (words.Length != 0)
+            {
+                Word nextWord = words.First();
+                return (nextWord, nextWord.GetCurrentBucket());
+            }
+            return (new Word(), -1);
         }
+
 
         /// <summary>
         /// Reset the bucket value of all words in the list to 3
