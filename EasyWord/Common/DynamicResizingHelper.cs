@@ -9,11 +9,16 @@ namespace EasyWord.Common
 {
     public class DynamicResizingHelper
     {
+        /// <summary>
+        /// Set min widths for columns
+        /// </summary>
+        /// <param name="windowWidth"></param>
+        /// <param name="columns"></param>
         public static void SetMinWidths(double windowWidth, params ColumnDefinition[] columns)
         {
             double minWidth;
 
-            // Define the logic for setting the MinWidth based on the window width
+            // Decide the MinWidth based on the window width
             if (windowWidth > 1000)
             {
                 minWidth = 200;
