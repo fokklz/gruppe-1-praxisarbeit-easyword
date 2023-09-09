@@ -157,7 +157,7 @@ namespace EasyWord.Common
             if (words.Length != 0)
             {
                 Word nextWord = words.First();
-                return (nextWord, nextWord.GetCurrentBucket());
+                return (nextWord, nextWord.Bucket);
             }
             return (new Word(), -1);
         }

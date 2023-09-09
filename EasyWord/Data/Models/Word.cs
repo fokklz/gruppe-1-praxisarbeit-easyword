@@ -119,16 +119,6 @@ namespace EasyWord.Data.Models
         }
 
         /// <summary>
-        /// Function to get the current bucket value
-        /// </summary>
-        /// <returns></returns>
-        public int GetCurrentBucket()
-        {
-            return _bucket;
-        }
-
-
-        /// <summary>
         /// Get/Set english translation
         /// </summary>
         public string English { get { return _english; } set { _english = value; } }
