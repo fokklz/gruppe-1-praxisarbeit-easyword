@@ -8,7 +8,7 @@ using System.Xml.Serialization;
 
 namespace EasyWord.Data.Repository
 {
-    public class ConfigurationHandler
+    public class FileProvider
     {
         /// <summary>
         /// AppData

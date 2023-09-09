@@ -28,7 +28,8 @@ namespace EasyWord.Windows
             string developerInfo = string.Join("\n", App.Config.Developer);
 
             // Set the content of the label with developer information and version
-            devInfoLabel.Content = $"Developers:\n{developerInfo}\n\nVersion: {App.Config.Version}";
+            DevOutput.Text = developerInfo;
+            VersionOutput.Text = App.Config.Version;
         }
     }
 }

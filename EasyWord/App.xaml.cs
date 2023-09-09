@@ -18,7 +18,7 @@ namespace EasyWord
         {
             try
             {
-                Config = ConfigurationHandler.LoadConfig<AppConfig>("config.xml");
+                Config = FileProvider.LoadConfig<AppConfig>("config.xml");
                 Config.Version = VersionProvider.getVersion();
             } catch {
                 // Use default if any errors while import
@@ -32,7 +32,7 @@ namespace EasyWord
         /// </summary>
         public static void SaveSettings()
         {
-            ConfigurationHandler.SaveConfig(Config, "config.xml");
+            FileProvider.SaveConfig(Config, "config.xml");
         }
 
     }

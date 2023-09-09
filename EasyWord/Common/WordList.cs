@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using EasyWord.Data.Models;
+using EasyWord.Data.Repository;
 
 namespace EasyWord.Common
 {
@@ -84,7 +85,7 @@ namespace EasyWord.Common
         public static WordList ImportFromCSV(string path)
         {
             List<Word> list = new List<Word>();
-            string[] lines = File.ReadAllLines(path);
+            string[] lines = File.ReadAllLines(path, Encoding.UTF8);
             // Assume that the CSV file is valid
             bool isValidCSV = true;
             foreach (string line in lines)
@@ -234,5 +235,31 @@ namespace EasyWord.Common
                 Console.WriteLine($"Error extending word list from CSV: {ex.Message}");
             }
         }
+        
+        /// <summary>
+        /// Export back to CSV
+        /// </summary>
+        /// <param name="filePath"></param>
+        public void ExportWordsWithBucketToCSV(string filePath)
+        {
+            try
+            {
+                using (StreamWriter sw = new StreamWriter(filePath))
+                {
+                    foreach (Word word in Words)
+                    {
+                        // Format each word entry as a CSV line with semicolon as delimiter
+                        string csvLine = $"{word.German};{word.English};{word.Bucket}";
+                        sw.WriteLine(csvLine);
+                    }
+                }
+                Console.WriteLine("Export to CSV with buckets successful.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error exporting to CSV with buckets: {ex.Message}");
+            }
+        }
+
     }
 }

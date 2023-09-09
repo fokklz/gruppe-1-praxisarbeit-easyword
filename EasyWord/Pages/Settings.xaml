@@ -23,6 +23,7 @@
             <RowDefinition Height="50"/>
             <RowDefinition Height="50"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="80"/>
         </Grid.RowDefinitions>
 
         <Rectangle Grid.Row="0" Grid.ColumnSpan="5" Fill="#19000000"/>
@@ -99,7 +100,7 @@
             Grid.Row="2" Grid.Column="3"
             VerticalAlignment="Center"
             Style="{StaticResource MaterialDesignSwitchToggleButton}"
-            ToolTip="MaterialDesignSwitchToggleButton" Margin="29,0,30,0"/>
+            ToolTip="MaterialDesignSwitchToggleButton" Margin="29,0,30,0" Checked="LearnEnglish_Checked" Unchecked="LearnEnglish_Unchecked"/>
         <!--Case sensitive settings-->
         <TextBlock 
             Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2"
@@ -111,7 +112,36 @@
             Grid.Row="3" Grid.Column="3"
             VerticalAlignment="Center"
             Style="{StaticResource MaterialDesignSwitchToggleButton}"
-            ToolTip="MaterialDesignSwitchToggleButton" Margin="29,0,30,0"/>
+            ToolTip="MaterialDesignSwitchToggleButton" Margin="29,0,30,0" Checked="CaseSensitive_Checked" Unchecked="CaseSensitive_Unchecked"/>
 
+        <Grid Grid.Column="1" Grid.Row="5" Grid.ColumnSpan="3" Margin="0,10,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Button 
+                x:Name="ImportState"
+                Grid.Column="0"
+                HorizontalAlignment="Center"
+                Style="{StaticResource MaterialDesignPaperButton}" Click="ImportState_Click" >
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <materialDesign:PackIcon Kind="SwapVerticalBold" Margin="0,2.5,10,0"/>
+                    <TextBlock Text="Stand Importieren"/>
+                </StackPanel>
+            </Button>
+            <Button 
+                 x:Name="ExportState"
+                 Grid.Column="1"
+                 HorizontalAlignment="Center"
+                 Style="{StaticResource MaterialDesignPaperButton}" Click="ExportState_Click">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <materialDesign:PackIcon Kind="ApplicationExport" Margin="0,2.5,10,0"/>
+                    <TextBlock Text="Stand Exportieren"/>
+                </StackPanel>
+            </Button>
+        </Grid>
     </Grid>
 </Page>

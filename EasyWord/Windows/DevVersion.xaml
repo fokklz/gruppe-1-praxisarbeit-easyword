@@ -3,28 +3,48 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:local="clr-namespace:EasyWord"
         mc:Ignorable="d"
-        Title="DevVersion" Height="291" Width="498">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+        Title="DevVersion" Height="360" Width="300" MaxHeight="360" MinHeight="360" MaxWidth="300" MinWidth="300">
+    <Grid Margin="15">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="30*"/>
+            <ColumnDefinition Width="71*"/>
         </Grid.ColumnDefinitions>
-        <Label Content="" Name="devInfoLabel" Width="119" RenderTransformOrigin="0.5,0.5" Grid.ColumnSpan="2" Grid.RowSpan="2" Margin="190,13,189,35">
-            <Label.RenderTransform>
-                <TransformGroup>
-                    <ScaleTransform/>
-                    <SkewTransform AngleY="-0.945"/>
-                    <RotateTransform/>
-                    <TranslateTransform Y="-1.006"/>
-                </TransformGroup>
-            </Label.RenderTransform>
-        </Label>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="47"/>
+            <RowDefinition Height="135*"/>
+            <RowDefinition Height="42"/>
+        </Grid.RowDefinitions>
 
+        <!--Dev titel-->
+        <TextBlock
+            Grid.ColumnSpan="2"
+            Style="{StaticResource MaterialDesignHeadline4TextBlock}"
+            Text="Entwickler:"/>
+
+        <!--Dev output-->
+        <TextBlock
+            x:Name="DevOutput"
+            Grid.Row="1" Grid.ColumnSpan="2"
+            Style="{StaticResource MaterialDesignHeadline5TextBlock}"
+            Text="Namen..."/>
+        
+        <!--Version titel-->
+        <TextBlock
+            FontSize="19"
+            Grid.Row="3"
+            Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+            Text="Version:"/>
+        
+        <!--Version output-->
+        <TextBlock
+            x:Name="VersionOutput"
+            Grid.Row="2" Grid.Column="1"
+            FontSize="19"
+            Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+            Text="0.0.0.1"/>
+  
     </Grid>
 </Window>

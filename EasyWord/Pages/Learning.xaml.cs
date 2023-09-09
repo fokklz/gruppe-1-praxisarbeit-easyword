@@ -145,6 +145,11 @@ namespace EasyWord.Pages
             }
         }
 
+        /// <summary>
+        /// submit typed word
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void SubmitButton_Click(object sender, RoutedEventArgs e)
         {
             if (_enableNext)
