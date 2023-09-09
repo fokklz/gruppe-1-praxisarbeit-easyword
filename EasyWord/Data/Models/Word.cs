@@ -82,17 +82,20 @@ namespace EasyWord.Data.Models
             if (string.Equals(awnser, translation, 
                 App.Config.CaseSensitive ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase))
             {
+                // if answer was correct, increment the valid stat and the iteration stat
+                // also decrement the bucket (bucket 1 == learned completely
                 _valid++;
                 _iteration++;
-                if(_bucket < 5)
+                if(_bucket > 1)
                 {
-                    _bucket++;
+                    _bucket--;
                 }
                 return true;
             }
-            if(_bucket > 0)
+            // if answer was wrong, increment the bucket (max. 5)
+            if(_bucket < 5)
             {
-                _bucket--;
+                _bucket++;
             }
             return false;
         }
