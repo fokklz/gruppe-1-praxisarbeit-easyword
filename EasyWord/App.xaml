@@ -12,6 +12,17 @@
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.DeepPurple.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Lime.xaml" />
             </ResourceDictionary.MergedDictionaries>
+
+            <ControlTemplate x:Key="CustomErrorTemplate">
+                <DockPanel LastChildFill="true">
+                    <Border Background="Transparent" VerticalAlignment="Center" Height="49" DockPanel.Dock="Top"/>
+                    <TextBlock FontSize="14" Foreground="Red" Text="{Binding [0].ErrorContent}" DockPanel.Dock="Bottom">
+                        <TextBlock.ToolTip>
+                            <ToolTip Content="{Binding [0].ErrorContent}"/>
+                        </TextBlock.ToolTip>
+                    </TextBlock>
+                </DockPanel>
+            </ControlTemplate>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

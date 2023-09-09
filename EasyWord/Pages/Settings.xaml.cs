@@ -26,11 +26,31 @@ namespace EasyWord.Pages
             InitializeComponent();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// set column min width on size changed
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-
+            DynamicResizingHelper.SetMinWidths(e.NewSize.Width, ColumnStart, ColumnEnd);
         }
 
+        /// <summary>
+        /// on Back
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void BtnBack_Click(object sender, RoutedEventArgs e)
+        {
+            ViewHandler.NavigateToPage();
+        }
+
+        /// <summary>
+        /// Show developer info
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void DevInfoVersion_click(object sender, RoutedEventArgs e)
         {
             DevVersion DevInfoWindow = new DevVersion();
