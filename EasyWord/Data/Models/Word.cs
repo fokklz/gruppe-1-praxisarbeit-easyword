@@ -127,7 +127,7 @@ namespace EasyWord.Data.Models
         {
             _iteration = 0;
             _valid = 0;
-            _bucket = 3;
+            //_bucket = 3; don't needed, because this should just reset the statistics and ResetBucket() should reset the bucket only
         }
 
         /// <summary>
