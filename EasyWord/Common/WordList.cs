@@ -144,6 +144,25 @@ namespace EasyWord.Common
         public int Iteration { get { return _iteration; } set { _iteration = value; } }
 
         /// <summary>
+        /// Check if words left
+        /// </summary>
+        /// <returns></returns>
+        public bool HasWordsLeft()
+        {
+            if (_words.Count == 0) return false;
+
+            foreach (var word in _words)
+            {
+                if (word.Bucket > 1)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+
+        /// <summary>
         /// Switch to the next word in the list and increment 
         /// the iteration stat of the word which was lately done
         /// </summary>

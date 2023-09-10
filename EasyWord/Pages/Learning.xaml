@@ -23,13 +23,13 @@
             <RowDefinition Height="60*"/>
         </Grid.RowDefinitions>
         
-        <!--Title-->
+        <!-- Title -->
         <TextBlock
             Name="Title" Height="26" Margin="10,10,10,10"
             VerticalAlignment="Center" HorizontalAlignment="Left"
             Style="{StaticResource MaterialDesignHeadline6TextBlock}"
             Grid.Column="1" />
-        <!--Import CSV button-->
+        <!-- Import CSV button -->
         <Button
             Name="BtnCsvImport"
             Background="{DynamicResource MaterialDesignTextFieldBoxBackground}"
@@ -40,7 +40,7 @@
             <materialDesign:PackIcon
             Kind="TrayArrowUp" />
         </Button>
-        <!--Output button-->
+        <!-- Output button -->
         <Button
             Name="BtnSettings"
             Background="{DynamicResource MaterialDesignTextFieldBoxBackground}"
@@ -51,7 +51,7 @@
             <materialDesign:PackIcon
             Kind="Cog" />
         </Button>
-        <!--Textinput card-->
+        <!-- Textinput card -->
         <materialDesign:Card
             Padding="5"
             Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="3"
@@ -63,25 +63,42 @@
                     <ColumnDefinition Width="50"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="60"/>
                     <RowDefinition Height="*"/>
+                    <RowDefinition Height="60"/>
                 </Grid.RowDefinitions>
-                <Button
-                    Name="BtnEdit"
-                    IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
-                    Style="{StaticResource MaterialDesignIconButton}"
-                    ToolTip="MaterialDesignIconButton"
-                    HorizontalAlignment="Center" VerticalAlignment="Top" Click="BtnSettings_Click" Grid.Column="1">
-                    <materialDesign:PackIcon
-                    Kind="Pencil" />
-                </Button>
+                
+                <!-- Edit Button 
+                <Button Name="BtnEdit" IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}" Style="{StaticResource MaterialDesignIconButton}" ToolTip="MaterialDesignIconButton" HorizontalAlignment="Center" VerticalAlignment="Top" Click="BtnSettings_Click" Grid.Column="1"> <materialDesign:PackIcon Kind="Pencil" /></Button>
+                -->
+                <!-- Word output -->
                 <TextBlock
-                    Name="WordOutput" Grid.Row="1"
-                    FontSize="20" TextAlignment="Center" VerticalAlignment="Center" Grid.ColumnSpan="2">
+                    Name="WordOutput"
+                    Grid.Row="1" Grid.ColumnSpan="2"
+                    FontSize="20" TextAlignment="Center" VerticalAlignment="Center" >
                     <Run Language="de-ch" Text="Test"/>
                 </TextBlock>
+                <!-- Bucket Display -->
+                <StackPanel VerticalAlignment="Bottom" Orientation="Horizontal" Grid.Row="2">
+                    <materialDesign:PackIcon Kind="Bucket" Opacity="0.3"/>
+                    <materialDesign:PackIcon Name="BucketDisplay2" Kind="Bucket" Opacity="0.3"/>
+                    <materialDesign:PackIcon Name="BucketDisplay3" Kind="Bucket" Opacity="0.3"/>
+                    <materialDesign:PackIcon Name="BucketDisplay4" Kind="Bucket" Opacity="0.3"/>
+                    <materialDesign:PackIcon Name="BucketDisplay5" Kind="Bucket" Opacity="0.3"/>
+                    <!-- Wrong output -->
+                    <StackPanel Opacity="0.8" Orientation="Horizontal" VerticalAlignment="Top" Margin="10,0,0,0" >
+                        <TextBlock
+                            Style="{StaticResource MaterialDesignBody2TextBlock}"
+                            Text="Falsch: "/>
+                        <TextBlock
+                            Name="WrongOutput"
+                            Style="{StaticResource MaterialDesignBody2TextBlock}"
+                            Text="10" />    
+                    </StackPanel>
+                </StackPanel>
             </Grid>
         </materialDesign:Card>
-        <!--Textoutput-->
+        <!-- Word input -->
         <StackPanel Grid.Column="1"  Grid.Row="2" VerticalAlignment="Top" Margin="10, 25, 15, 20">
             <TextBox
                 Name="WordInput"
@@ -98,7 +115,7 @@
                 </TextBox.Text>
             </TextBox>
         </StackPanel>
-        <!--Button Check-->
+        <!-- Button Check -->
         <Button 
             Name="SubmitButton" 
             Grid.Column="2" Grid.Row="2" Grid.ColumnSpan="2"

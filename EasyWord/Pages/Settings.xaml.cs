@@ -72,6 +72,7 @@ namespace EasyWord.Pages
         private void ResetAll_Click(object sender, RoutedEventArgs e)
         {
             App.Config.Words.ClearWords();
+            App.SaveSettings();
         }
 
         /// <summary>
@@ -82,6 +83,7 @@ namespace EasyWord.Pages
         private void ResetStats_Click(object sender, RoutedEventArgs e)
         {
             App.Config.Words.ResetAllStatistics();
+            App.SaveSettings();
         }
 
         /// <summary>

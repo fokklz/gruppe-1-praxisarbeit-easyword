@@ -75,7 +75,7 @@ namespace EasyWord.Pages
                 !App.Config.Words.HasTitle ? "Bitte csv Datei importieren" : App.Config.Words.Title;
             WordOutput.Text = App.Config.Words.GetNextWord().Question;
 
-            if (App.Config.Words.HasWords)
+            if (App.Config.Words.HasWordsLeft())
             {
                 SubmitButton.IsEnabled = true;
                 WordInput.IsEnabled = true;
@@ -88,6 +88,50 @@ namespace EasyWord.Pages
 
             Validation.ClearInvalid(WordInput.GetBindingExpression(TextBox.TextProperty));
             WordInput.Focus();
+
+            UpdateBucketDisplay();
+            UpdateWrongOutput();
+        }
+
+        /// <summary>
+        /// Change all Buckets to 0.3 Opacity, when word is true or false
+        /// the bucket change the opacity
+        /// </summary>
+
+        private void UpdateBucketDisplay()
+        {
+            BucketDisplay2.Opacity = 0.3;
+            BucketDisplay3.Opacity = 0.3;
+            BucketDisplay4.Opacity = 0.3;
+            BucketDisplay5.Opacity = 0.3;
+
+            int currentBucket = App.Config.Words.GetNextWord().Bucket;
+            switch (currentBucket)
+            {
+                case 2:
+                    BucketDisplay2.Opacity = 0.8;
+                    break;
+                case 4:
+                    BucketDisplay4.Opacity = 0.8;
+                    break;
+                case 5:
+                    BucketDisplay5.Opacity = 0.8;
+                    break;
+                default: 
+                    BucketDisplay3.Opacity = 0.8;
+                    break;
+            }
+           
+        }
+
+        /// <summary>
+        /// Updates WrongOutputs with the number of incorrect attempts for the
+        /// current word.
+        /// </summary>
+        private void UpdateWrongOutput()
+        {
+            Word currentWord = App.Config.Words.GetNextWord();
+            WrongOutput.Text = $"{currentWord.Iteration - currentWord.Valid}";
         }
 
         /// <summary>
@@ -209,7 +253,8 @@ namespace EasyWord.Pages
             SubmitButton.Content = "Next";
             WordInput.IsReadOnly = true;
             SubmitButton.Focus();
-            App.Config.Words.GoNext(); // switch to the next work, regardsless if the word was right or not.
+            // switch to the next word, regardsless if the word was right or not.
+            App.Config.Words.GoNext(); 
         }
     }
 }
