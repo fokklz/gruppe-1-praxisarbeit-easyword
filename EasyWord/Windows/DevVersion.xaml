@@ -6,11 +6,12 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:local="clr-namespace:EasyWord"
         mc:Ignorable="d"
-        Title="DevVersion" Height="360" Width="300" MaxHeight="360" MinHeight="360" MaxWidth="300" MinWidth="300">
+        Title="DevVersion" Height="360" Width="360" MaxHeight="360" MinHeight="360" MaxWidth="360" MinWidth="360">
     <Grid Margin="15">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="30*"/>
+            <ColumnDefinition Width="40*"/>
             <ColumnDefinition Width="71*"/>
+            <ColumnDefinition Width="60*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="47"/>
@@ -20,14 +21,14 @@
 
         <!--Dev titel-->
         <TextBlock
-            Grid.ColumnSpan="2"
+            Grid.ColumnSpan="3"
             Style="{StaticResource MaterialDesignHeadline4TextBlock}"
             Text="Entwickler:"/>
 
         <!--Dev output-->
         <TextBlock
             x:Name="DevOutput"
-            Grid.Row="1" Grid.ColumnSpan="2"
+            Grid.Row="1" Grid.ColumnSpan="3"
             Style="{StaticResource MaterialDesignHeadline5TextBlock}"
             Text="Namen..."/>
         
@@ -45,6 +46,14 @@
             FontSize="19"
             Style="{StaticResource MaterialDesignHeadline6TextBlock}"
             Text="0.0.0.1"/>
-  
+
+        <!--Version Date output-->
+        <TextBlock
+    x:Name="VersionDate"
+    Grid.Row="2" Grid.Column="3"
+    FontSize="19"
+    Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+    Text="DD.MM.YYYY"/>
+
     </Grid>
 </Window>

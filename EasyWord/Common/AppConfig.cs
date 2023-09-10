@@ -20,9 +20,9 @@ namespace EasyWord.Common
         public string[] Developer { get; } = new string[5]{
             "Arda Dursun",
             "Bobby Bilali",
-            "Robin Ruf",
             "Fokko Vos",
-            "Mahir Gönen"
+            "Mahir Gönen",
+            "Robin Ruf"
         };
 
         /// <summary>

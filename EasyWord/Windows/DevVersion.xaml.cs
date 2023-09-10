@@ -30,6 +30,15 @@ namespace EasyWord.Windows
             // Set the content of the label with developer information and version
             DevOutput.Text = developerInfo;
             VersionOutput.Text = App.Config.Version;
+
+            //Get creation date of running .EXE file
+            string filePath = System.Reflection.Assembly.GetExecutingAssembly().Location;
+            DateTime creationTime = System.IO.File.GetCreationTime(filePath);
+            string formattedDate = creationTime.ToString("d");
+
+            VersionDate.Text = formattedDate.ToString();
+
+
         }
     }
 }
