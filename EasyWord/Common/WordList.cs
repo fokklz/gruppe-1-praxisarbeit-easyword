@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using EasyWord.Data.Models;
 using EasyWord.Data.Repository;
 
@@ -18,6 +19,12 @@ namespace EasyWord.Common
         /// list of Words
         /// </summary>
         private List<Word> _words;
+
+        /// <summary>
+        /// Represents the current set of words to be iterated over in the current session. 
+        /// It is a subset of the main word list, filtered based on certain criteria such as the bucket value and the valid iteration count.
+        /// </summary>
+        private Word[] _currentIteration;
 
         /// <summary>
         /// Title of the list
@@ -36,6 +43,7 @@ namespace EasyWord.Common
         {
             _words = new List<Word>();
             _title = String.Empty;
+            _currentIteration = new Word[0];
         }
 
         /// <summary>
@@ -46,34 +54,12 @@ namespace EasyWord.Common
         {
             _words = words;
             _title = title;
+            _currentIteration = _words.Where(_filterWord).ToArray();
         }
 
-        /// <summary>
-        /// Get all words in the current iteration
-        /// </summary>
-        /// <returns></returns>
-        private Word[] _getIterationWords()
+        private bool _filterWord(Word word)
         {
-            Word[] words = _words.Where(word => word.Bucket > 1 && _iteration > word.Valid).ToArray();
-            if (words.Length == 0)
-            {
-                _iteration++;
-                words = _words.Where(word => word.Bucket > 1 && _iteration > word.Valid).ToArray();
-
-
-                _shuffleWordList();
-            }
-
-            return words;
-        }
-
-        /// <summary>
-        /// Shuffle the Wordlist to randomize the order
-        /// </summary>
-        private void _shuffleWordList()
-        {
-            var random = new Random();
-            _words = _words.OrderBy(x => random.Next()).ToList();
+            return word.Bucket > 1 && _iteration - 1 == word.Valid;
         }
 
         /// <summary>
@@ -155,7 +141,7 @@ namespace EasyWord.Common
         /// <summary>
         /// Current iteration of the list
         /// </summary>
-        public int Iteration { get { return _iteration; } set { _iteration = value; } } 
+        public int Iteration { get { return _iteration; } set { _iteration = value; } }
 
         /// <summary>
         /// Switch to the next word in the list and increment 
@@ -164,12 +150,45 @@ namespace EasyWord.Common
         /// <returns></returns>
         public Word GetNextWord()
         {
-            Word[] words = _getIterationWords();
-            if (words.Length != 0)
+            if (_currentIteration.Length != 0)
             {
-                return words.First();
+                return _currentIteration.First();
             }
             return new Word();
+        }
+
+        private bool _hasWordsLeft()
+        {
+            return _currentIteration.Where(_filterWord).Count() > 0;
+        }
+
+        /// <summary>
+        /// Advances to the next set of words for the current iteration, reshuffling the words if necessary. 
+        /// If the initial parameter is set to true, it initializes the current iteration with a random order of words that meet the filter criteria.
+        /// If all words have been iterated over in the current iteration, it increments the iteration counter and reshuffles the words for the next iteration.
+        /// </summary>
+        /// <param name="inital">Indicates whether this is the initial call to set up the first iteration.</param>
+        public void GoNext(bool inital = false)
+        {
+            Random random = new Random();
+            if (inital)
+            {
+                if (_currentIteration.Length == 0)
+                {
+                    _currentIteration = _words.Where(_filterWord).OrderBy(x => random.Next()).ToArray();
+                }
+                return;
+            }
+
+            if (_hasWordsLeft())
+            {
+                _currentIteration = _currentIteration.Where(_filterWord).OrderBy(x => random.Next()).ToArray();
+            }
+            else
+            {
+                _iteration++;
+                _currentIteration = _words.Where(_filterWord).OrderBy(x => random.Next()).ToArray();
+            }
         }
 
 
@@ -235,7 +254,7 @@ namespace EasyWord.Common
                 Console.WriteLine($"Error extending word list from CSV: {ex.Message}");
             }
         }
-        
+
         /// <summary>
         /// Export back to CSV
         /// </summary>

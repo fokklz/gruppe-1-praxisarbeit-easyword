@@ -54,9 +54,14 @@ namespace EasyWord.Pages
         /// </summary>
         public string WordInputText { get; set; }
 
+        /// <summary>
+        /// Initialize the component, set the first word, set the input fields and finally update the view
+        /// so the user can start learning
+        /// </summary>
         public Learning()
         {
             InitializeComponent();
+            App.Config.Words.GoNext(true);
             DataContext = this;
             UpdateView();
         }
@@ -204,6 +209,7 @@ namespace EasyWord.Pages
             SubmitButton.Content = "Next";
             WordInput.IsReadOnly = true;
             SubmitButton.Focus();
+            App.Config.Words.GoNext(); // switch to the next work, regardsless if the word was right or not.
         }
     }
 }
