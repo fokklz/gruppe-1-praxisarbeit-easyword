@@ -98,7 +98,7 @@ namespace EasyWord.Pages
                 // Create a SaveFileDialog
                 SaveFileDialog saveFileDialog = new SaveFileDialog();
                 saveFileDialog.Filter = "XML Files (*.xml)|*.xml";
-                saveFileDialog.Title = "Export XML File";
+                saveFileDialog.Title = "Export XML Datei";
                 saveFileDialog.DefaultExt = "xml";
 
                 // Show the SaveFileDialog and get the selected file path
@@ -111,12 +111,12 @@ namespace EasyWord.Pages
                     FileProvider.SaveConfig(App.Config.Words, exportFilePath);
 
                     // Provide feedback to the user
-                    MessageBox.Show($"Export to XML successful. File saved at: {exportFilePath}", "Export Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show($"Exportieren zu XML erfolgreich. Datei gespeichert in: {exportFilePath}", "Export erfolgreich", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error exporting to XML: {ex.Message}", "Export Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Export fehlgeschlagen: {ex.Message}", "Export Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -125,7 +125,7 @@ namespace EasyWord.Pages
 
             OpenFileDialog importPath = new OpenFileDialog();
             importPath.Filter = "XML Files (*.xml)|*.xml";
-            importPath.Title = "Select XML File";
+            importPath.Title = "Wähle XML Datei";
             importPath.DefaultExt = "xml";
 
             if (importPath.ShowDialog() == true)
