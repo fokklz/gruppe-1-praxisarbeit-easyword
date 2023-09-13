@@ -52,7 +52,7 @@ namespace EasyWord.Pages
         /// <summary>
         /// The text from the WordInput
         /// </summary>
-        public string WordInputText { get; set; }
+        public string WordInputText { get; set; } 
 
         /// <summary>
         /// Initialize the component, set the first word, set the input fields and finally update the view
@@ -97,7 +97,6 @@ namespace EasyWord.Pages
         /// Change all Buckets to 0.3 Opacity, when word is true or false
         /// the bucket change the opacity
         /// </summary>
-
         private void UpdateBucketDisplay()
         {
             BucketDisplay2.Opacity = 0.3;
@@ -121,7 +120,11 @@ namespace EasyWord.Pages
                     BucketDisplay3.Opacity = 0.8;
                     break;
             }
-           
+           BucketCount1.Text = App.Config.Words.GetBucketWords(1).ToString();
+           BucketCount2.Text = App.Config.Words.GetBucketWords(2).ToString();
+           BucketCount3.Text = App.Config.Words.GetBucketWords(3).ToString();
+           BucketCount4.Text = App.Config.Words.GetBucketWords(4).ToString();
+           BucketCount5.Text = App.Config.Words.GetBucketWords(5).ToString();
         }
 
         /// <summary>

@@ -79,21 +79,75 @@
                     <Run Language="de-ch" Text="Test"/>
                 </TextBlock>
                 <!-- Bucket Display -->
+                
                 <StackPanel VerticalAlignment="Bottom" Orientation="Horizontal" Grid.Row="2">
-                    <materialDesign:PackIcon Kind="Bucket" Opacity="0.3"/>
-                    <materialDesign:PackIcon Name="BucketDisplay2" Kind="Bucket" Opacity="0.3"/>
-                    <materialDesign:PackIcon Name="BucketDisplay3" Kind="Bucket" Opacity="0.3"/>
-                    <materialDesign:PackIcon Name="BucketDisplay4" Kind="Bucket" Opacity="0.3"/>
-                    <materialDesign:PackIcon Name="BucketDisplay5" Kind="Bucket" Opacity="0.3"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <!-- Bucket 1 -->
+                        <TextBlock 
+                            Name="BucketCount1" 
+                            HorizontalAlignment="Center" Opacity="0.7"/>
+                        <materialDesign:PackIcon
+                            Grid.Row="1"
+                            Kind="Bucket" Opacity="0.3"/>
+                        
+                        <!-- Bucket 2 -->
+                        <TextBlock 
+                            Name="BucketCount2"
+                            Grid.Column="1" HorizontalAlignment="Center" Opacity="0.7"/>
+                        <materialDesign:PackIcon 
+                            Name="BucketDisplay2" 
+                            Grid.Row="1" Grid.Column="1"
+                            Kind="Bucket" Opacity="0.3"/>
+
+                        <!-- Bucket 3 -->
+                        <TextBlock 
+                            Name="BucketCount3"
+                            Grid.Column="2" HorizontalAlignment="Center" Opacity="0.7"/>
+                        <materialDesign:PackIcon 
+                            Name="BucketDisplay3" 
+                            Grid.Row="1" Grid.Column="2" 
+                            Kind="Bucket" Opacity="0.3"/>
+
+                        <!-- Bucket 4 -->
+                        <TextBlock 
+                            Name="BucketCount4"
+                            Grid.Column="3" HorizontalAlignment="Center" Opacity="0.7"/>
+                        <materialDesign:PackIcon 
+                            Name="BucketDisplay4" 
+                            Grid.Row="1" Grid.Column="3" 
+                            Kind="Bucket" Opacity="0.3"/>
+
+                        <!-- Bucket 5 -->
+                        <TextBlock 
+                            Name="BucketCount5"
+                            Grid.Column="4" HorizontalAlignment="Center" Opacity="0.7"/>
+                        <materialDesign:PackIcon 
+                            Name="BucketDisplay5" 
+                            Grid.Row="1" Grid.Column="4" 
+                            Kind="Bucket" Opacity="0.3"/>
+                    </Grid>
+                    
                     <!-- Wrong output -->
-                    <StackPanel Opacity="0.8" Orientation="Horizontal" VerticalAlignment="Top" Margin="10,0,0,0" >
-                        <TextBlock
-                            Style="{StaticResource MaterialDesignBody2TextBlock}"
-                            Text="Falsch: "/>
+                    <StackPanel Grid.Column="2" Opacity="0.8" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10,0,0,0" >
                         <TextBlock
                             Name="WrongOutput"
                             Style="{StaticResource MaterialDesignBody2TextBlock}"
-                            Text="10" />    
+                            Text="10" />
+                        <TextBlock
+                            Style="{StaticResource MaterialDesignBody2TextBlock}"
+                            Text=" x Falsch bisher "/>
+                        
                     </StackPanel>
                 </StackPanel>
             </Grid>

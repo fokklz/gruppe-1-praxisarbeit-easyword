@@ -210,6 +210,15 @@ namespace EasyWord.Common
             }
         }
 
+        /// <summary>
+        /// Count words based on bucket  
+        /// </summary>
+        /// <param name="bucket"></param>
+        /// <returns></returns>
+        public int GetBucketWords(int bucket)
+        {
+            return _words.Where(w => w.Bucket == bucket).Count();
+        }
 
         /// <summary>
         /// Reset the bucket value of all words in the list to 3
