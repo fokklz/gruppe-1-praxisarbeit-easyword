@@ -19,7 +19,7 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="60"/>
-            <RowDefinition Height="80"/>
+            <RowDefinition Height="110"/>
             <RowDefinition Height="50"/>
             <RowDefinition Height="50"/>
             <RowDefinition Height="*"/>
@@ -65,7 +65,8 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
+                <RowDefinition Height="45" />
+                <RowDefinition Height="45" />
             </Grid.RowDefinitions>
             <Button 
                 x:Name="ResetStats"
@@ -78,8 +79,18 @@
                 </StackPanel>
             </Button>
             <Button 
+                x:Name="ResetBuckets"
+                Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2"
+                HorizontalAlignment="Center"
+                Style="{StaticResource MaterialDesignRaisedButton}" Click="ResetBuckets_Click">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <materialDesign:PackIcon Kind="Bucket" Margin="0,2.5,10,0"/>
+                    <TextBlock Text="Buckets Löschen"/>
+                </StackPanel>
+            </Button>
+            <Button 
                 x:Name="ResetAll"
-                Grid.Column="1"
+                Grid.Column="2"
                 HorizontalAlignment="Center"
                 Style="{StaticResource MaterialDesignRaisedButton}" Click="ResetAll_Click">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">

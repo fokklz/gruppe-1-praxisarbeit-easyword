@@ -164,36 +164,42 @@ namespace EasyWord.Pages
         /// <param name="e">Additional event data</param>
         private void BtnCsvImport_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "CSV Dateien (*.csv)|*.csv";
-
-            if (openFileDialog.ShowDialog() == true)
+            try
             {
-                // Store the selected file path
-                string filePath = openFileDialog.FileName;
-                // User confirmed, proceed with import
-                if (App.Config.Words.Words.Count == 0)
+                OpenFileDialog openFileDialog = new OpenFileDialog();
+                openFileDialog.Filter = "CSV Dateien (*.csv)|*.csv";
+
+                if (openFileDialog.ShowDialog() == true)
                 {
-                    // If the word list is null, simply import the CSV
-                    App.Config.Words = WordList.ImportFromCSV(filePath);
-                }
-                else
-                {
-                    var confirmResult = MessageBox.Show("Willst du die aktuelle Liste überschreiben?", "Confirmation", MessageBoxButton.YesNo);
-                    if (confirmResult == MessageBoxResult.Yes)
+                    // Store the selected file path
+                    string filePath = openFileDialog.FileName;
+                    // User confirmed, proceed with import
+                    if (App.Config.Words.Words.Count == 0)
                     {
                         // If the word list is null, simply import the CSV
                         App.Config.Words = WordList.ImportFromCSV(filePath);
                     }
                     else
                     {
-                        // If the word list already exists, extend it
-                        WordList importedWords = WordList.ImportFromCSV(filePath);
-                        App.Config.Words.ExtendFromCSV(filePath);
+                        var confirmResult = MessageBox.Show("Willst du die aktuelle Liste überschreiben?", "Confirmation", MessageBoxButton.YesNo);
+                        if (confirmResult == MessageBoxResult.Yes)
+                        {
+                            // If the word list is null, simply import the CSV
+                            App.Config.Words = WordList.ImportFromCSV(filePath);
+                        }
+                        else
+                        {
+                            // If the word list already exists, extend it
+                            WordList importedWords = WordList.ImportFromCSV(filePath);
+                            App.Config.Words.ExtendFromCSV(filePath);
+                        }
                     }
+                    // Update the view to reflect the changes
+                    UpdateView();
                 }
-                // Update the view to reflect the changes
-                UpdateView();
+            } catch
+            {
+                MessageBox.Show("Die Wörter konnten nicht Importiert werden. Überprüfe die Formatierung der CSV.");
             }
         }
 

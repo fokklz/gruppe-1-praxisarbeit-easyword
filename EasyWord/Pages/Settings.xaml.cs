@@ -98,7 +98,7 @@ namespace EasyWord.Pages
                 // Create a SaveFileDialog
                 SaveFileDialog saveFileDialog = new SaveFileDialog();
                 saveFileDialog.Filter = "XML Files (*.xml)|*.xml";
-                saveFileDialog.Title = "Export XML Datei";
+                saveFileDialog.Title = "XML Datei Exportieren";
                 saveFileDialog.DefaultExt = "xml";
 
                 // Show the SaveFileDialog and get the selected file path
@@ -122,16 +122,21 @@ namespace EasyWord.Pages
 
         private void ImportState_Click(object sender, RoutedEventArgs e)
         {
-
-            OpenFileDialog importPath = new OpenFileDialog();
-            importPath.Filter = "XML Files (*.xml)|*.xml";
-            importPath.Title = "Wähle XML Datei";
-            importPath.DefaultExt = "xml";
-
-            if (importPath.ShowDialog() == true)
+            try
             {
-             WordList importedWords = FileProvider.LoadConfig<WordList>(importPath.FileName);
-                App.Config.Words = importedWords;
+                OpenFileDialog importPath = new OpenFileDialog();
+                importPath.Filter = "XML Files (*.xml)|*.xml";
+                importPath.Title = "XML Datei wählen";
+                importPath.DefaultExt = "xml";
+
+                if (importPath.ShowDialog() == true)
+                {
+                    WordList importedWords = FileProvider.LoadConfig<WordList>(importPath.FileName);
+                    App.Config.Words = importedWords;
+                }
+            }catch
+            {
+                MessageBox.Show("Der Stand konnte nicht importiert werden. Stelle sicher das die XML Datei richtig Formatiert ist.");
             }
         }
 
@@ -174,6 +179,17 @@ namespace EasyWord.Pages
         private void LearnEnglish_Unchecked(object sender, RoutedEventArgs e)
         {
             App.Config.TranslationDirection = false;
+        }
+
+        /// <summary>
+        /// Reset all buckets
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ResetBuckets_Click(object sender, RoutedEventArgs e)
+        {
+            App.Config.Words.ResetAllBuckets();
+            App.SaveSettings();
         }
     }
 }
