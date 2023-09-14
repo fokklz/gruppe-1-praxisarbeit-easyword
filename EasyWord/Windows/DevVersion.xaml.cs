@@ -1,6 +1,7 @@
 ﻿using EasyWord.Common;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,6 +22,7 @@ namespace EasyWord.Windows
     /// </summary>
     public partial class DevVersion : Window
     {
+        [RequiresAssemblyFiles()]
         public DevVersion()
         {
             InitializeComponent();
