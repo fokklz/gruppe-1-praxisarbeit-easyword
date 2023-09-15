@@ -23,17 +23,17 @@ using EasyWord.Controls;
 namespace EasyWord.Pages
 {
     /// <summary>
-    /// Interaction logic for Lections.xaml
+    /// Interaction logic for Lectures.xaml
     /// </summary>
-    public partial class Lections : Page
+    public partial class Lectures : Page
     {
-public Lections()
+public Lectures()
         {
             InitializeComponent();
-            LectureWrapPanel.Children.Add(new LectionCard());
-            LectureWrapPanel.Children.Add(new LectionCard());
-            LectureWrapPanel.Children.Add(new LectionCard());
-            LectureWrapPanel.Children.Add(new LectionCard());
+            LectureWrapPanel.Children.Add(new LectureCard());
+            LectureWrapPanel.Children.Add(new LectureCard());
+            LectureWrapPanel.Children.Add(new LectureCard());
+            LectureWrapPanel.Children.Add(new LectureCard());
             // Add a new language
             FilledComboBox.Items.Add(new ComboBoxItem
             {
@@ -57,12 +57,12 @@ public Lections()
 
         }
 
-        private void SelectedLection_Click(object sender, RoutedEventArgs e)
+        private void SelectedLecture_Click(object sender, RoutedEventArgs e)
         {
 
         }
 
-        private void AllLections_Click(object sender, RoutedEventArgs e)
+        private void AllLectures_Click(object sender, RoutedEventArgs e)
         {
 
         }

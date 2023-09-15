@@ -18,14 +18,14 @@ using System.Windows.Shapes;
 namespace EasyWord.Controls
 {
     /// <summary>
-    /// Interaction logic for LectionCard.xaml
+    /// Interaction logic for LectureCard.xaml
     /// </summary>
-    public partial class LectionCard : UserControl
+    public partial class LectureCard : UserControl
     {
-        public string Lection { get; set; } = "Standard";
+        public string Lecture { get; set; } = "Standard";
         public int WordCount { get; set; } = 0;
 
-        public LectionCard()
+        public LectureCard()
         {
             InitializeComponent();
             DataContext = this;
