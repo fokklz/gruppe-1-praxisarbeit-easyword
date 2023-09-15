@@ -15,9 +15,19 @@ namespace EasyWord.Data.Models
     public class Word
     {
         /// <summary>
-        /// english translation
+        /// Foreign language translation
         /// </summary>
-        private string _english = "";
+        private string _foreignWord = "";
+
+        /// <summary>
+        /// Definition of foreign language
+        /// </summary>
+        private string _language = "";
+
+        /// <summary>
+        /// Definition in which lecture it is
+        /// </summary>
+        private string _lecture = "";
 
         /// <summary>
         /// german translation
@@ -40,15 +50,18 @@ namespace EasyWord.Data.Models
         private int _bucket = 3;
 
         /// <summary>
-        /// default Ctor
+        /// Construktor for Word
         /// </summary>
         /// <param name="german"></param>
-        /// <param name="english"></param>
-
-        public Word(string german, string english)
+        /// <param name="translation"></param>
+        /// <param name="language"></param>
+        /// <param name="lecture"></param>
+        public Word(string lecture , string german, string translation, string language)
         {
-            _english = english;
+            _foreignWord = translation;
             _german = german;
+            _language = language;
+            _lecture = lecture;
         }
 
         /// <summary>
@@ -57,7 +70,7 @@ namespace EasyWord.Data.Models
         public Word()
         {
             _german = string.Empty;
-            _english = string.Empty;
+            _foreignWord = string.Empty;
         }
 
         /// <summary>
@@ -67,7 +80,7 @@ namespace EasyWord.Data.Models
         public string Question {
             get
             {
-                return App.Config.TranslationDirection ? _english : _german;
+                return App.Config.TranslationDirection ? _foreignWord : _german;
             }
         }
 
@@ -79,7 +92,7 @@ namespace EasyWord.Data.Models
         {
             get
             {
-                return App.Config.TranslationDirection ? _german : _english;
+                return App.Config.TranslationDirection ? _german : _foreignWord;
             }
         }
 
@@ -91,7 +104,6 @@ namespace EasyWord.Data.Models
         public bool CheckAnswer(string awnser)
         {
             _iteration++;
-            // false: DE -> EN, true: EN -> DE
             if (string.Equals(awnser, Translation, 
                 App.Config.CaseSensitive ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase))
             {
@@ -144,12 +156,12 @@ namespace EasyWord.Data.Models
 
             if (direction)
             {
-                English = changeWordInput;
+                ForeignWord = changeWordInput;
                 German = changeTranslationInput;
             }
             else
             {
-                English = changeTranslationInput;
+                ForeignWord = changeTranslationInput;
                 German = changeWordInput;
             }
         }
@@ -158,9 +170,9 @@ namespace EasyWord.Data.Models
 
 
         /// <summary>
-        /// Get/Set english translation
+        /// Get/Set foreign word translation
         /// </summary>
-        public string English { get { return _english; } set { _english = value; } }
+        public string ForeignWord { get { return _foreignWord; } set { _foreignWord = value; } }
         /// <summary>
         /// Get/Set german translation
         /// </summary>
@@ -177,6 +189,16 @@ namespace EasyWord.Data.Models
         /// Get/Set bucket
         /// </summary>
         public int Bucket { get { return _bucket; } set { _bucket = value; } }
+
+        /// <summary>
+        /// Get/Set language
+        /// </summary>
+        public string Language { get { return _language; } set { _language = value; } }
+
+        /// <summary>
+        /// Get/Set Lecture
+        /// </summary>
+        public string Lecture { get { return _lecture; } set { _lecture = value; } }
 
     }
 }
