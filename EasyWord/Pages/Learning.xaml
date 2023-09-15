@@ -79,7 +79,6 @@
                     <Run Language="de-ch" Text="Test"/>
                 </TextBlock>
                 <!-- Bucket Display -->
-                
                 <StackPanel VerticalAlignment="Bottom" Orientation="Horizontal" Grid.Row="2">
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -93,22 +92,23 @@
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
-                        <!-- Bucket 1 -->
+                        <!-- Bucket 5 -->
                         <TextBlock 
-                            Name="BucketCount1" 
+                            Name="BucketCount5" 
                             HorizontalAlignment="Center" Opacity="0.7"/>
                         <materialDesign:PackIcon
+                            Name="BucketDisplay5"
                             Grid.Row="1"
-                            Kind="Bucket" Opacity="0.3"/>
+                            Kind="EmoticonCryOutline" Opacity="0.3"/>
                         
-                        <!-- Bucket 2 -->
+                        <!-- Bucket 4 -->
                         <TextBlock 
-                            Name="BucketCount2"
+                            Name="BucketCount4"
                             Grid.Column="1" HorizontalAlignment="Center" Opacity="0.7"/>
                         <materialDesign:PackIcon 
-                            Name="BucketDisplay2" 
+                            Name="BucketDisplay4" 
                             Grid.Row="1" Grid.Column="1"
-                            Kind="Bucket" Opacity="0.3"/>
+                            Kind="EmoticonSadOutline" Opacity="0.3"/>
 
                         <!-- Bucket 3 -->
                         <TextBlock 
@@ -117,25 +117,24 @@
                         <materialDesign:PackIcon 
                             Name="BucketDisplay3" 
                             Grid.Row="1" Grid.Column="2" 
-                            Kind="Bucket" Opacity="0.3"/>
+                            Kind="EmoticonNeutralOutline" Opacity="0.3"/>
 
-                        <!-- Bucket 4 -->
+                        <!-- Bucket 2 -->
                         <TextBlock 
-                            Name="BucketCount4"
+                            Name="BucketCount2"
                             Grid.Column="3" HorizontalAlignment="Center" Opacity="0.7"/>
                         <materialDesign:PackIcon 
-                            Name="BucketDisplay4" 
+                            Name="BucketDisplay2" 
                             Grid.Row="1" Grid.Column="3" 
-                            Kind="Bucket" Opacity="0.3"/>
+                            Kind="EmoticonHappyOutline" Opacity="0.3"/>
 
-                        <!-- Bucket 5 -->
+                        <!-- Bucket 1 -->
                         <TextBlock 
-                            Name="BucketCount5"
+                            Name="BucketCount1"
                             Grid.Column="4" HorizontalAlignment="Center" Opacity="0.7"/>
                         <materialDesign:PackIcon 
-                            Name="BucketDisplay5" 
                             Grid.Row="1" Grid.Column="4" 
-                            Kind="Bucket" Opacity="0.3"/>
+                            Kind="EmoticonCoolOutline" Opacity="0.3"/>
                     </Grid>
                     
                     <!-- Wrong output -->
