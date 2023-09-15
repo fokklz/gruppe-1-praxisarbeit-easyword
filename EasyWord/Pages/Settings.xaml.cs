@@ -119,7 +119,11 @@ namespace EasyWord.Pages
                 MessageBox.Show($"Export fehlgeschlagen: {ex.Message}", "Export Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
+        /// <summary>
+        /// Import Words with stats
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ImportState_Click(object sender, RoutedEventArgs e)
         {
             try

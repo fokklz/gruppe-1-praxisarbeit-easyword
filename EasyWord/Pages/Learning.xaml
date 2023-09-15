@@ -5,6 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
       xmlns:local="clr-namespace:EasyWord.Pages"
+      xmlns:ctls="clr-namespace:EasyWord.Controls"
       mc:Ignorable="d" 
       Background="White"
       SizeChanged="OnSizeChanged">
@@ -22,7 +23,7 @@
             <RowDefinition Height="100*"/>
             <RowDefinition Height="60*"/>
         </Grid.RowDefinitions>
-        
+
         <!-- Title -->
         <TextBlock
             Name="Title" Height="26" Margin="10,10,10,10"
@@ -40,7 +41,7 @@
             <materialDesign:PackIcon
             Kind="TrayArrowUp" />
         </Button>
-        <!-- Output button -->
+        <!-- Settings button -->
         <Button
             Name="BtnSettings"
             Background="{DynamicResource MaterialDesignTextFieldBoxBackground}"
@@ -51,6 +52,7 @@
             <materialDesign:PackIcon
             Kind="Cog" />
         </Button>
+        
         <!-- Textinput card -->
         <materialDesign:Card
             Padding="5"
@@ -59,6 +61,7 @@
             Foreground="{DynamicResource PrimaryHueLightForegroundBrush}" Margin="10,10,10,10" >
             <Grid>
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="80"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="50"/>
                 </Grid.ColumnDefinitions>
@@ -67,91 +70,43 @@
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="60"/>
                 </Grid.RowDefinitions>
-                
                 <!-- Edit Button 
                 <Button Name="BtnEdit" IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}" Style="{StaticResource MaterialDesignIconButton}" ToolTip="MaterialDesignIconButton" HorizontalAlignment="Center" VerticalAlignment="Top" Click="BtnSettings_Click" Grid.Column="1"> <materialDesign:PackIcon Kind="Pencil" /></Button>
                 -->
                 <!-- Word output -->
                 <TextBlock
                     Name="WordOutput"
-                    Grid.Row="1" Grid.ColumnSpan="2"
+                    Grid.Row="1" Grid.ColumnSpan="3"
                     FontSize="20" TextAlignment="Center" VerticalAlignment="Center" >
                     <Run Language="de-ch" Text="Test"/>
                 </TextBlock>
                 <!-- Bucket Display -->
-                <StackPanel VerticalAlignment="Bottom" Orientation="Horizontal" Grid.Row="2">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-                        
-                        <!-- Bucket 1 -->
-                        <TextBlock 
-                            Name="BucketCount1"
-                            Grid.Column="4" HorizontalAlignment="Center" Opacity="0.7"/>
-                        <materialDesign:PackIcon 
-                            Grid.Row="1" Grid.Column="4" 
-                            Kind="EmoticonCoolOutline" Opacity="0.3"/>
-                        
-                        <!-- Bucket 2 -->
-                        <TextBlock 
-                            Name="BucketCount2"
-                            Grid.Column="3" HorizontalAlignment="Center" Opacity="0.7"/>
-                        <materialDesign:PackIcon 
-                            Name="BucketDisplay2" 
-                            Grid.Row="1" Grid.Column="3" 
-                            Kind="EmoticonHappyOutline" Opacity="0.3"/>
-                        
-                        <!-- Bucket 3 -->
-                        <TextBlock 
-                            Name="BucketCount3"
-                            Grid.Column="2" HorizontalAlignment="Center" Opacity="0.7"/>
-                        <materialDesign:PackIcon 
-                            Name="BucketDisplay3" 
-                            Grid.Row="1" Grid.Column="2" 
-                            Kind="EmoticonNeutralOutline" Opacity="0.3"/>
-                        
-                        <!-- Bucket 4 -->
-                        <TextBlock 
-                            Name="BucketCount4"
-                            Grid.Column="1" HorizontalAlignment="Center" Opacity="0.7"/>
-                        <materialDesign:PackIcon 
-                            Name="BucketDisplay4" 
-                            Grid.Row="1" Grid.Column="1"
-                            Kind="EmoticonSadOutline" Opacity="0.3"/>
-                        
-                        <!-- Bucket 5 -->
-                            <TextBlock 
-                            Name="BucketCount5" 
-                            HorizontalAlignment="Center" Opacity="0.7"/>
-                        <materialDesign:PackIcon
-                            Name="BucketDisplay5"
-                            Grid.Row="1"
-                            Kind="EmoticonCryOutline" Opacity="0.3"/>
-                    </Grid>
-                    
-                    <!-- Wrong output -->
-                    <StackPanel Grid.Column="2" Opacity="0.8" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10,0,0,0" >
-                        <TextBlock
-                            Name="WrongOutput"
-                            Style="{StaticResource MaterialDesignBody2TextBlock}"
-                            Text="10" />
-                        <TextBlock
-                            Style="{StaticResource MaterialDesignBody2TextBlock}"
-                            Text=" x Falsch bisher "/>
-                        
-                    </StackPanel>
-                </StackPanel>
+                <ctls:Emoticon Grid.Row="2" VerticalAlignment="Center" Values="2,3,5,6,8" Active="3" Margin="0,-10,0,0" >
+                    <ctls:Emoticon.RenderTransform>
+                        <ScaleTransform ScaleX="1.6" ScaleY="1.6"/>
+                    </ctls:Emoticon.RenderTransform>
+                </ctls:Emoticon>
+                
+                <!-- Wrong output -->
+                <StackPanel Grid.Column="1" Grid.Row="3" Grid.ColumnSpan="2" Opacity="0.8" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom"  >
+                    <TextBlock
+                        x:Name="WrongOutput"
+                        Style="{StaticResource MaterialDesignBody2TextBlock}"
+                        Text="10"
+                        VerticalAlignment="Bottom"/>
+                    <TextBlock
+                        Style="{StaticResource MaterialDesignBody2TextBlock}"
+                        Text=" x"
+                        VerticalAlignment="Bottom"/>
+
+                    <materialDesign:PackIcon Kind="AlphabeticalVariantOff"
+                        Opacity="0.6"
+                        Height="23" Width="32"
+                        Margin="0,0,0,-3"/>
+                 </StackPanel>
             </Grid>
         </materialDesign:Card>
+        
         <!-- Word input -->
         <StackPanel Grid.Column="1"  Grid.Row="2" VerticalAlignment="Top" Margin="10, 25, 15, 20">
             <TextBox
@@ -169,6 +124,7 @@
                 </TextBox.Text>
             </TextBox>
         </StackPanel>
+        
         <!-- Button Check -->
         <Button 
             Name="SubmitButton" 
