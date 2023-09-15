@@ -69,33 +69,5 @@
                 IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
                 Style="{StaticResource MaterialDesignOutlinedDarkButton}"
                 ToolTip="MaterialDesignOutlinedButton" />
-        <!--Lection Cards-->
-        <materialDesign:Card x:Name="LexiconCard1"
-                Grid.Column="0"
-                Grid.Row="1"
-                Width="200"
-                Height="90"
-                Background="{DynamicResource PrimaryHueLightBrush}"
-                Foreground="{DynamicResource PrimaryHueLightForegroundBrush}">
-            <TextBlock
-                FontSize="16"
-                VerticalAlignment="Center"
-                TextAlignment="Center"
-                Text="Lektion" />
-        </materialDesign:Card>
-        <materialDesign:Card x:Name="LexiconCard2"
-         Grid.Column="1"
-         Grid.ColumnSpan="3"
-         Grid.Row="1"
-         Width="200"
-         Height="90"
-         Background="{DynamicResource PrimaryHueLightBrush}"
-         Foreground="{DynamicResource PrimaryHueLightForegroundBrush}">
-            <TextBlock
-         FontSize="16"
-         VerticalAlignment="Center"
-         TextAlignment="Center"
-         Text="Lektion" />
-        </materialDesign:Card>
     </Grid>
 </Page>
