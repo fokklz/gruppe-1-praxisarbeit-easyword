@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:EasyWord.Pages" 
+      xmlns:ctls="clr-namespace:EasyWord.Controls"
       xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
       mc:Ignorable="d" 
       Background="White" Title="Settings"
@@ -58,7 +59,7 @@
                 <materialDesign:PackIcon Kind="Information" Margin="5, 2.5, 0, 0"/>
             </StackPanel>
         </Button>
-        
+
         <Grid Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="3" Margin="0,10,0,10">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
@@ -99,19 +100,27 @@
                 </StackPanel>
             </Button>
         </Grid>
-        
+
         <!--English settings-->
-        <TextBlock 
+        <Button
+            Name="ToggleLanguageDirection"
+            Grid.Row="2" Grid.Column="3" 
+            VerticalAlignment="Center" 
+            IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
+            Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+            ToolTip="MaterialDesignFloatingActionMiniButton" Click="ToggleLanguageDirection_Click">
+            <materialDesign:PackIcon
+                     Kind="Autorenew" />
+        </Button>
+
+        <ctls:TranslationToggle
+            x:Name="TranslationToggle"
             Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2"
+            Rotated="True"
+            Margin="10,0,0,0"
             VerticalAlignment="Center"
-            Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
-            Text="Englisch lernen" Margin="10,0,0,0" />
-        <ToggleButton 
-            Name="LearnEnglish"
-            Grid.Row="2" Grid.Column="3"
-            VerticalAlignment="Center"
-            Style="{StaticResource MaterialDesignSwitchToggleButton}"
-            ToolTip="MaterialDesignSwitchToggleButton" Margin="29,0,30,0" Checked="LearnEnglish_Checked" Unchecked="LearnEnglish_Unchecked"/>
+            />
+
         <!--Case sensitive settings-->
         <TextBlock 
             Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2"
