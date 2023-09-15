@@ -30,7 +30,5 @@ namespace EasyWord.Controls
             InitializeComponent();
             DataContext = this;
         }
-
-
     }
 }
