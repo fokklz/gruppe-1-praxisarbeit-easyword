@@ -92,14 +92,32 @@
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
-                        <!-- Bucket 5 -->
+                        
+                        <!-- Bucket 1 -->
                         <TextBlock 
-                            Name="BucketCount5" 
-                            HorizontalAlignment="Center" Opacity="0.7"/>
-                        <materialDesign:PackIcon
-                            Name="BucketDisplay5"
-                            Grid.Row="1"
-                            Kind="EmoticonCryOutline" Opacity="0.3"/>
+                            Name="BucketCount1"
+                            Grid.Column="4" HorizontalAlignment="Center" Opacity="0.7"/>
+                        <materialDesign:PackIcon 
+                            Grid.Row="1" Grid.Column="4" 
+                            Kind="EmoticonCoolOutline" Opacity="0.3"/>
+                        
+                        <!-- Bucket 2 -->
+                        <TextBlock 
+                            Name="BucketCount2"
+                            Grid.Column="3" HorizontalAlignment="Center" Opacity="0.7"/>
+                        <materialDesign:PackIcon 
+                            Name="BucketDisplay2" 
+                            Grid.Row="1" Grid.Column="3" 
+                            Kind="EmoticonHappyOutline" Opacity="0.3"/>
+                        
+                        <!-- Bucket 3 -->
+                        <TextBlock 
+                            Name="BucketCount3"
+                            Grid.Column="2" HorizontalAlignment="Center" Opacity="0.7"/>
+                        <materialDesign:PackIcon 
+                            Name="BucketDisplay3" 
+                            Grid.Row="1" Grid.Column="2" 
+                            Kind="EmoticonNeutralOutline" Opacity="0.3"/>
                         
                         <!-- Bucket 4 -->
                         <TextBlock 
@@ -109,32 +127,15 @@
                             Name="BucketDisplay4" 
                             Grid.Row="1" Grid.Column="1"
                             Kind="EmoticonSadOutline" Opacity="0.3"/>
-
-                        <!-- Bucket 3 -->
-                        <TextBlock 
-                            Name="BucketCount3"
-                            Grid.Column="2" HorizontalAlignment="Center" Opacity="0.7"/>
-                        <materialDesign:PackIcon 
-                            Name="BucketDisplay3" 
-                            Grid.Row="1" Grid.Column="2" 
-                            Kind="EmoticonNeutralOutline" Opacity="0.3"/>
-
-                        <!-- Bucket 2 -->
-                        <TextBlock 
-                            Name="BucketCount2"
-                            Grid.Column="3" HorizontalAlignment="Center" Opacity="0.7"/>
-                        <materialDesign:PackIcon 
-                            Name="BucketDisplay2" 
-                            Grid.Row="1" Grid.Column="3" 
-                            Kind="EmoticonHappyOutline" Opacity="0.3"/>
-
-                        <!-- Bucket 1 -->
-                        <TextBlock 
-                            Name="BucketCount1"
-                            Grid.Column="4" HorizontalAlignment="Center" Opacity="0.7"/>
-                        <materialDesign:PackIcon 
-                            Grid.Row="1" Grid.Column="4" 
-                            Kind="EmoticonCoolOutline" Opacity="0.3"/>
+                        
+                        <!-- Bucket 5 -->
+                            <TextBlock 
+                            Name="BucketCount5" 
+                            HorizontalAlignment="Center" Opacity="0.7"/>
+                        <materialDesign:PackIcon
+                            Name="BucketDisplay5"
+                            Grid.Row="1"
+                            Kind="EmoticonCryOutline" Opacity="0.3"/>
                     </Grid>
                     
                     <!-- Wrong output -->
