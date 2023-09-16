@@ -15,7 +15,7 @@ namespace EasyWord.Common
         /// private Language storage
         /// </summary>
         private string _language = DEFAULT_LANGUAGE;
-
+      
         /// <summary>
         /// Version of the Application
         /// </summary>
@@ -73,7 +73,6 @@ namespace EasyWord.Common
         /// </summary>
         public Storage Storage { get; set; } = new Storage();
 
-        /// <summary>
         /// Default Ctor for XML Serialization
         /// </summary>
         public AppConfig()
