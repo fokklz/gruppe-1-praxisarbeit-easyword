@@ -16,6 +16,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using EasyWord.Windows;
 
 namespace EasyWord.Pages
 {
@@ -174,7 +175,15 @@ namespace EasyWord.Pages
 
                     if(duplicates.Count > 0)
                     {
-                        // TODO: Implement new overwrite dialog as seperate window
+                        CustomDialog dialog = App.OpenDuplicateDialog(duplicates);
+                        if (dialog.ShowDialog() == true)
+                        {
+                            duplicates.ForEach(dup =>
+                            {
+                                App.Config.Storage.Words.Where(w => st)
+                            });
+                            
+                        }
                     }
 
                     // TODO: only renew when there are new words for current active language and lectures

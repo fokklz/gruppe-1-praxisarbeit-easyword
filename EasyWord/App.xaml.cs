@@ -1,7 +1,9 @@
 ﻿using EasyWord.Common;
 using EasyWord.Data.Models;
 using EasyWord.Data.Repository;
+using EasyWord.Windows;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 
@@ -16,6 +18,7 @@ namespace EasyWord
         /// global application configuration
         /// </summary>
         public static AppConfig Config { get; private set; }
+        public static Window MainWindow { get; set; }
         public static Session? Session
         {
             get => _session;
@@ -87,6 +90,21 @@ namespace EasyWord
             {
                 Session = new Session(words);
             }
+        }
+
+        /// <summary>
+        /// Opens a dialog to show the duplicated words
+        /// </summary>
+        /// <param name="duplicates"></param>
+        /// <returns></returns>
+        public static CustomDialog OpenDuplicateDialog(List<Word> duplicates)
+        {
+            CustomDialog customDialog = new CustomDialog()
+            {
+                Owner = MainWindow,
+                Data = duplicates
+            };
+            return customDialog;
         }
     }
 }

@@ -220,6 +220,30 @@ namespace EasyWord.Data.Models
             }
         }
 
+        /// <summary>
+        /// Compares two strings with ignoring case sensitive
+        /// </summary>
+        /// <param name="val">First String</param>
+        /// <param name="value">Secound String</param>
+        /// <returns>True if they are equal</returns>
+        private bool _compareIgnoreCase(string val, string value)
+        {
+            return val.Equals(value, StringComparison.OrdinalIgnoreCase);
+        }
+
+        /// <summary>
+        /// Helper to check if a word is already in the list
+        /// </summary>
+        /// <param name="word"></param>
+        /// <returns></returns>
+        public bool Compare(Word word)
+        {
+            return (
+                _compareIgnoreCase(German, word.German) &&
+                _compareIgnoreCase(ForeignWord, word.ForeignWord) &&
+                _compareIgnoreCase(Language, word.Language) &&
+                _compareIgnoreCase(Lecture, word.Lecture));
+        }
 
         /// <summary>
         /// Get/Set foreign word translation

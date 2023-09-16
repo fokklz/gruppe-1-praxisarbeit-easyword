@@ -1,4 +1,6 @@
 ﻿using EasyWord.Common;
+using EasyWord.Data.Models;
+using EasyWord.Windows;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -25,6 +27,7 @@ namespace EasyWord
         public MainWindow()
         {
             InitializeComponent();
+            App.MainWindow = this;
             ViewHandler.MainFrame = MainFrame;
             ViewHandler.NavigateToPage();
         }
@@ -38,5 +41,6 @@ namespace EasyWord
             base.OnClosed(e);
             App.SaveSettings();
         }
+        
     }
 }
