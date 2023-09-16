@@ -88,43 +88,8 @@ namespace EasyWord.Pages
 
             Validation.ClearInvalid(WordInput.GetBindingExpression(TextBox.TextProperty));
             WordInput.Focus();
-
-            UpdateBucketDisplay();
+ 
             UpdateWrongOutput();
-        }
-
-        /// <summary>
-        /// Change all Buckets to 0.3 Opacity, when word is true or false
-        /// the bucket change the opacity
-        /// </summary>
-        private void UpdateBucketDisplay()
-        {
-            BucketDisplay2.Opacity = 0.3;
-            BucketDisplay3.Opacity = 0.3;
-            BucketDisplay4.Opacity = 0.3;
-            BucketDisplay5.Opacity = 0.3;
-
-            int currentBucket = App.Config.Words.GetNextWord().Bucket;
-            switch (currentBucket)
-            {
-                case 2:
-                    BucketDisplay2.Opacity = 0.8;
-                    break;
-                case 4:
-                    BucketDisplay4.Opacity = 0.8;
-                    break;
-                case 5:
-                    BucketDisplay5.Opacity = 0.8;
-                    break;
-                default: 
-                    BucketDisplay3.Opacity = 0.8;
-                    break;
-            }
-           BucketCount1.Text = App.Config.Words.GetBucketWords(1).ToString();
-           BucketCount2.Text = App.Config.Words.GetBucketWords(2).ToString();
-           BucketCount3.Text = App.Config.Words.GetBucketWords(3).ToString();
-           BucketCount4.Text = App.Config.Words.GetBucketWords(4).ToString();
-           BucketCount5.Text = App.Config.Words.GetBucketWords(5).ToString();
         }
 
         /// <summary>
