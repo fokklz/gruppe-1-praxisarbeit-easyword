@@ -9,8 +9,8 @@ using EasyWord;
 namespace EasyWord.Data.Models
 {
     /// <summary>
-    /// Represents a Word with its translations
-    /// also Tracks the stats of the word
+    /// Represents a word with its translations
+    /// also tracks the stats of the word
     /// </summary>
     public class Word
     {
@@ -50,7 +50,7 @@ namespace EasyWord.Data.Models
         private int _bucket = 3;
 
         /// <summary>
-        /// Construktor for Word
+        /// Default constructor
         /// </summary>
         /// <param name="german"></param>
         /// <param name="translation"></param>
@@ -65,13 +65,26 @@ namespace EasyWord.Data.Models
         }
 
         /// <summary>
-        /// Empty Ctor for XML serialization
+        /// Constructor with 2 items in CSV
         /// </summary>
-        public Word()
-        {
-            _german = string.Empty;
-            _foreignWord = string.Empty;
-        }
+        /// <param name="german"></param>
+        /// <param name="translation"></param>
+        public Word(string german, string translation) : this(string.Empty, german, translation, string.Empty) { }
+
+        /// <summary>
+        /// Constructor with 3 items in CSV
+        /// </summary>
+        /// <param name="german"></param>
+        /// <param name="translation"></param>
+        /// <param name="language"></param>
+        public Word (string german, string translation, string language) : this(string.Empty, german , translation, language) { }
+
+
+        /// <summary>
+        /// Empty ctor for XML serialization
+        /// </summary>
+        public Word() : this(string.Empty,string.Empty,string.Empty,string.Empty) { }
+        
 
         /// <summary>
         /// get translation to ask for
@@ -166,7 +179,21 @@ namespace EasyWord.Data.Models
             }
         }
 
-
+        /// <summary>
+        /// convert word to CSV
+        /// </summary>
+        /// <returns>CSV line</returns>
+        public string ToCSV()
+        {
+            if (_lecture != string.Empty)
+            {
+                return $"{_lecture};{_german};{_foreignWord}";
+            }
+            else
+            {
+                return $"{_german};{_foreignWord}";
+            }
+        }
 
 
         /// <summary>
