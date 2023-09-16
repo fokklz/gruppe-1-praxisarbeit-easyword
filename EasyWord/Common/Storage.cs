@@ -102,11 +102,23 @@ namespace EasyWord.Common
             return comboBoxItems;
         }
 
+        /// <summary>
+        /// We get the language as parameter.
+        /// Then we do a small check, if there are any words in the app already
+        /// If so, we looking for every word which has the same value in its language property like the string in the parameter
+        /// and add them to the filtered array.
+        /// Then we will return it.
+        /// </summary>
+        /// <param name="language"></param>
+        /// <returns></returns>
         public Word[] GetWordsByLanguage(string language)
-        { //TODO: implement logic
+        {
+            if (_words == null || string.IsNullOrEmpty(language)) return new Word[0];
 
-            return new Word[] {new Word()};
+            var filteredWords = _words.Where(w => w.Language.Equals(language, StringComparison.OrdinalIgnoreCase)).ToArray(); // ignore case sensitive to prevent unexpected behavior
+            return filteredWords;
         }
+
 
         public void ResetAllBuckets()
         {
