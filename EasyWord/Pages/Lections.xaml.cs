@@ -27,18 +27,24 @@ namespace EasyWord.Pages
     /// </summary>
     public partial class Lectures : Page
     {
-public Lectures()
+        public Lectures()
         {
             InitializeComponent();
-            LectureWrapPanel.Children.Add(new LectureCard());
-            LectureWrapPanel.Children.Add(new LectureCard());
-            LectureWrapPanel.Children.Add(new LectureCard());
-            LectureWrapPanel.Children.Add(new LectureCard());
-            // Add a new language
-            FilledComboBox.Items.Add(new ComboBoxItem
+        }
+
+        public void UpdateView()
+        {
+            FilledComboBox.Items.Clear();
+            foreach (var item in App.Config.Storage.GetAvailableLanguagesAsComboItem())
             {
-                Content = "English"
-            });
+                FilledComboBox.Items.Add(item);
+            }
+
+            LectureWrapPanel.Children.Clear();
+            foreach (var item in App.Config.Storage.GetAvailableLecturesByLanguageAsCard(App.Config.Language))
+            {
+                LectureWrapPanel.Children.Add(item);
+            }
         }
 
         /// <summary>

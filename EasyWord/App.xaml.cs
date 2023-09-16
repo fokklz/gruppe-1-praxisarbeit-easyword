@@ -1,4 +1,5 @@
 ﻿using EasyWord.Common;
+using EasyWord.Data.Models;
 using EasyWord.Data.Repository;
 using System;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace EasyWord
         /// global application configuration
         /// </summary>
         public static AppConfig Config { get; private set; }
-        public static Session Session
+        public static Session? Session
         {
             get => _session;
             set
@@ -25,19 +26,13 @@ namespace EasyWord
             }
         }
 
-        private static Session _session;
+        private static Session? _session = null;
 
         public static event EventHandler SessionChanged;
 
         public App()
         {
-            try
-            {
-                Config = FileProvider.LoadConfig<AppConfig>("config.xml", true);
-            } catch {
-                // Use default if any errors while import
-                Config = new AppConfig(); 
-            }
+            LoadSettings();
 
             try
             {
@@ -62,22 +57,36 @@ namespace EasyWord
             FileProvider.SaveConfig(Config, "config.xml");
         }
 
+        public static void LoadSettings()
+        {
+            try
+            {
+                Config = FileProvider.LoadConfig<AppConfig>("config.xml", true);
+            }
+            catch
+            {
+                // Use default if any errors while import
+                Config = new AppConfig();
+            }
+            if (Config.Storage.HasWords) CreateSession();
+        }
+
+        public static void ReloadSettings()
+        {
+            SaveSettings();
+            LoadSettings();
+        }
+
         /// <summary>
         /// Create a new Session based on current settings
         /// </summary>
         public static void CreateSession()
         {
-            Session = new Session(Config.Storage.GetWordsByLanguageAndLectures(Config.Language, Config.Lectures.ToList()));
-        }
-
-        /// <summary>
-        /// Simplyfied check if the session is alive
-        /// </summary>
-        /// <returns></returns>
-        public static bool IsAlive()
-        {
-            if(Session == null) return false;
-            return Session.HasWordsLeft();
+            Word[] words = Config.Storage.GetWordsByLanguageAndLectures(Config.Language, Config.Lectures.ToList());
+            if (words.Length > 0)
+            {
+                Session = new Session(words);
+            }
         }
     }
 }

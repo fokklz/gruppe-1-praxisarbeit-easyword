@@ -7,6 +7,7 @@ using System.Text;
 using System.Transactions;
 using System.Windows;
 using System.Windows.Controls;
+using EasyWord.Controls;
 using EasyWord.Data.Models;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -264,7 +265,7 @@ namespace EasyWord.Common
         /// uses GetAvailableLanguages() to get the languages and then creates a ComboBoxItem for each language
         /// </summary>
         /// <returns>ArrayOfComboBoxItems</returns>
-        public ComboBoxItem[] GetAvailableLanguagesAsCombox()
+        public ComboBoxItem[] GetAvailableLanguagesAsComboItem()
         {
             return GetAvailableLanguages().Select(lang => new ComboBoxItem { Content = lang }).ToArray();
         }
@@ -272,6 +273,16 @@ namespace EasyWord.Common
         public string[] GetAvailableLecturesByLanguage(string language)
         {
             return GetWordsByLanguage(language).Select(w => w.Lecture).Distinct().ToArray();
+        }
+
+        public LectureCard[] GetAvailableLecturesByLanguageAsCard(string language)
+        {
+            Word[] languageWords = GetWordsByLanguage(language);
+            return GetAvailableLecturesByLanguage(language).Select(lecture =>
+            {
+                int wordCount = languageWords.Where(w => _compareIgnoreCase(lecture, w.Lecture)).Count();
+                return new LectureCard { Lecture = lecture, WordCount = wordCount };
+            }).ToArray();
         }
 
         /// <summary>
@@ -300,15 +311,21 @@ namespace EasyWord.Common
         /// <returns></returns>
         public Word[] GetWordsByLanguageAndLectures(string language, List<string> lectures)
         {
-            if (_words == null || string.IsNullOrEmpty(language) || lectures.Count == 0) return new Word[0];
+            if (_words == null || string.IsNullOrEmpty(language)) return new Word[0];
+
+
+            if (lectures.Count == 0)
+            {
+                lectures = GetAvailableLecturesByLanguage(language).ToList();
+            }
+
             var filteredWords = _words
-                .Where(w =>
-                    _compareIgnoreCase(w.Language, language) &&
-                    lectures.Select(w => w.ToLower()).Contains(w.Lecture.ToLower()))
+                .Where(w => _compareIgnoreCase(w.Language, language) && lectures.Contains(w.Lecture))
                 .ToArray();
+
+             // for testing
             return filteredWords;
         }
-
 
 
         /// <summary>
@@ -375,6 +392,5 @@ namespace EasyWord.Common
         {
             _words = _words.Where(w => !_compareIgnoreCase(w.Language, language)).ToArray();
         }
-
     }
 }
