@@ -4,24 +4,161 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Transactions;
+using System.Windows;
 using System.Windows.Controls;
 using EasyWord.Data.Models;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EasyWord.Common
 {
-    internal class Storage
+    public class Storage
     {
-        private List<Word> _words = new List<Word>();
+        private Word[] _words;
 
-        public List<Word> Words
+        /// <summary>
+        /// Initialize the wordlist as empty list
+        /// </summary>
+        public Storage()
+        {
+            _words = new Word[0];
+        }
+
+        /// <summary>
+        /// Deletes a specific word in the list
+        /// </summary>
+        /// <param name="id"></param>
+        public void DeleteWord(Guid id)
+        {
+            _words = _words.Where(w => w.GetID() != id).ToArray();
+        }
+
+        /// <summary>
+        /// Let us change the Data of each word
+        /// The word will be identify with the uid
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="german"></param>
+        /// <param name="translation"></param>
+        /// <param name="lecture"></param>
+        public void ChangeWordData(Guid id, string german, string translation, string lecture)
+        {
+            var word = _words.FirstOrDefault(w => w.GetID() == id);
+            if (word != null)
+            {
+                word.German = german;
+                word.ForeignWord = translation;
+                word.Lecture = lecture;
+            }
+        }
+
+        /// <summary>
+        /// Hook function:
+        /// Will execute by SessionWord.cs
+        /// There the iteration is handled for the current session
+        /// and then will set the latest iteration value to the 
+        /// list in this storage class with this
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="iteration"></param>
+        public void SetIteration(Guid id, int iteration)
+        {
+            var word = _words.FirstOrDefault(w => w.GetID() == id);
+            if (word != null)
+            {
+                word.Iteration = iteration;
+            }
+        }
+
+        /// <summary>
+        /// Hook function:
+        /// Will execute by SessionWord.cs
+        /// There the valid value is handled for the current session
+        /// and then will set the latest valid value to the list
+        /// in this storage class with this
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="valid"></param>
+        public void SetValid(Guid id, int valid)
+        {
+            var word = _words.FirstOrDefault(w => w.GetID() == id);
+            if (word != null)
+            {
+                word.Valid = valid;
+                MessageBox.Show("SetValid used"); // for testing
+            }
+        }
+
+        /// <summary>
+        /// Hook funtion:
+        /// Will execute by SessionWord.cs
+        /// There the bucket is handled for the current session
+        /// and then will set the latest bucket value to the
+        /// list in this storage class with this
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="bucket"></param>
+        public void SetBucket(Guid id, int bucket)
+        {
+            var word = _words.FirstOrDefault(w => w.GetID() == id);
+            if (word != null)
+            {
+                word.Bucket = bucket;
+            }
+        }
+
+        /// <summary>
+        /// Getter and Setter for the wordlist
+        /// </summary>
+        public Word[] Words
         {
             get { return _words; }
             set { _words = value; }
         }
 
+        /// <summary>
+        /// Checks, if the list is empty or not
+        /// </summary>
         public bool HasWords
         {
-            get { return _words.Count > 0; }
+            get { return _words.Length > 0; }
+        }
+
+        /// <summary>
+        /// Compares two strings with ignoring case sensitive
+        /// </summary>
+        /// <param name="val">First String</param>
+        /// <param name="value">Secound String</param>
+        /// <returns>True if they are equal</returns>
+        private bool _compareIgnoreCase(string val, string value)
+        {
+            return val.Equals(value, StringComparison.OrdinalIgnoreCase);
+        }
+
+        /// <summary>
+        /// Helper to check if a word is already in the list
+        /// </summary>
+        /// <param name="word"></param>
+        /// <returns></returns>
+        public bool HasWord(Word word)
+        {
+            return _words.Any(w =>
+                _compareIgnoreCase(w.German, word.German) &&
+                _compareIgnoreCase(w.ForeignWord, word.ForeignWord) &&
+                _compareIgnoreCase(w.Language, word.Language) &&
+                _compareIgnoreCase(w.Lecture, word.Lecture));
+        }
+
+
+        /// <summary>
+        /// Helper to merge duplicates if desired
+        /// </summary>
+        /// <param name="words">The words to add</param>
+        public void MergeWords(List<Word> words)
+        {
+            List<Word> listWords = _words.ToList();
+            listWords.AddRange(words);
+            _words = listWords.ToArray();
         }
 
         /// <summary>
@@ -30,85 +167,111 @@ namespace EasyWord.Common
         /// <param name="path">The path to the CSV file to import.</param>
         /// <returns>A Storage object containing a list of Word objects.</returns>
         /// <exception cref="Exception">Thrown if the imported file format is not as expected.</exception>
-        public static void ImportFromCSV(string path)
+        public List<Word> ImportFromCSV(string path)
         { // TODO: Implement storage extension
 
             List<Word> words = new List<Word>();
+            List<Word> containedWords = new List<Word>();
+
             string fileName = Path.GetFileNameWithoutExtension(path);
-            string langauge = "Englisch";
+            // initial default language
+            string langauge = AppConfig.DEFAULT_LANGUAGE;
             if (fileName.Contains("_"))
             {
+                // overwrite when language is set
                 langauge = fileName.Split('_')[0];
             }
 
             string[] lines = File.ReadAllLines(path, Encoding.UTF8);
             foreach (string line in lines)
             {
-                string cleanLine = line.Replace("\"", "");
-                if (line.Equals(string.Empty)) continue;
-                if (!line.Contains(";")) continue;
+                string cleanLine = line.Trim().Replace("\"", "");
+                if (cleanLine.Equals(string.Empty)) continue;
+                if (!cleanLine.Contains(";")) continue;
+
                 string[] parts = cleanLine.Split(';');
                 if (parts.Length == 3)
                 {
                     string lecture = parts[0].Trim();
                     string german = parts[1].Trim();
                     string translation = parts[2].Trim();
-                    Word word = new Word(lecture,german, translation, langauge);
-                    words.Add(word);
+                    Word word = new Word(german, translation, langauge, lecture);
+                    if (HasWord(word))
+                    {
+                        containedWords.Add(word);
+                    }
+                    else
+                    {
+                        words.Add(word);
+                    }
                 }
                 else if (parts.Length == 2)
                 {
                     string german = parts[0].Trim();
                     string translation = parts[1].Trim();
-                    Word word = new Word(german, translation,langauge);
-                    words.Add(word);
+                    Word word = new Word(german, translation, langauge);
+                    if (HasWord(word))
+                    {
+                        containedWords.Add(word);
+                    }
+                    else
+                    {
+                        words.Add(word);
+                    }
                 }
                 else throw new Exception("The imported file does not contain the expected format");
-            } 
-            words = words
-                .GroupBy(w => new { w.German, w.ForeignWord, w.Lecture, w.Language })
-                .Select(group => group.First())
-                .ToList();
+            }
+
+            MergeWords(words);
+            return containedWords;
         }
-        
-       public void ExportWordsWithBucketToCSV(string filePath)
-       {
+
+        /// <summary>
+        /// Exports the whole list to a CSV file
+        /// </summary>
+        /// <param name="filePath"></param>
+        public void ExportWordsToCSV(string filePath)
+        {
             foreach (string language in GetAvailableLanguages())
             {
-                string fileName = $"{language}_words.csv";
+                string newFileName = Path.GetFileNameWithoutExtension(filePath);
+                if (newFileName.Contains("_"))
+                {
+                    newFileName = newFileName.Split('_')[1];
+                }
+                string fileName = $"{language}_{newFileName}.csv";
                 string newFilePath = Path.Combine(Path.GetDirectoryName(filePath), fileName);
                 using (StreamWriter sw = new StreamWriter(newFilePath))
                 {
                     foreach (var word in GetWordsByLanguage(language))
                     {
-                        
+                        sw.WriteLine(word.ToCSV());
                     }
                 }
             }
         }
 
         /// <summary>
-        /// uses LINQ:
-        /// With Distinct() we only get every language once - copies will be ignored
-        /// Then we select every item in distinctLanguages and create a new ComboBoxItem with the language as content
-        /// Then we return this Array as StringArray with every language once inside as a ComboBoxItem, so we can use it in the UI
+        /// Get each available language
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Returns each unique Language contained</returns>
         public string[] GetAvailableLanguages()
         {
-            // Check, if there are any words in the app
-            if (!_words.Any())
-            {
-                return new string[0];
-            }
+            return _words.Select(w => w.Language).Distinct().ToArray();
+        }
 
-            var distinctLanguages = _words.Select(w => w.Language).Distinct();
-            var comboBoxItems = distinctLanguages.Select(lang => new ComboBoxItem { Content = lang }).ToArray();
+        /// <summary>
+        /// uses GetAvailableLanguages() to get the languages and then creates a ComboBoxItem for each language
+        /// </summary>
+        /// <returns>ArrayOfComboBoxItems</returns>
+        public ComboBoxItem[] GetAvailableLanguagesAsCombox()
+        {
+            return GetAvailableLanguages().Select(lang => new ComboBoxItem { Content = lang }).ToArray();
+        }
 
-            // Convert ComboBoxItem[] to string[]
-            var stringArray = comboBoxItems.Select(item => item.Content.ToString()).ToArray();
-
-            return stringArray!;
+        public string[] GetAvailableLecturesByLanguage(string language)
+        {
+            return GetWordsByLanguage(language).Select(w => w.Lecture).Distinct().ToArray();
         }
 
         /// <summary>
@@ -123,10 +286,30 @@ namespace EasyWord.Common
         public Word[] GetWordsByLanguage(string language)
         {
             if (_words == null || string.IsNullOrEmpty(language)) return new Word[0];
-
-            var filteredWords = _words.Where(w => w.Language.Equals(language, StringComparison.OrdinalIgnoreCase)).ToArray(); // ignore case sensitive to prevent unexpected behavior
+            var filteredWords = _words.Where(w => w.Language.Equals(language, StringComparison.OrdinalIgnoreCase)).ToArray();
             return filteredWords;
         }
+
+        /// <summary>
+        /// We will provide language and lecture as parameter
+        /// then we can get the words filtered by the chosen
+        /// language and the chosen lecture(s)
+        /// </summary>
+        /// <param name="language"></param>
+        /// <param name="lectures"></param>
+        /// <returns></returns>
+        public Word[] GetWordsByLanguageAndLectures(string language, List<string> lectures)
+        {
+            if (_words == null || string.IsNullOrEmpty(language) || lectures.Count == 0) return new Word[0];
+            var filteredWords = _words
+                .Where(w =>
+                    _compareIgnoreCase(w.Language, language) &&
+                    lectures.Select(w => w.ToLower()).Contains(w.Lecture.ToLower()))
+                .ToArray();
+            return filteredWords;
+        }
+
+
 
         /// <summary>
         /// Resets the bucket to the default
@@ -181,16 +364,17 @@ namespace EasyWord.Common
         /// </summary>
         public void ClearAll()
         {
-            _words.Clear();
+            _words = new Word[0];
         }
 
         /// <summary>
         /// Delete all words of a specific language
         /// </summary>
-        /// <param name="language"></param>
+        /// <param name="language">The language to Clear</param>
         public void Clear(string language)
         {
-            _words = _words.Where(w => !w.Language.Equals(language, StringComparison.OrdinalIgnoreCase)).ToList();
+            _words = _words.Where(w => !_compareIgnoreCase(w.Language, language)).ToArray();
         }
+
     }
 }

@@ -27,7 +27,7 @@ namespace EasyWord.Pages
     {
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
         {
-            Word? currentWord = App.Config.Session?.GetNextWord();
+            Word? currentWord = App.Session?.GetNextWord();
             if (currentWord?.CheckAnswer(value?.ToString() ?? "") ?? false)
             {
                 return ValidationResult.ValidResult;
@@ -62,6 +62,13 @@ namespace EasyWord.Pages
         {
             InitializeComponent();
             DataContext = this;
+            if (!App.IsAlive()) App.CreateSession();
+            App.SessionChanged += App_SessionChanged;
+            UpdateView();
+        }
+
+        private void App_SessionChanged(object? sender, EventArgs e)
+        {
             UpdateView();
         }
 
@@ -70,18 +77,10 @@ namespace EasyWord.Pages
         /// </summary>
         private void UpdateView()
         {
-            if (App.Config.Session == null)
-            {
-                // TODO: update to storage class
-                App.Config.Session = new Session(App.Config.Words.Words.ToArray());
-            }
+            _updateTitle();
+            WordOutput.Text = App.Session?.GetNextWord().Question;
 
-            // TODO: update to stroage class
-            Title.Text =
-                !App.Config.Words.HasTitle ? "Bitte csv Datei importieren" : App.Config.Words.Title;
-            WordOutput.Text = App.Config.Words.GetNextWord().Question;
-
-            if (App.Config.Session.HasWordsLeft())
+            if (App.IsAlive())
             {
                 SubmitButton.IsEnabled = true;
                 WordInput.IsEnabled = true;
@@ -94,52 +93,40 @@ namespace EasyWord.Pages
 
             Validation.ClearInvalid(WordInput.GetBindingExpression(TextBox.TextProperty));
             WordInput.Focus();
-
-            UpdateBucketDisplay();
+ 
             UpdateWrongOutput();
         }
 
         /// <summary>
-        /// Change all Buckets to 0.3 Opacity, when word is true or false
-        /// the bucket change the opacity
+        /// Helper function to update the title of the page
+        /// if there are words in the storage, the title will be the language with the cuttrently selected lectures as subtitle
+        /// ask for import if there are no words in the storage
         /// </summary>
-        private void UpdateBucketDisplay()
+        private void _updateTitle()
         {
-            BucketDisplay2.Opacity = 0.3;
-            BucketDisplay3.Opacity = 0.3;
-            BucketDisplay4.Opacity = 0.3;
-            BucketDisplay5.Opacity = 0.3;
-
-            int currentBucket = App.Config.Words.GetNextWord().Bucket;
-            switch (currentBucket)
+            string title = "Bitte csv Datei importieren";
+            if (App.Config.Storage.HasWords)
             {
-                case 2:
-                    BucketDisplay2.Opacity = 0.8;
-                    break;
-                case 4:
-                    BucketDisplay4.Opacity = 0.8;
-                    break;
-                case 5:
-                    BucketDisplay5.Opacity = 0.8;
-                    break;
-                default: 
-                    BucketDisplay3.Opacity = 0.8;
-                    break;
+                string lectures = string.Join(",", App.Config.Lectures.Distinct());
+                title = App.Config.Language;
+                SubTitle.Text = $"Lektionen: {lectures}";
+                SubTitle.Visibility = Visibility.Visible;
+                SubTitle.Height = double.NaN;
             }
-           BucketCount1.Text = App.Config.Words.GetBucketWords(1).ToString();
-           BucketCount2.Text = App.Config.Words.GetBucketWords(2).ToString();
-           BucketCount3.Text = App.Config.Words.GetBucketWords(3).ToString();
-           BucketCount4.Text = App.Config.Words.GetBucketWords(4).ToString();
-           BucketCount5.Text = App.Config.Words.GetBucketWords(5).ToString();
+            else
+            {
+                SubTitle.Visibility = Visibility.Hidden;
+                SubTitle.Height = 0;
+            }
+            Title.Text = title;
         }
 
-        /// <summary>
         /// Updates WrongOutputs with the number of incorrect attempts for the
         /// current word.
         /// </summary>
         private void UpdateWrongOutput()
         {
-            Word currentWord = App.Config.Words.GetNextWord();
+            Word currentWord = App.Session.GetNextWord();
             WrongOutput.Text = $"{currentWord.Iteration - currentWord.Valid}";
         }
 
@@ -177,31 +164,18 @@ namespace EasyWord.Pages
 
                 if (openFileDialog.ShowDialog() == true)
                 {
-                    // Store the selected file path
-                    string filePath = openFileDialog.FileName;
-                    // User confirmed, proceed with import
-                    if (App.Config.Words.Words.Count == 0)
+
+                    List<Word> duplicates = App.Config.Storage.ImportFromCSV(openFileDialog.FileName);
+
+                    if(duplicates.Count > 0)
                     {
-                        // If the word list is null, simply import the CSV
-                        App.Config.Words = WordList.ImportFromCSV(filePath);
+                        // TODO: Implement new overwrite dialog as seperate window
                     }
-                    else
-                    {
-                        var confirmResult = MessageBox.Show("Willst du die aktuelle Liste überschreiben? \n\nJa = Überschreiben \nNein = Zusammenführen", "Confirmation", MessageBoxButton.YesNo);
-                        if (confirmResult == MessageBoxResult.Yes)
-                        {
-                            // If the word list is null, simply import the CSV
-                            App.Config.Words = WordList.ImportFromCSV(filePath);
-                        }
-                        else
-                        {
-                            // If the word list already exists, extend it
-                            WordList importedWords = WordList.ImportFromCSV(filePath);
-                            App.Config.Words.ExtendFromCSV(filePath);
-                        }
-                    }
-                    // Update the view to reflect the changes
-                    UpdateView();
+
+                    // TODO: only renew when there are new words for current active language and lectures
+                    // Overwrite the current session
+                    App.CreateSession();
+                    // will auto update on session refresh
                 }
             } catch
             {
@@ -269,7 +243,12 @@ namespace EasyWord.Pages
             WordInput.IsReadOnly = true;
             SubmitButton.Focus();
             // switch to the next word, regardsless if the word was right or not.
-            App.Config.Session?.GoNext();
+            App.Session?.GoNext();
+        }
+
+        private void BtnLectures_Click(object sender, RoutedEventArgs e)
+        {
+            ViewHandler.NavigateToPage("Lectures");
         }
     }
 }

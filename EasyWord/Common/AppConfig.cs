@@ -8,11 +8,14 @@ namespace EasyWord.Common
 {
     public class AppConfig
     {
+        public static string DEFAULT_LANGUAGE = "Englisch";
+        public static string DEFAULT_LECTURE = "Standard";
+
         /// <summary>
         /// private Language storage
         /// </summary>
-        private string _language = "Englisch";
-
+        private string _language = DEFAULT_LANGUAGE;
+      
         /// <summary>
         /// Version of the Application
         /// </summary>
@@ -55,24 +58,27 @@ namespace EasyWord.Common
             }
             set {
                 _language = value;
-                Lectures = new List<string>();
+                Lectures.Clear();
+                Lectures.Add(DEFAULT_LECTURE);
             } 
         }
 
         /// <summary>
         /// Currently active lectures
         /// </summary>
-        public List<string> Lectures { get; set; } = new List<string>();
+        public HashSet<string> Lectures { get; set; } = new HashSet<string>();
 
         /// <summary>
         /// All stored words
         /// </summary>
         public Storage Storage { get; set; } = new Storage();
 
-        /// <summary>
-        /// Current learning session
+        /// Default Ctor for XML Serialization
         /// </summary>
-        public Session? Session { get; set; } = null;
-
+        public AppConfig()
+        {
+            Version = "preview";
+            Lectures.Add(DEFAULT_LECTURE);
+        }
     }
 }
