@@ -34,6 +34,9 @@ namespace EasyWord.Common
                 case "Settings":
                     MainFrame.Navigate(new Settings());
                     break;
+                case "Lectures":
+                    MainFrame.Navigate(new Lectures());
+                    break;
                 default:
                     MainFrame.Navigate(new Learning());
                     break;

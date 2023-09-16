@@ -16,6 +16,7 @@
             <ColumnDefinition Width="300*"/>
             <ColumnDefinition Width="60"/>
             <ColumnDefinition Width="60"/>
+            <ColumnDefinition Width="60"/>
             <ColumnDefinition x:Name="ColumnEnd" Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -26,7 +27,7 @@
 
         <!-- Title -->
         <TextBlock
-            Name="Title" Height="26" Margin="10,10,10,10"
+            Name="Title" Margin="10,10,10,10"
             VerticalAlignment="Center" HorizontalAlignment="Left"
             Style="{StaticResource MaterialDesignHeadline6TextBlock}"
             Grid.Column="1" />
@@ -52,11 +53,22 @@
             <materialDesign:PackIcon
             Kind="Cog" />
         </Button>
-        
+      
+        <!-- Output button -->
+        <Button
+          Name="BtnLectures"
+          Background="{DynamicResource MaterialDesignTextFieldBoxBackground}"
+          IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
+          Style="{StaticResource MaterialDesignIconButton}"
+          ToolTip="MaterialDesignIconButton"
+          Grid.Column="4" Click="BtnLectures_Click">
+                  <materialDesign:PackIcon
+          Kind="SelectGroup" />
+        </Button>
         <!-- Textinput card -->
         <materialDesign:Card
             Padding="5"
-            Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="3"
+            Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="4"
             Background="{DynamicResource PrimaryHueLightBrush}"
             Foreground="{DynamicResource PrimaryHueLightForegroundBrush}" Margin="10,10,10,10" >
             <Grid>
@@ -108,7 +120,7 @@
         </materialDesign:Card>
         
         <!-- Word input -->
-        <StackPanel Grid.Column="1"  Grid.Row="2" VerticalAlignment="Top" Margin="10, 25, 15, 20">
+        <StackPanel Grid.Column="1"  Grid.Row="2" Grid.ColumnSpan="2" VerticalAlignment="Top" Margin="10, 25, 15, 20">
             <TextBox
                 Name="WordInput"
                 materialDesign:HintAssist.Hint="Übersetzung"
@@ -128,7 +140,7 @@
         <!-- Button Check -->
         <Button 
             Name="SubmitButton" 
-            Grid.Column="2" Grid.Row="2" Grid.ColumnSpan="2"
+            Grid.Column="3" Grid.Row="2" Grid.ColumnSpan="2"
             Content="Check" 
             HorizontalAlignment="Center" VerticalAlignment="Top"
             Height="42" Width="102" Visibility="Visible" Margin="0,27,10,0" 

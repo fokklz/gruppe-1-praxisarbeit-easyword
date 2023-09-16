@@ -230,5 +230,10 @@ namespace EasyWord.Pages
             // switch to the next word, regardsless if the word was right or not.
             App.Config.Words.GoNext(); 
         }
+
+        private void BtnLectures_Click(object sender, RoutedEventArgs e)
+        {
+            ViewHandler.NavigateToPage("Lectures");
+        }
     }
 }
