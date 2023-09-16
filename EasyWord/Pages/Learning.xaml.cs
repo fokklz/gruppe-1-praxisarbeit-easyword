@@ -93,8 +93,7 @@ namespace EasyWord.Pages
 
             Validation.ClearInvalid(WordInput.GetBindingExpression(TextBox.TextProperty));
             WordInput.Focus();
-
-            UpdateBucketDisplay();
+ 
             UpdateWrongOutput();
         }
 
@@ -122,41 +121,6 @@ namespace EasyWord.Pages
             Title.Text = title;
         }
 
-        /// <summary>
-        /// Change all Buckets to 0.3 Opacity, when word is true or false
-        /// the bucket change the opacity
-        /// </summary>
-        private void UpdateBucketDisplay()
-        {
-            BucketDisplay2.Opacity = 0.3;
-            BucketDisplay3.Opacity = 0.3;
-            BucketDisplay4.Opacity = 0.3;
-            BucketDisplay5.Opacity = 0.3;
-
-            int currentBucket = App.Session.GetNextWord().Bucket;
-            switch (currentBucket)
-            {
-                case 2:
-                    BucketDisplay2.Opacity = 0.8;
-                    break;
-                case 4:
-                    BucketDisplay4.Opacity = 0.8;
-                    break;
-                case 5:
-                    BucketDisplay5.Opacity = 0.8;
-                    break;
-                default: 
-                    BucketDisplay3.Opacity = 0.8;
-                    break;
-            }
-           BucketCount1.Text = App.Session.GetBucketWords(1).ToString();
-           BucketCount2.Text = App.Session.GetBucketWords(2).ToString();
-           BucketCount3.Text = App.Session.GetBucketWords(3).ToString();
-           BucketCount4.Text = App.Session.GetBucketWords(4).ToString();
-           BucketCount5.Text = App.Session.GetBucketWords(5).ToString();
-        }
-
-        /// <summary>
         /// Updates WrongOutputs with the number of incorrect attempts for the
         /// current word.
         /// </summary>
@@ -280,6 +244,11 @@ namespace EasyWord.Pages
             SubmitButton.Focus();
             // switch to the next word, regardsless if the word was right or not.
             App.Session?.GoNext();
+        }
+
+        private void BtnLectures_Click(object sender, RoutedEventArgs e)
+        {
+            ViewHandler.NavigateToPage("Lectures");
         }
     }
 }
