@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using EasyWord;
-
+using EasyWord.Common;
 
 namespace EasyWord.Data.Models
 {
@@ -17,37 +17,42 @@ namespace EasyWord.Data.Models
         /// <summary>
         /// Foreign language translation
         /// </summary>
-        private string _foreignWord = "";
+        private string _foreignWord;
 
         /// <summary>
         /// Definition of foreign language
         /// </summary>
-        private string _language = "";
+        private string _language;
 
         /// <summary>
         /// Definition in which lecture it is
         /// </summary>
-        private string _lecture = "";
+        private string _lecture;
 
         /// <summary>
         /// german translation
         /// </summary>
-        private string _german = "";
+        private string _german;
 
         /// <summary>
         /// current query iteration
         /// </summary>
-        private int _iteration = 0;
+        protected int _iteration;
 
         /// <summary>
         /// amount of correct querys
         /// </summary>
-        private int _valid = 0;
+        protected int _valid;
 
         /// <summary>
         /// current bucket position
         /// </summary>
-        private int _bucket = 3;
+        protected int _bucket;
+
+        /// <summary>
+        /// GUID to identify the word while running
+        /// </summary>
+        private Guid _id = Guid.NewGuid();
 
         /// <summary>
         /// Default constructor
@@ -56,12 +61,23 @@ namespace EasyWord.Data.Models
         /// <param name="translation"></param>
         /// <param name="language"></param>
         /// <param name="lecture"></param>
-        public Word(string lecture , string german, string translation, string language)
+        public Word(string german, string translation, string language, string lecture)
         {
             _foreignWord = translation;
             _german = german;
+            if(language == string.Empty)
+            {
+                language = AppConfig.DEFAULT_LANGUAGE;
+            }
             _language = language;
+            if (lecture == string.Empty)
+            {
+                lecture = AppConfig.DEFAULT_LECTURE;
+            }
             _lecture = lecture;
+            _iteration = 0;
+            _valid = 0;
+            _bucket = 3;
         }
 
         /// <summary>
@@ -69,7 +85,7 @@ namespace EasyWord.Data.Models
         /// </summary>
         /// <param name="german"></param>
         /// <param name="translation"></param>
-        public Word(string german, string translation) : this(string.Empty, german, translation, string.Empty) { }
+        public Word(string german, string translation) : this(german, translation, string.Empty, string.Empty) { }
 
         /// <summary>
         /// Constructor with 3 items in CSV
@@ -77,7 +93,7 @@ namespace EasyWord.Data.Models
         /// <param name="german"></param>
         /// <param name="translation"></param>
         /// <param name="language"></param>
-        public Word (string german, string translation, string language) : this(string.Empty, german , translation, language) { }
+        public Word (string german, string translation, string language) : this(german , translation, language, string.Empty) { }
 
 
         /// <summary>
@@ -85,6 +101,15 @@ namespace EasyWord.Data.Models
         /// </summary>
         public Word() : this(string.Empty,string.Empty,string.Empty,string.Empty) { }
         
+        /// <summary>
+        /// Allow access to private ID
+        /// its a function, because the ID should not be serialized
+        /// </summary>
+        /// <returns>The GUID of the word</returns>
+        public Guid GetID()
+        {
+            return _id;
+        }
 
         /// <summary>
         /// get translation to ask for
@@ -116,23 +141,23 @@ namespace EasyWord.Data.Models
         /// <returns></returns>
         public bool CheckAnswer(string awnser)
         {
-            _iteration++;
+            Iteration++;
             if (string.Equals(awnser, Translation, 
                 App.Config.CaseSensitive ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase))
             {
                 // if answer was correct, increment the valid stat and the iteration stat
                 // also decrement the bucket (bucket 1 == learned completely
-                _valid++;
-                if(_bucket > 1)
+                Valid++;
+                if(Bucket > 1)
                 {
-                    _bucket--;
+                    Bucket--;
                 }
                 return true;
             }
             // if answer was wrong, increment the bucket (max. 5)
-            if(_bucket < 5)
+            if(Bucket < 5)
             {
-                _bucket++;
+                Bucket++;
             }
             return false;
         }
