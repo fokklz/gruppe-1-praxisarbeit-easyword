@@ -1,8 +1,10 @@
 ﻿using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Windows.Controls;
 using EasyWord.Data.Models;
 
 namespace EasyWord.Common
@@ -22,97 +24,101 @@ namespace EasyWord.Common
             get { return _words.Count > 0; }
         }
 
-        public static Storage ImportFromCSV(string path)
-        {
-            List<Word> list = new List<Word>();
+        /// <summary>
+        /// Imports data from a CSV file and creates Word objects.
+        /// </summary>
+        /// <param name="path">The path to the CSV file to import.</param>
+        /// <returns>A Storage object containing a list of Word objects.</returns>
+        /// <exception cref="Exception">Thrown if the imported file format is not as expected.</exception>
+        public static void ImportFromCSV(string path)
+        { // TODO: Implement storage extension
+
+            List<Word> words = new List<Word>();
+            string fileName = Path.GetFileNameWithoutExtension(path);
+            string langauge = "Englisch";
+            if (fileName.Contains("_"))
+            {
+                langauge = fileName.Split('_')[0];
+            }
+
             string[] lines = File.ReadAllLines(path, Encoding.UTF8);
-            bool isValidCSV = true;
             foreach (string line in lines)
             {
-                string cleanLine = line;
+                string cleanLine = line.Replace("\"", "");
                 if (line.Equals(string.Empty)) continue;
-                if (!line.Contains(";"))
-                {
-                    isValidCSV = false;
-                    break;
-                }
-
-                if (line.Contains("\""))
-                {
-                    cleanLine = line.Replace("\"", "");
-                }
-
+                if (!line.Contains(";")) continue;
                 string[] parts = cleanLine.Split(';');
-                if (parts.Length != 2)
+                if (parts.Length == 3)
                 {
-                    isValidCSV = false;
-                    break;
+                    string lecture = parts[0].Trim();
+                    string german = parts[1].Trim();
+                    string translation = parts[2].Trim();
+                    Word word = new Word(lecture,german, translation, langauge);
+                    words.Add(word);
                 }
-
-                string german = parts[0].Trim();
-                string english = parts[1].Trim();
-                Word word = new Word(german, english);
-                list.Add(word);
-            }
-
-            if (!isValidCSV)
-            {
-                throw new Exception("The CSV file contains invalid characters or does not use the expected semicolon delimiter.");
-            }
-
-            list = list
-                .GroupBy(w => new { w.German, w.English })
+                else if (parts.Length == 2)
+                {
+                    string german = parts[0].Trim();
+                    string translation = parts[1].Trim();
+                    Word word = new Word(german, translation,langauge);
+                    words.Add(word);
+                }
+                else throw new Exception("The imported file does not contain the expected format");
+            } 
+            words = words
+                .GroupBy(w => new { w.German, w.ForeignWord, w.Lecture, w.Language })
                 .Select(group => group.First())
                 .ToList();
-
-            Storage storage = new Storage();
-            storage.Words = list;
-            return storage;
         }
-
-        public void ExtendFromCSV(string path)
-        {
-            try
+        
+       public void ExportWordsWithBucketToCSV(string filePath)
+       {
+            foreach (string language in GetAvailableLanguages())
             {
-                Storage importedStorage = Storage.ImportFromCSV(path);
-                if (importedStorage != null)
+                string fileName = $"{language}_words.csv";
+                string newFilePath = Path.Combine(Path.GetDirectoryName(filePath), fileName);
+                using (StreamWriter sw = new StreamWriter(newFilePath))
                 {
-                    this.Words.AddRange(importedStorage.Words);
-                    this.Words = this.Words
-                        .GroupBy(w => new { w.German, w.English })
-                        .Select(group => group.First())
-                        .ToList();
-                }
-                else
-                {
-                    Console.WriteLine("Error importing words from CSV.");
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error extending word list from CSV: {ex.Message}");
-            }
-        }
-
-        public void ExportWordsWithBucketToCSV(string filePath)
-        {
-            try
-            {
-                using (StreamWriter sw = new StreamWriter(filePath))
-                {
-                    foreach (Word word in Words)
+                    foreach (var word in GetWordsByLanguage(language))
                     {
-                        string csvLine = $"{word.German};{word.English};{word.Bucket}";
-                        sw.WriteLine(csvLine);
+                        
                     }
                 }
-                Console.WriteLine("Export to CSV with buckets successful.");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error exporting to CSV with buckets: {ex.Message}");
             }
         }
+
+        /// <summary>
+        /// uses LINQ:
+        /// With Distinct() we only get every language once - copies will be ignored
+        /// Then we select every item in distinctLanguages and create a new ComboBoxItem with the language as content
+        /// Then we return this Array comboBoxItems with every language once inside as a ComboBoxItem, so we can use it in the UI
+        /// </summary>
+        /// <returns></returns>
+        public string[] GetAvailableLanguages()
+        { //TODO: implement logic
+
+            var distinctLanguages = _words.Select(w => w.Language).Distinct();
+            var comboBoxItems = distinctLanguages.Select(lang => new ComboBoxItem { Content = lang }).ToArray();
+            return comboBoxItems;
+        }
+
+        /// <summary>
+        /// We get the language as parameter.
+        /// Then we do a small check, if there are any words in the app already
+        /// If so, we looking for every word which has the same value in its language property like the string in the parameter
+        /// and add them to the filtered array.
+        /// Then we will return it.
+        /// </summary>
+        /// <param name="language"></param>
+        /// <returns></returns>
+        public Word[] GetWordsByLanguage(string language)
+        {
+            if (_words == null || string.IsNullOrEmpty(language)) return new Word[0];
+
+            var filteredWords = _words.Where(w => w.Language.Equals(language, StringComparison.OrdinalIgnoreCase)).ToArray(); // ignore case sensitive to prevent unexpected behavior
+            return filteredWords;
+        }
+
 
         public void ResetAllBuckets()
         {
