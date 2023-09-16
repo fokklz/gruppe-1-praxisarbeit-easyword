@@ -18,11 +18,18 @@ namespace EasyWord
         {
             try
             {
-                Config = FileProvider.LoadConfig<AppConfig>("config.xml");
-                Config.Version = VersionProvider.getVersion();
+                Config = FileProvider.LoadConfig<AppConfig>("config.xml", true);
             } catch {
                 // Use default if any errors while import
                 Config = new AppConfig(); 
+            }
+
+            try
+            {
+                Config.Version = VersionProvider.getVersion();
+            } catch
+            {
+                // set to unknown if any errors while reading
                 Config.Version = "unknown";
             }
         }

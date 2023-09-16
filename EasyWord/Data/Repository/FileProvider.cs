@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
@@ -45,12 +46,18 @@ namespace EasyWord.Data.Repository
         /// Load class from serialized XML
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="filePath">relative path</param>
+        /// <param name="filePath">Absolute Path</param>
+        /// <param name="package">Makes filePath relative to the AppData Folder for the Application</param>
         /// <returns>instance</returns>
         /// <exception cref="FileNotFoundException"></exception>
-        public static T LoadConfig<T>(string filePath)
+        public static T LoadConfig<T>(string filePath, bool package)
         {
-            string absPath = Path.Combine(_basePath, filePath);
+            string absPath = filePath;
+            if (package)
+            {
+                absPath = Path.Combine(_basePath, filePath);
+            }
+
             if (File.Exists(absPath))
             {
                 XmlSerializer deserializer = new XmlSerializer(typeof(T));
@@ -63,6 +70,16 @@ namespace EasyWord.Data.Repository
             {
                 throw new FileNotFoundException("Config file not found");
             }
+        }
+
+        /// <summary>
+        /// Overfloww defaulting to External loading
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public static T LoadConfig<T>(string path) {
+            return LoadConfig<T>(path, false);
         }
     }
 }

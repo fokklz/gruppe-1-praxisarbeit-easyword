@@ -27,8 +27,8 @@ namespace EasyWord.Pages
     {
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
         {
-            Word currentWord = App.Config.Words.GetNextWord();
-            if (currentWord.CheckAnswer(value?.ToString()))
+            Word? currentWord = App.Config.Session?.GetNextWord();
+            if (currentWord?.CheckAnswer(value?.ToString() ?? "") ?? false)
             {
                 return ValidationResult.ValidResult;
             }
@@ -61,7 +61,6 @@ namespace EasyWord.Pages
         public Learning()
         {
             InitializeComponent();
-            App.Config.Words.GoNext(true);
             DataContext = this;
             UpdateView();
         }
@@ -71,11 +70,18 @@ namespace EasyWord.Pages
         /// </summary>
         private void UpdateView()
         {
+            if (App.Config.Session == null)
+            {
+                // TODO: update to storage class
+                App.Config.Session = new Session(App.Config.Words.Words.ToArray());
+            }
+
+            // TODO: update to stroage class
             Title.Text =
                 !App.Config.Words.HasTitle ? "Bitte csv Datei importieren" : App.Config.Words.Title;
             WordOutput.Text = App.Config.Words.GetNextWord().Question;
 
-            if (App.Config.Words.HasWordsLeft())
+            if (App.Config.Session.HasWordsLeft())
             {
                 SubmitButton.IsEnabled = true;
                 WordInput.IsEnabled = true;
@@ -263,7 +269,7 @@ namespace EasyWord.Pages
             WordInput.IsReadOnly = true;
             SubmitButton.Focus();
             // switch to the next word, regardsless if the word was right or not.
-            App.Config.Words.GoNext(); 
+            App.Config.Session?.GoNext();
         }
     }
 }
