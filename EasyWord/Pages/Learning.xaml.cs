@@ -62,39 +62,44 @@ namespace EasyWord.Pages
         {
             InitializeComponent();
             DataContext = this;
-            if (!App.IsAlive()) App.CreateSession();
             App.SessionChanged += App_SessionChanged;
-            UpdateView();
         }
+
 
         private void App_SessionChanged(object? sender, EventArgs e)
         {
+            //MessageBox.Show("Session changed");
             UpdateView();
         }
 
         /// <summary>
         /// Updates the view to reflect the current state of the application
         /// </summary>
-        private void UpdateView()
+        public void UpdateView()
         {
+            if (App.Session != null && !App.Session.IsValid()) App.CreateSession();
             _updateTitle();
             WordOutput.Text = App.Session?.GetNextWord().Question;
 
-            if (App.IsAlive())
+            if (App.Session != null)
             {
-                SubmitButton.IsEnabled = true;
-                WordInput.IsEnabled = true;
-            }
-            else
-            {
-                SubmitButton.IsEnabled = false;
-                WordInput.IsEnabled = false;
+                if (!App.Session.HasWordsLeft()) App.Session.GoNext();
+                if (App.Session.IsValid())
+                {
+                    SubmitButton.IsEnabled = true;
+                    WordInput.IsEnabled = true;
+
+
+                    Validation.ClearInvalid(WordInput.GetBindingExpression(TextBox.TextProperty));
+                    WordInput.Focus();
+
+                    UpdateWrongOutput();
+                    return;
+                }
             }
 
-            Validation.ClearInvalid(WordInput.GetBindingExpression(TextBox.TextProperty));
-            WordInput.Focus();
- 
-            UpdateWrongOutput();
+            SubmitButton.IsEnabled = false;
+            WordInput.IsEnabled = false;
         }
 
         /// <summary>
@@ -126,8 +131,8 @@ namespace EasyWord.Pages
         /// </summary>
         private void UpdateWrongOutput()
         {
-            Word currentWord = App.Session.GetNextWord();
-            WrongOutput.Text = $"{currentWord.Iteration - currentWord.Valid}";
+            Word? currentWord = App.Session?.GetNextWord();
+            WrongOutput.Text = $"{currentWord?.Iteration - currentWord?.Valid}";
         }
 
         /// <summary>

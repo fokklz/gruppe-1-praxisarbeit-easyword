@@ -28,6 +28,10 @@ namespace EasyWord.Pages
         public Settings()
         {
             InitializeComponent();
+        }
+
+        public void UpdateView()
+        {
             CaseSensitive.IsChecked = App.Config.CaseSensitive;
             TranslationToggle.LearningLanguage = "English";
         }

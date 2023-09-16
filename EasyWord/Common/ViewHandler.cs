@@ -15,6 +15,10 @@ namespace EasyWord.Common
         /// </summary>
         public static Frame MainFrame { get; set; }
 
+        private static readonly Settings settingsPage = new Settings();
+        private static readonly Lectures lecturesPage = new Lectures();
+        private static readonly Learning learningPage = new Learning();
+
         /// <summary>
         /// Fallback navigation to the default page
         /// </summary>
@@ -32,13 +36,16 @@ namespace EasyWord.Common
             switch(view)
             {
                 case "Settings":
-                    MainFrame.Navigate(new Settings());
+                    MainFrame.Navigate(settingsPage);
+                    settingsPage.UpdateView();
                     break;
                 case "Lectures":
-                    MainFrame.Navigate(new Lectures());
+                    MainFrame.Navigate(lecturesPage);
+                    lecturesPage.UpdateView();
                     break;
                 default:
-                    MainFrame.Navigate(new Learning());
+                    MainFrame.Navigate(learningPage);
+                    learningPage.UpdateView();
                     break;
             }
         }

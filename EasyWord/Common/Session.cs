@@ -28,7 +28,7 @@ namespace EasyWord.Common
         /// <summary>
         /// iteration counter
         /// </summary>
-        private int _iteration = 0;
+        private int _iteration;
 
         /// <summary>
         /// Constructor for Session
@@ -36,28 +36,23 @@ namespace EasyWord.Common
         /// <param name="words"></param>
         public Session(Word[] words)
         {
-            if (words.Length == 0) { 
-                _words = new SessionWord[0];
-            }
-            else
+            int minValid = words.Min(w => w.Valid);
+            int maxValid = words.Max(w => w.Valid);
+            _words = words.Select(word =>
             {
-                int minValid = words.Min(w => w.Valid);
-                int maxValid = words.Max(w => w.Valid);
-                _words = words.Select(word =>
+                if (maxValid == minValid)
                 {
-                    if (maxValid == minValid)
-                    {
-                        return new SessionWord(word);
-                    }
-                    else
-                    {
-                        SessionWord sw = new SessionWord(word);
-                        sw.ValidSession = word.Valid - minValid;
-                        return sw;
-                    }
-                }).ToArray();
-            }
-            
+                    return new SessionWord(word);
+                }
+                else
+                {
+                    SessionWord sw = new SessionWord(word);
+                    sw.ValidSession = word.Valid - minValid;
+                    return sw;
+                }
+            }).ToArray();
+
+            _iteration = 1;
             _currentWords = _words.Where(_filterWord).OrderBy(x => _random.Next()).ToArray();
         }
 
@@ -68,7 +63,7 @@ namespace EasyWord.Common
         /// <returns>True when keeped</returns>
         private bool _filterWord(SessionWord word)
         {
-            return word.Bucket > 1 && (_iteration == 0 ? 0 : _iteration - 1) == word.ValidSession;
+            return word.Bucket > 1 && _iteration - 1 == word.ValidSession;
         }
 
         /// <summary>
@@ -77,8 +72,16 @@ namespace EasyWord.Common
         /// <returns>True when there are words left to iterate over it</returns>
         public bool HasWordsLeft()
         {
-            if (_currentWords.Length == 0) return false;
-            return _currentWords.Where(_filterWord).Count() > 0;
+            return _currentWords.Length > 0;
+        }
+
+        /// <summary>
+        /// Check if the session is valid
+        /// </summary>
+        /// <returns></returns>
+        public bool IsValid()
+        {
+            return _words.Length > 0;
         }
 
         /// <summary>
@@ -98,9 +101,9 @@ namespace EasyWord.Common
         /// <returns>The current word or a empty word</returns>
         public SessionWord GetNextWord()
         {
-            if (_words.Length != 0)
+            if (_currentWords.Length != 0)
             {
-                return _words.First();
+                return _currentWords.First();
             }
             return new SessionWord(new Word());
         }
@@ -112,6 +115,7 @@ namespace EasyWord.Common
         /// </summary>
         public void GoNext()
         {
+            if (_words.Length == 0) return;
             if (HasWordsLeft())
             {
                 _currentWords = _currentWords.Where(_filterWord).OrderBy(x => _random.Next()).ToArray();

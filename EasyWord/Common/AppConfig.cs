@@ -59,7 +59,6 @@ namespace EasyWord.Common
             set {
                 _language = value;
                 Lectures.Clear();
-                Lectures.Add(DEFAULT_LECTURE);
             } 
         }
 
@@ -78,7 +77,6 @@ namespace EasyWord.Common
         public AppConfig()
         {
             Version = "preview";
-            Lectures.Add(DEFAULT_LECTURE);
         }
     }
 }
