@@ -109,9 +109,9 @@ namespace EasyWord.Common
                     "not use the expected semicolon delimiter.");
             }
 
-            // Remove duplicates based on both German and English translations
+            // Remove duplicates based on both German and ForeignWord translations
             list = list
-                .GroupBy(w => new { w.German, w.English })
+                .GroupBy(w => new { w.German, w.ForeignWord })
                 .Select(group => group.First())
                 .ToList();
 
@@ -266,9 +266,9 @@ namespace EasyWord.Common
                     // Merge the imported word list into the existing word list
                     this.Words.AddRange(importedWordList.Words);
 
-                    // Optionally, remove duplicates based on both German and English translations
+                    // Optionally, remove duplicates based on both German and ForeignWord translations
                     this.Words = this.Words
-                        .GroupBy(w => new { w.German, w.English })
+                        .GroupBy(w => new { w.German, w.ForeignWord })
                         .Select(group => group.First())
                         .ToList();
                 }
@@ -296,7 +296,7 @@ namespace EasyWord.Common
                     foreach (Word word in Words)
                     {
                         // Format each word entry as a CSV line with semicolon as delimiter
-                        string csvLine = $"{word.German};{word.English};{word.Bucket}";
+                        string csvLine = $"{word.German};{word.ForeignWord};{word.Bucket}";
                         sw.WriteLine(csvLine);
                     }
                 }

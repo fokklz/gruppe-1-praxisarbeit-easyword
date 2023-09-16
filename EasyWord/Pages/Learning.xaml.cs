@@ -181,7 +181,7 @@ namespace EasyWord.Pages
                     }
                     else
                     {
-                        var confirmResult = MessageBox.Show("Willst du die aktuelle Liste überschreiben?", "Confirmation", MessageBoxButton.YesNo);
+                        var confirmResult = MessageBox.Show("Willst du die aktuelle Liste überschreiben? \n\nJa = Überschreiben \nNein = Zusammenführen", "Confirmation", MessageBoxButton.YesNo);
                         if (confirmResult == MessageBoxResult.Yes)
                         {
                             // If the word list is null, simply import the CSV
