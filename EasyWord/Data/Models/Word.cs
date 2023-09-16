@@ -4,60 +4,111 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using EasyWord;
-
+using EasyWord.Common;
 
 namespace EasyWord.Data.Models
 {
     /// <summary>
-    /// Represents a Word with its translations
-    /// also Tracks the stats of the word
+    /// Represents a word with its translations
+    /// also tracks the stats of the word
     /// </summary>
     public class Word
     {
         /// <summary>
-        /// english translation
+        /// Foreign language translation
         /// </summary>
-        private string _english = "";
+        private string _foreignWord;
+
+        /// <summary>
+        /// Definition of foreign language
+        /// </summary>
+        private string _language;
+
+        /// <summary>
+        /// Definition in which lecture it is
+        /// </summary>
+        private string _lecture;
 
         /// <summary>
         /// german translation
         /// </summary>
-        private string _german = "";
+        private string _german;
 
         /// <summary>
         /// current query iteration
         /// </summary>
-        private int _iteration = 0;
+        protected int _iteration;
 
         /// <summary>
         /// amount of correct querys
         /// </summary>
-        private int _valid = 0;
+        protected int _valid;
 
         /// <summary>
         /// current bucket position
         /// </summary>
-        private int _bucket = 3;
+        protected int _bucket;
 
         /// <summary>
-        /// default Ctor
+        /// GUID to identify the word while running
+        /// </summary>
+        private Guid _id = Guid.NewGuid();
+
+        /// <summary>
+        /// Default constructor
         /// </summary>
         /// <param name="german"></param>
-        /// <param name="english"></param>
-
-        public Word(string german, string english)
+        /// <param name="translation"></param>
+        /// <param name="language"></param>
+        /// <param name="lecture"></param>
+        public Word(string german, string translation, string language, string lecture)
         {
-            _english = english;
+            _foreignWord = translation;
             _german = german;
+            if(language == string.Empty)
+            {
+                language = AppConfig.DEFAULT_LANGUAGE;
+            }
+            _language = language;
+            if (lecture == string.Empty)
+            {
+                lecture = AppConfig.DEFAULT_LECTURE;
+            }
+            _lecture = lecture;
+            _iteration = 0;
+            _valid = 0;
+            _bucket = 3;
         }
 
         /// <summary>
-        /// Empty Ctor for XML serialization
+        /// Constructor with 2 items in CSV
         /// </summary>
-        public Word()
+        /// <param name="german"></param>
+        /// <param name="translation"></param>
+        public Word(string german, string translation) : this(german, translation, string.Empty, string.Empty) { }
+
+        /// <summary>
+        /// Constructor with 3 items in CSV
+        /// </summary>
+        /// <param name="german"></param>
+        /// <param name="translation"></param>
+        /// <param name="language"></param>
+        public Word (string german, string translation, string language) : this(german , translation, language, string.Empty) { }
+
+
+        /// <summary>
+        /// Empty ctor for XML serialization
+        /// </summary>
+        public Word() : this(string.Empty,string.Empty,string.Empty,string.Empty) { }
+        
+        /// <summary>
+        /// Allow access to private ID
+        /// its a function, because the ID should not be serialized
+        /// </summary>
+        /// <returns>The GUID of the word</returns>
+        public Guid GetID()
         {
-            _german = string.Empty;
-            _english = string.Empty;
+            return _id;
         }
 
         /// <summary>
@@ -67,7 +118,7 @@ namespace EasyWord.Data.Models
         public string Question {
             get
             {
-                return App.Config.TranslationDirection ? _english : _german;
+                return App.Config.TranslationDirection ? _foreignWord : _german;
             }
         }
 
@@ -79,7 +130,7 @@ namespace EasyWord.Data.Models
         {
             get
             {
-                return App.Config.TranslationDirection ? _german : _english;
+                return App.Config.TranslationDirection ? _german : _foreignWord;
             }
         }
 
@@ -90,24 +141,23 @@ namespace EasyWord.Data.Models
         /// <returns></returns>
         public bool CheckAnswer(string awnser)
         {
-            _iteration++;
-            // false: DE -> EN, true: EN -> DE
+            Iteration++;
             if (string.Equals(awnser, Translation, 
                 App.Config.CaseSensitive ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase))
             {
                 // if answer was correct, increment the valid stat and the iteration stat
                 // also decrement the bucket (bucket 1 == learned completely
-                _valid++;
-                if(_bucket > 1)
+                Valid++;
+                if(Bucket > 1)
                 {
-                    _bucket--;
+                    Bucket--;
                 }
                 return true;
             }
             // if answer was wrong, increment the bucket (max. 5)
-            if(_bucket < 5)
+            if(Bucket < 5)
             {
-                _bucket++;
+                Bucket++;
             }
             return false;
         }
@@ -144,23 +194,37 @@ namespace EasyWord.Data.Models
 
             if (direction)
             {
-                English = changeWordInput;
+                ForeignWord = changeWordInput;
                 German = changeTranslationInput;
             }
             else
             {
-                English = changeTranslationInput;
+                ForeignWord = changeTranslationInput;
                 German = changeWordInput;
             }
         }
 
-
+        /// <summary>
+        /// convert word to CSV
+        /// </summary>
+        /// <returns>CSV line</returns>
+        public string ToCSV()
+        {
+            if (_lecture != string.Empty)
+            {
+                return $"{_lecture};{_german};{_foreignWord}";
+            }
+            else
+            {
+                return $"{_german};{_foreignWord}";
+            }
+        }
 
 
         /// <summary>
-        /// Get/Set english translation
+        /// Get/Set foreign word translation
         /// </summary>
-        public string English { get { return _english; } set { _english = value; } }
+        public string ForeignWord { get { return _foreignWord; } set { _foreignWord = value; } }
         /// <summary>
         /// Get/Set german translation
         /// </summary>
@@ -177,6 +241,16 @@ namespace EasyWord.Data.Models
         /// Get/Set bucket
         /// </summary>
         public int Bucket { get { return _bucket; } set { _bucket = value; } }
+
+        /// <summary>
+        /// Get/Set language
+        /// </summary>
+        public string Language { get { return _language; } set { _language = value; } }
+
+        /// <summary>
+        /// Get/Set Lecture
+        /// </summary>
+        public string Lecture { get { return _lecture; } set { _lecture = value; } }
 
     }
 }

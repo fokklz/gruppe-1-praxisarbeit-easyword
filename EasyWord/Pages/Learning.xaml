@@ -26,11 +26,10 @@
         </Grid.RowDefinitions>
 
         <!-- Title -->
-        <TextBlock
-            Name="Title" Margin="10,10,10,10"
-            VerticalAlignment="Center" HorizontalAlignment="Left"
-            Style="{StaticResource MaterialDesignHeadline6TextBlock}"
-            Grid.Column="1" />
+        <StackPanel Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0">
+            <TextBlock Name="Title" VerticalAlignment="Center" Style="{StaticResource MaterialDesignHeadline6TextBlock}"/>
+            <TextBlock Name="SubTitle" Style="{StaticResource MaterialDesignSubtitle1TextBlock}" Opacity="0.7" Visibility="Hidden" />
+        </StackPanel>
         <!-- Import CSV button -->
         <Button
             Name="BtnCsvImport"
