@@ -91,15 +91,24 @@ namespace EasyWord.Common
         /// uses LINQ:
         /// With Distinct() we only get every language once - copies will be ignored
         /// Then we select every item in distinctLanguages and create a new ComboBoxItem with the language as content
-        /// Then we return this Array comboBoxItems with every language once inside as a ComboBoxItem, so we can use it in the UI
+        /// Then we return this Array as StringArray with every language once inside as a ComboBoxItem, so we can use it in the UI
         /// </summary>
         /// <returns></returns>
         public string[] GetAvailableLanguages()
-        { //TODO: implement logic
+        {
+            // Check, if there are any words in the app
+            if (!_words.Any())
+            {
+                return new string[0];
+            }
 
             var distinctLanguages = _words.Select(w => w.Language).Distinct();
             var comboBoxItems = distinctLanguages.Select(lang => new ComboBoxItem { Content = lang }).ToArray();
-            return comboBoxItems;
+
+            // Convert ComboBoxItem[] to string[]
+            var stringArray = comboBoxItems.Select(item => item.Content.ToString()).ToArray();
+
+            return stringArray!;
         }
 
         /// <summary>
@@ -119,7 +128,10 @@ namespace EasyWord.Common
             return filteredWords;
         }
 
-
+        /// <summary>
+        /// Resets the bucket to the default
+        /// of every word in the list
+        /// </summary>
         public void ResetAllBuckets()
         {
             foreach (var word in _words)
@@ -128,6 +140,22 @@ namespace EasyWord.Common
             }
         }
 
+        /// <summary>
+        /// Resets the bucet to the default,
+        /// but only for a specific language
+        /// </summary>
+        /// <param name="language"></param>
+        public void ResetBuckets(string language)
+        {
+            foreach (var word in _words.Where(w => w.Language.Equals(language, StringComparison.OrdinalIgnoreCase)))
+            {
+                word.ResetBucket();
+            }
+        }
+
+        /// <summary>
+        /// Resets all stats of every word in the list
+        /// </summary>
         public void ResetAllStatistics()
         {
             foreach (var word in _words)
@@ -136,9 +164,33 @@ namespace EasyWord.Common
             }
         }
 
-        public void ClearWords()
+        /// <summary>
+        /// Resets all stats, but only for a specific language
+        /// </summary>
+        /// <param name="language"></param>
+        public void ResetStatistics(string language)
+        {
+            foreach (var word in _words.Where(w => w.Language.Equals(language, StringComparison.OrdinalIgnoreCase)))
+            {
+                word.ResetStatistic();
+            }
+        }
+
+        /// <summary>
+        /// Deletes the whole list of words, so no words are left in the app
+        /// </summary>
+        public void ClearAll()
         {
             _words.Clear();
+        }
+
+        /// <summary>
+        /// Delete all words of a specific language
+        /// </summary>
+        /// <param name="language"></param>
+        public void Clear(string language)
+        {
+            _words = _words.Where(w => !w.Language.Equals(language, StringComparison.OrdinalIgnoreCase)).ToList();
         }
     }
 }
