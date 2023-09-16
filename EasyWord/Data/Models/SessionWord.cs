@@ -17,7 +17,7 @@ namespace EasyWord.Data.Models
         /// Copy from Word
         /// </summary>
         /// <param name="word">Word to create a Session instance of</param>
-        public SessionWord(Word word) : base(word.Lecture, word.German, word.ForeignWord, word.Language)
+        public SessionWord(Word word) : base(word.German, word.ForeignWord, word.Language, word.Lecture)
         {
 
             Iteration = word.Iteration;
