@@ -75,7 +75,7 @@
                 Style="{StaticResource MaterialDesignRaisedButton}" Click="ResetStats_Click">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                     <materialDesign:PackIcon Kind="Undo" Margin="0,2.5,10,0"/>
-                    <TextBlock Text="Stats Zurücksetzen"/>
+                    <TextBlock Text="Statistik Zurücksetzen"/>
                 </StackPanel>
             </Button>
             <Button 
@@ -85,7 +85,7 @@
                 Style="{StaticResource MaterialDesignRaisedButton}" Click="ResetBuckets_Click">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                     <materialDesign:PackIcon Kind="Bucket" Margin="0,2.5,10,0"/>
-                    <TextBlock Text="Buckets Löschen"/>
+                    <TextBlock Text="Buckets Zurücksetzen"/>
                 </StackPanel>
             </Button>
             <Button 
