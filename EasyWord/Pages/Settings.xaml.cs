@@ -29,7 +29,7 @@ namespace EasyWord.Pages
         {
             InitializeComponent();
             CaseSensitive.IsChecked = App.Config.CaseSensitive;
-            LearnEnglish.IsChecked = App.Config.TranslationDirection;
+            TranslationToggle.LearningLanguage = "English";
         }
 
         /// <summary>
@@ -166,26 +166,6 @@ namespace EasyWord.Pages
 
 
         /// <summary>
-        /// enable for translation direction
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void LearnEnglish_Checked(object sender, RoutedEventArgs e)
-        {
-            App.Config.TranslationDirection = true;
-        }
-
-        /// <summary>
-        /// disable for translation direction
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void LearnEnglish_Unchecked(object sender, RoutedEventArgs e)
-        {
-            App.Config.TranslationDirection = false;
-        }
-
-        /// <summary>
         /// Reset all buckets
         /// </summary>
         /// <param name="sender"></param>
@@ -194,6 +174,11 @@ namespace EasyWord.Pages
         {
             App.Config.Words.ResetAllBuckets();
             App.SaveSettings();
+        }
+
+        private void ToggleLanguageDirection_Click(object sender, RoutedEventArgs e)
+        {
+            TranslationToggle.Rotated = !TranslationToggle.Rotated;
         }
     }
 }
