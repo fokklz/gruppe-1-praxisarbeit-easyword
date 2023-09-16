@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace EasyWord.Common
 {
@@ -35,21 +36,28 @@ namespace EasyWord.Common
         /// <param name="words"></param>
         public Session(Word[] words)
         {
-            int minValid = words.Min(w => w.Valid);
-            int maxValid = words.Max(w => w.Valid);
-            _words = words.Select(word =>
+            if (words.Length == 0) { 
+                _words = new SessionWord[0];
+            }
+            else
             {
-                if(maxValid == minValid)
+                int minValid = words.Min(w => w.Valid);
+                int maxValid = words.Max(w => w.Valid);
+                _words = words.Select(word =>
                 {
-                    return new SessionWord(word);
-                }
-                else
-                {
-                    SessionWord sw = new SessionWord(word);
-                    sw.ValidSession = word.Valid - minValid;
-                    return sw;
-                }
-            }).ToArray();
+                    if (maxValid == minValid)
+                    {
+                        return new SessionWord(word);
+                    }
+                    else
+                    {
+                        SessionWord sw = new SessionWord(word);
+                        sw.ValidSession = word.Valid - minValid;
+                        return sw;
+                    }
+                }).ToArray();
+            }
+            
             _currentWords = _words.Where(_filterWord).OrderBy(x => _random.Next()).ToArray();
         }
 
@@ -60,7 +68,7 @@ namespace EasyWord.Common
         /// <returns>True when keeped</returns>
         private bool _filterWord(SessionWord word)
         {
-            return word.Bucket > 1 && _iteration - 1 == word.ValidSession;
+            return word.Bucket > 1 && (_iteration == 0 ? 0 : _iteration - 1) == word.ValidSession;
         }
 
         /// <summary>
@@ -73,6 +81,15 @@ namespace EasyWord.Common
             return _currentWords.Where(_filterWord).Count() > 0;
         }
 
+        /// <summary>
+        /// Count words based on bucket  
+        /// </summary>
+        /// <param name="bucket"></param>
+        /// <returns></returns>
+        public int GetBucketWords(int bucket)
+        {
+            return _words.Where(w => w.Bucket == bucket).Count();
+        }
 
         /// <summary>
         /// Switch to the next word in the list and increment 

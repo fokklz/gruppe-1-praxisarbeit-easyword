@@ -40,6 +40,7 @@ namespace EasyWord.Data.Models
             return false;
         }
 
+
         /// <summary>
         /// Current valid querys in this session
         /// </summary>
@@ -47,6 +48,37 @@ namespace EasyWord.Data.Models
         {
             get { return _validSession; }
             set { _validSession = value; }
+        }
+
+        /// <summary>
+        /// Get/Set iteration
+        /// </summary>
+        public new int Iteration { 
+            get { return _iteration; } 
+            set { 
+                _iteration = value;
+                App.Config.Storage.SetIteration(GetID(), value);
+            } 
+        }
+        /// <summary>
+        /// Get/Set valid
+        /// </summary>
+        public new int Valid { 
+            get { return _valid; } 
+            set { 
+                _valid = value;
+                App.Config.Storage.SetValid(GetID(), value);
+            } 
+        }
+        /// <summary>
+        /// Get/Set bucket
+        /// </summary>
+        public new int Bucket { 
+            get { return _bucket; }
+            set { 
+                _bucket = value;
+                App.Config.Storage.SetBucket(GetID(), value);
+            } 
         }
     }
 }
