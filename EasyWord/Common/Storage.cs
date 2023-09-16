@@ -87,10 +87,19 @@ namespace EasyWord.Common
             }
         }
 
+        /// <summary>
+        /// uses LINQ:
+        /// With Distinct() we only get every language once - copies will be ignored
+        /// Then we select every item in distinctLanguages and create a new ComboBoxItem with the language as content
+        /// Then we return this Array comboBoxItems with every language once inside as a ComboBoxItem, so we can use it in the UI
+        /// </summary>
+        /// <returns></returns>
         public string[] GetAvailableLanguages()
         { //TODO: implement logic
 
-            return new string[] { "Englisch" };
+            var distinctLanguages = _words.Select(w => w.Language).Distinct();
+            var comboBoxItems = distinctLanguages.Select(lang => new ComboBoxItem { Content = lang }).ToArray();
+            return comboBoxItems;
         }
 
         public Word[] GetWordsByLanguage(string language)
@@ -98,6 +107,7 @@ namespace EasyWord.Common
 
             return new Word[] {new Word()};
         }
+
         public void ResetAllBuckets()
         {
             foreach (var word in _words)
