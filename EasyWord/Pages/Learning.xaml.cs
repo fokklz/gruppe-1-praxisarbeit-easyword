@@ -27,14 +27,14 @@ namespace EasyWord.Pages
     {
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
         {
-            Word? currentWord = App.Session?.GetNextWord();
+            SessionWord? currentWord = App.Session?.GetNextWord();
             if (currentWord?.CheckAnswer(value?.ToString() ?? "") ?? false)
             {
                 return ValidationResult.ValidResult;
             }
             else
             {
-                return new ValidationResult(false, $"Korrekt wäre: {currentWord.Translation}");
+                return new ValidationResult(false, $"Korrekt wäre: {currentWord?.Translation}");
             }
         }
     }
@@ -77,14 +77,13 @@ namespace EasyWord.Pages
         /// </summary>
         public void UpdateView()
         {
-            if (App.Session != null && !App.Session.IsValid()) App.CreateSession();
+            if (App.Session != null && !App.Session.IsInitialized()) App.CreateSession();
             _updateTitle();
             WordOutput.Text = App.Session?.GetNextWord().Question;
 
             if (App.Session != null)
             {
-                if (!App.Session.HasWordsLeft()) App.Session.GoNext();
-                if (App.Session.IsValid())
+                if (App.Session.IsInitialized())
                 {
                     SubmitButton.IsEnabled = true;
                     WordInput.IsEnabled = true;
@@ -179,7 +178,7 @@ namespace EasyWord.Pages
 
                     // TODO: only renew when there are new words for current active language and lectures
                     // Overwrite the current session
-                    App.CreateSession();
+                    App.SaveSettingsAndCreateSession();
                     // will auto update on session refresh
                 }
             } catch

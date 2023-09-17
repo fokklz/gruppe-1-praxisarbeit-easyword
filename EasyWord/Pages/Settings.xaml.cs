@@ -67,7 +67,7 @@ namespace EasyWord.Pages
             DevInfoWindow.ShowDialog();
         }
 
-        
+
         /// <summary>
         /// Implementing clear words from wordlist
         /// </summary>
@@ -75,7 +75,7 @@ namespace EasyWord.Pages
         /// <param name="e"></param>
         private void ResetAll_Click(object sender, RoutedEventArgs e)
         {
-            App.Config.Words.ClearWords();
+            App.Storage.ClearAll();
             App.SaveSettings();
         }
 
@@ -86,7 +86,7 @@ namespace EasyWord.Pages
         /// <param name="e"></param>
         private void ResetStats_Click(object sender, RoutedEventArgs e)
         {
-            App.Config.Words.ResetAllStatistics();
+            App.Storage.ResetAllStatistics();
             App.SaveSettings();
         }
 
@@ -97,30 +97,26 @@ namespace EasyWord.Pages
         /// <param name="e"></param>
         private void ExportState_Click(object sender, RoutedEventArgs e)
         {
-            try
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "XML Files (*.xml)|*.xml";
+            saveFileDialog.Title = "XML Datei Exportieren";
+            saveFileDialog.DefaultExt = "xml";
+
+            // Show the SaveFileDialog and get the selected file path
+            if (saveFileDialog.ShowDialog() == true)
             {
-                // Create a SaveFileDialog
-                SaveFileDialog saveFileDialog = new SaveFileDialog();
-                saveFileDialog.Filter = "XML Files (*.xml)|*.xml";
-                saveFileDialog.Title = "XML Datei Exportieren";
-                saveFileDialog.DefaultExt = "xml";
-
-                // Show the SaveFileDialog and get the selected file path
-                if (saveFileDialog.ShowDialog() == true)
+                try
                 {
-                    // Get the selected export file path
                     string exportFilePath = saveFileDialog.FileName;
-
-                    // Calling SaveConfig function to save as XML
-                    FileProvider.SaveConfig(App.Config.Words, exportFilePath);
-
-                    // Provide feedback to the user
+                    App.ExportState(exportFilePath);
                     MessageBox.Show($"Exportieren zu XML erfolgreich. Datei gespeichert in: {exportFilePath}", "Export erfolgreich", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Export fehlgeschlagen: {ex.Message}", "Export Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                catch
+                {
+                    MessageBox.Show("Fehler beim Speichern der Datei", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+
+                // Provide feedback to the user
             }
         }
         /// <summary>
@@ -130,21 +126,21 @@ namespace EasyWord.Pages
         /// <param name="e"></param>
         private void ImportState_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                OpenFileDialog importPath = new OpenFileDialog();
-                importPath.Filter = "XML Files (*.xml)|*.xml";
-                importPath.Title = "XML Datei wählen";
-                importPath.DefaultExt = "xml";
+            OpenFileDialog importPath = new OpenFileDialog();
+            importPath.Filter = "XML Files (*.xml)|*.xml";
+            importPath.Title = "XML Datei wählen";
+            importPath.DefaultExt = "xml";
 
-                if (importPath.ShowDialog() == true)
-                {
-                    WordList importedWords = FileProvider.LoadConfig<WordList>(importPath.FileName);
-                    App.Config.Words = importedWords;
-                }
-            }catch
+            if (importPath.ShowDialog() == true)
             {
-                MessageBox.Show("Der Stand konnte nicht importiert werden. Stelle sicher das die XML Datei richtig Formatiert ist.");
+                try
+                {
+                    App.LoadState(importPath.FileName);
+                }
+                catch
+                {
+                    MessageBox.Show("Fehler beim Laden der Datei", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
 
@@ -176,7 +172,7 @@ namespace EasyWord.Pages
         /// <param name="e"></param>
         private void ResetBuckets_Click(object sender, RoutedEventArgs e)
         {
-            App.Config.Words.ResetAllBuckets();
+            App.Storage.ResetAllBuckets();
             App.SaveSettings();
         }
 

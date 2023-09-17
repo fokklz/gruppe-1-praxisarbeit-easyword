@@ -20,7 +20,7 @@
             <ColumnDefinition x:Name="ColumnEnd" Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="80"/>
+            <RowDefinition Height="80*"/>
             <RowDefinition Height="100*"/>
             <RowDefinition Height="60*"/>
         </Grid.RowDefinitions>
@@ -28,7 +28,7 @@
         <!-- Title -->
         <StackPanel Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0">
             <TextBlock Name="Title" VerticalAlignment="Center" Style="{StaticResource MaterialDesignHeadline6TextBlock}"/>
-            <TextBlock Name="SubTitle" Style="{StaticResource MaterialDesignSubtitle1TextBlock}" Opacity="0.7" Visibility="Hidden" />
+            <TextBlock Name="SubTitle" Style="{StaticResource MaterialDesignSubtitle1TextBlock}" Opacity="0.7" Visibility="Hidden" TextWrapping="Wrap" />
         </StackPanel>
         <!-- Import CSV button -->
         <Button
