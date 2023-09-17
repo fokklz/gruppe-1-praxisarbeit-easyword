@@ -9,12 +9,45 @@ using System.Windows;
 using System.Windows.Controls;
 using EasyWord.Controls;
 using EasyWord.Data.Models;
+using EasyWord.Pages;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EasyWord.Common
 {
+    /// <summary>
+    /// Thrown when a word already exists in the storage
+    /// </summary>
+    public class DuplicateWordException : Exception
+    {
+        public DuplicateWordException() : base("Word already exists"){}
+    }
+
+    /// <summary>
+    /// Throw when the format of the CSV file is not correct
+    /// </summary>
+    public class FormattingException : Exception
+    {
+        public FormattingException() : base("Formatting is not correct") { }
+    }
+
+    /// <summary>
+    /// This is the main storage class for the words, it will keep track of all words
+    /// uses Fîlters to make the words available for the UI in the packages needed
+    /// 
+    /// This class should only be used with one instance, because it will keep track of the words
+    /// It is initialized in the App.Config and can be accessed with App.Storage
+    /// </summary>
     public class Storage
     {
+
+        /// <summary>
+        /// Array of Words currently in the Storage
+        /// </summary>
+        public Word[] Words
+        {
+            get { return _words; }
+            set { _words = value; }
+        }
         private Word[] _words;
 
         /// <summary>
@@ -25,10 +58,19 @@ namespace EasyWord.Common
             _words = new Word[0];
         }
 
+
+        /// <summary>
+        /// Checks, if the list is empty or not
+        /// </summary>
+        public bool HasWords
+        {
+            get { return _words.Length > 0; }
+        }
+
         /// <summary>
         /// Deletes a specific word in the list
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id">The guid of the word to delete</param>
         public void DeleteWord(Guid id)
         {
             _words = _words.Where(w => w.GetID() != id).ToArray();
@@ -38,10 +80,10 @@ namespace EasyWord.Common
         /// Let us change the Data of each word
         /// The word will be identify with the uid
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="german"></param>
-        /// <param name="translation"></param>
-        /// <param name="lecture"></param>
+        /// <param name="id">The guid of the word to change</param>
+        /// <param name="german">The new german content</param>
+        /// <param name="translation">The new translation content</param>
+        /// <param name="lecture">The new lecture for the word</param>
         public void ChangeWordData(Guid id, string german, string translation, string lecture)
         {
             var word = _words.FirstOrDefault(w => w.GetID() == id);
@@ -54,14 +96,37 @@ namespace EasyWord.Common
         }
 
         /// <summary>
+        /// Create a new Word and add it to the array
+        /// </summary>
+        /// <param name="german">The german version</param>
+        /// <param name="translation">The foregin word</param>
+        /// <param name="language">The language</param>
+        /// <param name="lecture">The lecture</param>
+        /// <exception cref="DuplicateWordException">Thrown when the word already exists</exception>
+        public void CreateWord(string german, string translation, string language, string lecture)
+        {
+            Word word = new Word(german, translation, language, lecture);
+            if (!HasWord(word))
+            {
+                List<Word> words = _words.ToList();
+                words.Add(word);
+                _words = words.ToArray();
+            }
+            else
+            {
+                throw new DuplicateWordException();
+            }
+        }
+
+        /// <summary>
         /// Hook function:
         /// Will execute by SessionWord.cs
         /// There the iteration is handled for the current session
         /// and then will set the latest iteration value to the 
         /// list in this storage class with this
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="iteration"></param>
+        /// <param name="id">The guid of the word</param>
+        /// <param name="iteration">The iteration count to set</param>
         public void SetIteration(Guid id, int iteration)
         {
             var word = _words.FirstOrDefault(w => w.GetID() == id);
@@ -78,15 +143,14 @@ namespace EasyWord.Common
         /// and then will set the latest valid value to the list
         /// in this storage class with this
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="valid"></param>
+        /// <param name="id">The guid of the word</param>
+        /// <param name="valid">The valid count to set</param>
         public void SetValid(Guid id, int valid)
         {
             var word = _words.FirstOrDefault(w => w.GetID() == id);
             if (word != null)
             {
                 word.Valid = valid;
-                MessageBox.Show("SetValid used"); // for testing
             }
         }
 
@@ -97,8 +161,8 @@ namespace EasyWord.Common
         /// and then will set the latest bucket value to the
         /// list in this storage class with this
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="bucket"></param>
+        /// <param name="id">The guid of the word</param>
+        /// <param name="bucket">The bucket to set the word to</param>
         public void SetBucket(Guid id, int bucket)
         {
             var word = _words.FirstOrDefault(w => w.GetID() == id);
@@ -108,22 +172,6 @@ namespace EasyWord.Common
             }
         }
 
-        /// <summary>
-        /// Getter and Setter for the wordlist
-        /// </summary>
-        public Word[] Words
-        {
-            get { return _words; }
-            set { _words = value; }
-        }
-
-        /// <summary>
-        /// Checks, if the list is empty or not
-        /// </summary>
-        public bool HasWords
-        {
-            get { return _words.Length > 0; }
-        }
 
         /// <summary>
         /// Compares two strings with ignoring case sensitive
@@ -167,7 +215,7 @@ namespace EasyWord.Common
         /// </summary>
         /// <param name="path">The path to the CSV file to import.</param>
         /// <returns>A Storage object containing a list of Word objects.</returns>
-        /// <exception cref="Exception">Thrown if the imported file format is not as expected.</exception>
+        /// <exception cref="FormattingException">Thrown if the imported file format is not as expected.</exception>
         public List<Word> ImportFromCSV(string path)
         { // TODO: Implement storage extension
 
@@ -186,62 +234,71 @@ namespace EasyWord.Common
             string[] lines = File.ReadAllLines(path, Encoding.UTF8);
             foreach (string line in lines)
             {
+                // clean line and skip empty or non-csv lines
                 string cleanLine = line.Trim().Replace("\"", "");
                 if (cleanLine.Equals(string.Empty)) continue;
                 if (!cleanLine.Contains(";")) continue;
 
+                // split line into parts
                 string[] parts = cleanLine.Split(';');
+                // we only support 3 or 2 parts since we expect
+                // german ; translation
+                // or
+                // lecture ; german ; translation
+                // The words will be built using these values
+                Word word;
+
                 if (parts.Length == 3)
                 {
                     string lecture = parts[0].Trim();
                     string german = parts[1].Trim();
                     string translation = parts[2].Trim();
-                    Word word = new Word(german, translation, langauge, lecture);
-                    if (HasWord(word))
-                    {
-                        containedWords.Add(word);
-                    }
-                    else
-                    {
-                        words.Add(word);
-                    }
+                    word = new Word(german, translation, langauge, lecture);
                 }
                 else if (parts.Length == 2)
                 {
                     string german = parts[0].Trim();
                     string translation = parts[1].Trim();
-                    Word word = new Word(german, translation, langauge);
-                    if (HasWord(word))
-                    {
-                        containedWords.Add(word);
-                    }
-                    else
-                    {
-                        words.Add(word);
-                    }
+                    word = new Word(german, translation, langauge);
                 }
-                else throw new Exception("The imported file does not contain the expected format");
+                // if the length not matches the expected format, throw an FormattingException
+                else throw new FormattingException();
+
+                if (HasWord(word))
+                {
+                    containedWords.Add(word);
+                }
+                else
+                {
+                    words.Add(word);
+                }
             }
 
             MergeWords(words);
+            // return duplicates, will be handled by the caller
             return containedWords;
         }
 
         /// <summary>
         /// Exports the whole list to a CSV file
         /// </summary>
-        /// <param name="filePath"></param>
+        /// <param name="filePath">The location the file should be written</param>
         public void ExportWordsToCSV(string filePath)
         {
             foreach (string language in GetAvailableLanguages())
             {
                 string newFileName = Path.GetFileNameWithoutExtension(filePath);
+                // Cleanup if user added a language to the filename
                 if (newFileName.Contains("_"))
                 {
                     newFileName = newFileName.Split('_')[1];
                 }
+
                 string fileName = $"{language}_{newFileName}.csv";
-                string newFilePath = Path.Combine(Path.GetDirectoryName(filePath), fileName);
+                // default to desktop if no path is given
+                string newFilePath = Path.Combine(
+                    path1: Path.GetDirectoryName(filePath) ?? Environment.GetFolderPath(Environment.SpecialFolder.Desktop), 
+                    path2: fileName);
                 using (StreamWriter sw = new StreamWriter(newFilePath))
                 {
                     foreach (var word in GetWordsByLanguage(language))
@@ -270,11 +327,22 @@ namespace EasyWord.Common
             return GetAvailableLanguages().Select(lang => new ComboBoxItem { Content = lang }).ToArray();
         }
 
+        /// <summary>
+        /// Get each unique available lecture by language
+        /// </summary>
+        /// <param name="language">The language to get the lectures for</param>
+        /// <returns>The lectures of the provided language</returns>
         public string[] GetAvailableLecturesByLanguage(string language)
         {
             return GetWordsByLanguage(language).Select(w => w.Lecture).Distinct().ToArray();
         }
 
+        /// <summary>
+        /// Implementation of LectureCard to simplify implementation
+        /// Also calculates the word count for each lecture
+        /// </summary>
+        /// <param name="language">The language to get the lectures for</param>
+        /// <returns>Array of lecture cards</returns>
         public LectureCard[] GetAvailableLecturesByLanguageAsCard(string language)
         {
             Word[] languageWords = GetWordsByLanguage(language);
@@ -292,8 +360,8 @@ namespace EasyWord.Common
         /// and add them to the filtered array.
         /// Then we will return it.
         /// </summary>
-        /// <param name="language"></param>
-        /// <returns></returns>
+        /// <param name="language">The Language to get the words for</param>
+        /// <returns>Array of words for the provided language</returns>
         public Word[] GetWordsByLanguage(string language)
         {
             if (_words == null || string.IsNullOrEmpty(language)) return new Word[0];
@@ -302,28 +370,34 @@ namespace EasyWord.Common
         }
 
         /// <summary>
-        /// We will provide language and lecture as parameter
-        /// then we can get the words filtered by the chosen
-        /// language and the chosen lecture(s)
+        /// Will return the words based on the provided language and lectures
+        /// If the Lecture Configurations are empty, it will add the default lecture
+        /// or the first available lecture to the lectures list
         /// </summary>
-        /// <param name="language"></param>
-        /// <param name="lectures"></param>
-        /// <returns></returns>
+        /// <param name="language">The langauge to get the words for</param>
+        /// <param name="lectures">The lectures to get</param>
+        /// <returns>The filterd words based on the provided language and lectures</returns>
         public Word[] GetWordsByLanguageAndLectures(string language, List<string> lectures)
         {
             if (_words == null || string.IsNullOrEmpty(language)) return new Word[0];
 
-
+            // fix empty lecture by adding the default or first available lecture
             if (lectures.Count == 0)
             {
-                lectures = GetAvailableLecturesByLanguage(language).ToList();
+                string[] availableLectures = GetAvailableLecturesByLanguage(language);
+                string lecture = AppConfig.DEFAULT_LECTURE;
+                if (!availableLectures.Contains(AppConfig.DEFAULT_LECTURE))
+                {
+                    lecture = availableLectures[0];
+                }
+
+                lectures.Add(lecture);
+                App.Lectures.Add(lecture);
             }
 
             var filteredWords = _words
                 .Where(w => _compareIgnoreCase(w.Language, language) && lectures.Contains(w.Lecture))
                 .ToArray();
-
-             // for testing
             return filteredWords;
         }
 

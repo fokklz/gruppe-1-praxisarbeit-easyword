@@ -9,6 +9,15 @@ using System.Windows.Controls.Primitives;
 
 namespace EasyWord.Common
 {
+    /// <summary>
+    /// Helper class to dynamically resize the UI
+    /// for a minimal implementation of responsive design
+    /// 
+    /// This class should only be used in Code-Behind files for any kind of UI
+    /// which inclues resizing events
+    /// 
+    /// a basic implementation can be found on each Page
+    /// </summary>
     public class DynamicResizingHelper
     {
         /// <summary>

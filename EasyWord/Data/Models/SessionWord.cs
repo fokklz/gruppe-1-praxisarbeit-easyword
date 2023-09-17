@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace EasyWord.Data.Models
 {
@@ -17,25 +18,39 @@ namespace EasyWord.Data.Models
         /// Copy from Word
         /// </summary>
         /// <param name="word">Word to create a Session instance of</param>
-        public SessionWord(Word word) : base(word.German, word.ForeignWord, word.Language, word.Lecture)
+        public SessionWord(Word word) : base(word.German, word.ForeignWord, word.Language, word.Lecture, word.GetID())
         {
 
-            Iteration = word.Iteration;
-            Valid = word.Valid;
-            Bucket = word.Bucket;
+            _iteration = word.Iteration;
+            _valid = word.Valid;
+            _bucket = word.Bucket;
         }
-        
+
         /// <summary>
-        /// Wrapper for CheckAnswer to reflect to the session
+        /// check if the translation provided is valid
         /// </summary>
-        /// <param name="awnser">The Awnser the user Provided</param>
-        /// <returns>True when Correct</returns>
-        public new bool CheckAnswer(string awnser)
+        /// <param name="awnser"></param>
+        /// <returns></returns>
+        public bool CheckAnswer(string awnser)
         {
-            if (base.CheckAnswer(awnser))
+            Iteration++;
+            if (string.Equals(awnser, Translation,
+                App.Config.CaseSensitive ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase))
             {
+                // if answer was correct, increment the valid stat and the iteration stat
+                // also decrement the bucket (bucket 1 == learned completely
+                Valid++;
                 _validSession++;
+                if (Bucket > 1)
+                {
+                    Bucket--;
+                }
                 return true;
+            }
+            // if answer was wrong, increment the bucket (max. 5)
+            if (Bucket < 5)
+            {
+                Bucket++;
             }
             return false;
         }
