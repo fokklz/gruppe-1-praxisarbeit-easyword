@@ -52,7 +52,7 @@ namespace EasyWord.Data.Models
         /// <summary>
         /// GUID to identify the word while running
         /// </summary>
-        private Guid _id = Guid.NewGuid();
+        private Guid _id;
 
         /// <summary>
         /// Default constructor
@@ -61,7 +61,7 @@ namespace EasyWord.Data.Models
         /// <param name="translation"></param>
         /// <param name="language"></param>
         /// <param name="lecture"></param>
-        public Word(string german, string translation, string language, string lecture)
+        public Word(string german, string translation, string language, string lecture, Guid id)
         {
             _foreignWord = translation;
             _german = german;
@@ -78,7 +78,10 @@ namespace EasyWord.Data.Models
             _iteration = 0;
             _valid = 0;
             _bucket = 3;
+            _id = id;
         }
+
+        public Word(string german, string translation, string language, string lecture) : this(german, translation, language, lecture, Guid.NewGuid()) {}
 
         /// <summary>
         /// Constructor with 2 items in CSV
@@ -132,34 +135,6 @@ namespace EasyWord.Data.Models
             {
                 return App.Config.TranslationDirection ? _german : _foreignWord;
             }
-        }
-
-        /// <summary>
-        /// check if the translation provided is valid
-        /// </summary>
-        /// <param name="awnser"></param>
-        /// <returns></returns>
-        public bool CheckAnswer(string awnser)
-        {
-            Iteration++;
-            if (string.Equals(awnser, Translation, 
-                App.Config.CaseSensitive ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase))
-            {
-                // if answer was correct, increment the valid stat and the iteration stat
-                // also decrement the bucket (bucket 1 == learned completely
-                Valid++;
-                if(Bucket > 1)
-                {
-                    Bucket--;
-                }
-                return true;
-            }
-            // if answer was wrong, increment the bucket (max. 5)
-            if(Bucket < 5)
-            {
-                Bucket++;
-            }
-            return false;
         }
 
         /// <summary>

@@ -27,19 +27,28 @@ namespace EasyWord.Data.Repository
         /// <typeparam name="T"></typeparam>
         /// <param name="config">instance</param>
         /// <param name="filePath">relative path</param>
-        public static void SaveConfig<T>(T config, string filePath)
+        public static void SaveConfig<T>(T config, string filePath, bool package)
         {
-            if (!Directory.Exists(_basePath))
+            string absPath = filePath;
+            if (package)
             {
-                Directory.CreateDirectory(_basePath);
+                if (!Directory.Exists(_basePath))
+                {
+                    Directory.CreateDirectory(_basePath);
+                }
+                absPath = Path.Combine(_basePath, filePath);
             }
 
-            string absPath = Path.Combine(_basePath, filePath);
             XmlSerializer serializer = new XmlSerializer(typeof(T));
             using (TextWriter writer = new StreamWriter(absPath))
             {
                 serializer.Serialize(writer, config);
             }
+        }
+
+        public static void SaveConfig<T>(T config, string filePath)
+        {
+            SaveConfig(config, filePath, false);
         }
 
         /// <summary>
