@@ -7,6 +7,7 @@
       xmlns:local="clr-namespace:EasyWord.Pages"
       xmlns:ctls="clr-namespace:EasyWord.Controls"
       mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
       Background="White"
       SizeChanged="OnSizeChanged">
     
@@ -15,7 +16,6 @@
             <ColumnDefinition x:Name="ColumnStart" Width="*"/>
             <ColumnDefinition Width="120"/>
             <ColumnDefinition Width="100*"/>
-            <ColumnDefinition Width="100"/>
             <ColumnDefinition x:Name="ColumnEnd" Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -28,38 +28,32 @@
         <!--Dropdown Language-->
         <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="10,0,0,0">
             <ComboBox
-    x:Name="FilledComboBox"
-    Width="256"
-    materialDesign:HintAssist.Hint="Sprache"
-    Style="{StaticResource MaterialDesignFilledComboBox}" SelectionChanged="FilledComboBox_SelectionChanged">
+                x:Name="FilledComboBox"
+                Width="256"
+                materialDesign:HintAssist.Hint="Sprache"
+                Style="{StaticResource MaterialDesignFilledComboBox}" SelectionChanged="FilledComboBox_SelectionChanged">
             </ComboBox>
         </StackPanel>
         
         <!--Button select all lections to learn-->
-        <Button x:Name="AllLectures"
-                Click="AllLectures_Click"
-                Grid.Column="2"
-                Grid.Row="0"
+        <StackPanel 
+            Orientation="Horizontal"
+            Grid.Column="2" 
+            HorizontalAlignment="Right" VerticalAlignment="Center">
+            <Button x:Name="AllLectures"
                 VerticalAlignment="Center"
-                HorizontalAlignment="Right"
-                Width="100" Height="30"
-                Content="Alle lernen" />
-        
-        <!--Button selected lection learn-->
-        <Button x:Name="SelectedLecture"
-                Click="SelectedLecture_Click"
-                Grid.Column="3"
-                Grid.Row="0"
+                Content="Alle lernen" Click="AllLectures_Click" />
+
+            <!--Button selected lection learn-->
+            <Button x:Name="SelectedLecture"
                 VerticalAlignment="Center"
-                HorizontalAlignment="Center"
-                Width="75" Height="30"
-                Content="Lernen"
-                IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
-                Style="{StaticResource MaterialDesignOutlinedDarkButton}"
-                ToolTip="MaterialDesignOutlinedButton" />
+                Margin="10,0,0,0"
+                Content="{Binding ButtonLabel}"
+                Style="{StaticResource MaterialDesignOutlinedDarkButton}" Click="SelectedLecture_Click" />
+        </StackPanel>
         
         <!--Lecture Cards-->
-        <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3">
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2">
             <UniformGrid Name="LectureWrapPanel" Columns="2">
             </UniformGrid>
         </ScrollViewer>
