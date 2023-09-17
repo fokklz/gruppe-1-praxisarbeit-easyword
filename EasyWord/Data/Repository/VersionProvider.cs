@@ -13,17 +13,39 @@ namespace EasyWord.Data.Repository
 
         private static string _resource = "EasyWord.VERSION";
 
-        public static string getVersion()
+        private static Stream? _getStreamFromResource()
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
-            using Stream stream = assembly.GetManifestResourceStream(_resource);
+            if (assembly != null)
+            {
+                return assembly.GetManifestResourceStream(_resource);
+            }
+
+            return null;
+        }
+
+        public static (string Version, DateTime LastModified) GetVersion()
+        {
+            using Stream? stream = _getStreamFromResource();
             if (stream == null)
             {
                 throw new InvalidOperationException("Version resource not found");
             }
+
             using StreamReader reader = new StreamReader(stream);
-            return reader.ReadToEnd();
+            string? version = reader.ReadLine();
+            string? lastModifiedStr = reader.ReadLine() ?? "2023-09-16 14:45:00";
+
+            if (DateTime.TryParse(lastModifiedStr, out DateTime lastModified))
+            {
+                return (version, lastModified);
+            }
+            else
+            {
+                throw new InvalidOperationException("Could not parse last modified date");
+            }
         }
+
 
     }
 }
