@@ -22,7 +22,9 @@ namespace EasyWord.Windows
     /// </summary>
     public partial class DevVersion : Window
     {
-        [RequiresAssemblyFiles()]
+        /// <summary>
+        /// Window for the information about the developers and the version
+        /// </summary>
         public DevVersion()
         {
             InitializeComponent();
@@ -32,15 +34,7 @@ namespace EasyWord.Windows
             // Set the content of the label with developer information and version
             DevOutput.Text = developerInfo;
             VersionOutput.Text = App.Config.Version;
-
-            //Get creation date of running .EXE file
-            string filePath = System.Reflection.Assembly.GetExecutingAssembly().Location;
-            DateTime creationTime = System.IO.File.GetCreationTime(filePath);
-            string formattedDate = creationTime.ToString("d");
-
-            VersionDate.Text = formattedDate.ToString();
-
-
+            VersionDate.Text = App.Config.VersionDate.ToString("d");
         }
     }
 }

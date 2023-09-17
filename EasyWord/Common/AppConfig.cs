@@ -6,22 +6,9 @@ using System.Threading.Tasks;
 
 namespace EasyWord.Common
 {
-    /// <summary>
-    /// This is the core configuration for the application
-    /// It should be used via the static instance in the App class
-    /// App.Config
-    /// 
-    /// This class and all classes inside have to be serializable
-    /// </summary>
     public class AppConfig
     {
-        /// <summary>
-        /// Default Language if not provided by the file name
-        /// </summary>
         public static string DEFAULT_LANGUAGE = "Englisch";
-        /// <summary>
-        /// Default Lecture if not provided by the data
-        /// </summary>
         public static string DEFAULT_LECTURE = "Standard";
 
         /// <summary>
@@ -33,6 +20,11 @@ namespace EasyWord.Common
         /// Version of the Application
         /// </summary>
         public string Version { get; set; }
+
+        /// <summary>
+        /// Version date for the Application
+        /// </summary>
+        public DateTime VersionDate { get; set; }
 
         /// <summary>
         /// Developer information

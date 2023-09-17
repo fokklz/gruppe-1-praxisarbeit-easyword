@@ -79,12 +79,15 @@ namespace EasyWord
             }
             try
             {
-                Config.Version = VersionProvider.getVersion();
+                var (version, lastModified) = VersionProvider.GetVersion();
+                Config.Version = version;
+                Config.VersionDate = lastModified;
             }
             catch
             {
                 // set to unknown if any errors while reading
                 Config.Version = "unknown";
+                Config.VersionDate = new DateTime();
             }
 
             // Initialize a Session if words are available

@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - ci/cd-debugging
     paths:
       - "EasyWord/VERSION"
 
@@ -25,6 +26,17 @@ jobs:
 
       - name: Publish WPF App x86
         run: dotnet publish -r win-x86 -c Release /p:PublishSingleFile=true /p:PublishTrimmed=false --self-contained true
+
+      - name: Update version file
+        run: |
+            VERSION_FILE="EasyWord/VERSION"
+            CURRENT_DATE=$(date +"%Y-%m-%d %H:%M:%S")
+            
+            # Read the existing version number
+            VERSION_NUMBER=$(head -n 1 $VERSION_FILE)
+            
+            # Write the version number and current date back to the version file
+            echo -e "$VERSION_NUMBER\n$CURRENT_DATE" > $VERSION_FILE
 
       - name: Load version from file
         id: load_version
