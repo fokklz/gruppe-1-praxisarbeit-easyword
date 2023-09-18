@@ -22,7 +22,7 @@
         </Grid.ColumnDefinitions>
         <TextBlock
             Style="{StaticResource MaterialDesignHeadline6TextBlock}"
-            Text="Duplikate" 
+            Text="Nicht importierte Duplikate" 
             VerticalAlignment="Center"
             Margin="10,0,10,0"/>
 
@@ -36,7 +36,7 @@
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid HorizontalAlignment="Stretch">
-                    <ctls:DuplicateDisplay DataContext="{Binding}" />
+                        <ctls:DuplicateDisplay DataContext="{Binding}" />
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>
@@ -45,19 +45,12 @@
         <StackPanel Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Right" Margin="10,0,10,0">
 
             <Button
-              Content="Überschreiben"
+              Content="Okey"
                 Margin="10,0,0,0"
               IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
-              Style="{StaticResource MaterialDesignRaisedButton}"
-              ToolTip="Resource name: MaterialDesignRaisedButton" Click="BtnSubmit" />    
+              Style="{StaticResource MaterialDesignPaperButton}"
+              ToolTip="Resource name: MaterialDesignRaisedButton" Click="BtnSubmit" />
         </StackPanel>
-        <Button
-    Content="Überspringen"
-    Margin="10,0,10,0"
-            Grid.Row="2"
-            HorizontalAlignment="Left"
-            IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
-            Style="{StaticResource MaterialDesignPaperButton}"
-            ToolTip="Resource name: MaterialDesignPaperButton" Click="Cancel" />
+       
     </Grid>
 </Window>

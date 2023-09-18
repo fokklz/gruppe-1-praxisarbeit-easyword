@@ -170,22 +170,23 @@ namespace EasyWord.Pages
 
                 if (openFileDialog.ShowDialog() == true)
                 {
-
-                    List<Word> duplicates = App.Config.Storage.ImportFromCSV(openFileDialog.FileName);
-
-                    if(duplicates.Count > 0)
+                    try
                     {
-                        CustomDialog dialog = App.OpenDuplicateDialog(duplicates);
-                        if (dialog.ShowDialog() == true)
-                        {
-                            duplicates.ForEach(dup =>
-                            {
-                                App.Config.Storage.Words.Where(w => st)
-                            });
-                            
-                        }
-                    }
+                        List<Word> duplicates = App.Config.Storage.ImportFromCSV(openFileDialog.FileName);
 
+                        if (duplicates.Count > 0)
+                        {
+                            CustomDialog customDialog = new CustomDialog()
+                            {
+                                Owner = App.MainWindow,
+                                Data = duplicates
+                            };
+                            customDialog.ShowDialog();
+                        }
+                    } catch (CancelByUser ex)
+                    {
+                        return;
+                    }
                     // TODO: only renew when there are new words for current active language and lectures
                     // Overwrite the current session
                     App.SaveSettingsAndCreateSession();
