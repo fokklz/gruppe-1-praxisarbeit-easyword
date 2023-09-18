@@ -79,24 +79,24 @@ namespace EasyWord.Pages
         /// </summary>
         public void UpdateView()
         {
-            if (App.Session == null || !App.Session.IsInitialized()) App.CreateSession();
+            if(App.Session != null && (!App.Session.IsEmpty() && !App.Session.IsInitialized()))
+            {
+                App.CreateSession();
+            }
             _updateTitle();
             WordOutput.Text = ActiveWord.Question;
 
-            if (App.Session != null)
+            if (App.Session != null && App.Session.IsInitialized())
             {
-                if (App.Session.IsInitialized())
-                {
-                    SubmitButton.IsEnabled = true;
-                    WordInput.IsEnabled = true;
+                SubmitButton.IsEnabled = true;
+                WordInput.IsEnabled = true;
 
 
-                    Validation.ClearInvalid(WordInput.GetBindingExpression(TextBox.TextProperty));
-                    WordInput.Focus();
+                Validation.ClearInvalid(WordInput.GetBindingExpression(TextBox.TextProperty));
+                WordInput.Focus();
 
-                    UpdateWrongOutput();
-                    return;
-                }
+                UpdateWrongOutput();
+                return;
             }
 
             SubmitButton.IsEnabled = false;
