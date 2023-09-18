@@ -66,6 +66,9 @@ namespace EasyWord.Data.Models
         public int SessionValid { get { return _sessionValid; } set { _sessionValid = value; } }
         private int _sessionValid;
 
+        [XmlIgnore]
+        public Guid Guid { get; set; } = Guid.NewGuid();
+
         public event PropertyChangedEventHandler? PropertyChanged;
 
         /// <summary>

@@ -1,8 +1,10 @@
-﻿using System;
+﻿using EasyWord.Data.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace EasyWord.Common
 {
@@ -13,29 +15,27 @@ namespace EasyWord.Common
     /// 
     /// This class and all classes inside have to be serializable
     /// </summary>
-    public class AppConfig
+    public class AppConfig : Settings
     {
         public static string DEFAULT_LANGUAGE = "Englisch";
         public static string DEFAULT_LECTURE = "Standard";
 
         /// <summary>
-        /// private Language storage
-        /// </summary>
-        private string _language = DEFAULT_LANGUAGE;
-      
-        /// <summary>
         /// Version of the Application
         /// </summary>
-        public string Version { get; set; }
+        [XmlIgnore]
+        public string Version { get; set; } = "0.0.0.0";
 
         /// <summary>
         /// Version date for the Application
         /// </summary>
+        [XmlIgnore]
         public DateTime VersionDate { get; set; }
 
         /// <summary>
         /// Developer information
         /// </summary>
+        [XmlIgnore]
         public string[] Developer { get; } = new string[5]{
             "Arda Dursun",
             "Bobby Bilali",
@@ -43,17 +43,6 @@ namespace EasyWord.Common
             "Mahir Gönen",
             "Robin Ruf"
         };
-
-        /// <summary>
-        /// true: EN -> DE
-        /// false: DE -> EN
-        /// </summary>
-        public bool TranslationDirection { get; set; } = true;
-
-        /// <summary>
-        /// Switch between case sensitive checking
-        /// </summary>
-        public bool CaseSensitive { get; set; } = false;
 
         /// <summary>
         /// The Language the user is Currently trying to learn
@@ -66,8 +55,9 @@ namespace EasyWord.Common
             set {
                 _language = value;
                 Lectures = new HashSet<string>();
-            } 
+            }
         }
+        private string _language = DEFAULT_LANGUAGE;
 
         /// <summary>
         /// Currently active lectures
@@ -81,9 +71,6 @@ namespace EasyWord.Common
 
         /// Default Ctor for XML Serialization
         /// </summary>
-        public AppConfig()
-        {
-            Version = "preview";
-        }
+        public AppConfig(): base() {}
     }
 }

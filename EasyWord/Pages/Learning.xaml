@@ -20,9 +20,9 @@
             <ColumnDefinition x:Name="ColumnEnd" Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="80*"/>
-            <RowDefinition Height="100*"/>
-            <RowDefinition Height="60*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="3*"/>
+            <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
 
         <!-- Title -->
@@ -81,9 +81,11 @@
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="60"/>
                 </Grid.RowDefinitions>
+
                 <!-- Edit Button 
                 <Button Name="BtnEdit" IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}" Style="{StaticResource MaterialDesignIconButton}" ToolTip="MaterialDesignIconButton" HorizontalAlignment="Center" VerticalAlignment="Top" Click="BtnSettings_Click" Grid.Column="1"> <materialDesign:PackIcon Kind="Pencil" /></Button>
                 -->
+                
                 <!-- Word output -->
                 <TextBox Text="{Binding DataContext.ActiveWord.Answer}" />  <!--Example for editing binding-->
                 <TextBlock

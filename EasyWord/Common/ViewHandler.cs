@@ -62,15 +62,16 @@ namespace EasyWord.Common
             {
                 case "Settings":
                     MainFrame.Navigate(settingsPage);
-                    settingsPage.UpdateView();
+                    //settingsPage.UpdateView();
                     break;
                 case "Lectures":
                     MainFrame.Navigate(lecturesPage);
-                    lecturesPage.UpdateView();
+                    //lecturesPage.UpdateView();
                     break;
                 default:
                     MainFrame.Navigate(learningPage);
-                    learningPage.UpdateView();
+                    //learningPage.UpdateView();
+                    App.CreateSession();
                     break;
             }
         }
