@@ -16,6 +16,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using EasyWord.Windows;
 
 namespace EasyWord.Pages
 {
@@ -169,14 +170,23 @@ namespace EasyWord.Pages
 
                 if (openFileDialog.ShowDialog() == true)
                 {
-
-                    List<Word> duplicates = App.Config.Storage.ImportFromCSV(openFileDialog.FileName);
-
-                    if(duplicates.Count > 0)
+                    try
                     {
-                        // TODO: Implement new overwrite dialog as seperate window
-                    }
+                        List<Word> duplicates = App.Config.Storage.ImportFromCSV(openFileDialog.FileName);
 
+                        if (duplicates.Count > 0)
+                        {
+                            CustomDialog customDialog = new CustomDialog()
+                            {
+                                Owner = App.MainWindow,
+                                Data = duplicates
+                            };
+                            customDialog.ShowDialog();
+                        }
+                    } catch (CancelByUser ex)
+                    {
+                        return;
+                    }
                     // TODO: only renew when there are new words for current active language and lectures
                     // Overwrite the current session
                     App.SaveSettingsAndCreateSession();

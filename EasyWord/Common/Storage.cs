@@ -10,6 +10,7 @@ using System.Windows.Controls;
 using EasyWord.Controls;
 using EasyWord.Data.Models;
 using EasyWord.Pages;
+using EasyWord.Windows;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EasyWord.Common
@@ -20,6 +21,13 @@ namespace EasyWord.Common
     public class DuplicateWordException : Exception
     {
         public DuplicateWordException() : base("Word already exists"){}
+    }
+    /// <summary>
+    /// Thrown when user does not accept the merge
+    /// </summary>
+    public class CancelByUser : Exception
+    {
+        public CancelByUser() : base("User cancelled the merge") { }
     }
 
     /// <summary>
@@ -147,6 +155,23 @@ namespace EasyWord.Common
             {
                 // overwrite when language is set
                 langauge = fileName.Split('_')[0];
+            }
+            
+            //Ask if user to merge duplicates
+            if (GetAvailableLanguages().Contains(langauge))
+            {
+                string messageBoxText = "Diese Sprache ist bereits enthalten \nWollen Sie diese zusammenführen?";
+                string caption = "Duplizierte Sprache erkannt";
+                MessageBoxButton button = MessageBoxButton.YesNo;
+                MessageBoxImage icon = MessageBoxImage.Warning;
+                MessageBoxResult result;
+
+                result = MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
+
+                if (result == MessageBoxResult.No)
+                {
+                    throw new CancelByUser();
+                }
             }
 
             string[] lines = File.ReadAllLines(path, Encoding.UTF8);

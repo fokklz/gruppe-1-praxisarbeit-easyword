@@ -1,6 +1,7 @@
 ﻿using EasyWord.Common;
 using EasyWord.Data.Models;
 using EasyWord.Data.Repository;
+using EasyWord.Windows;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,8 @@ namespace EasyWord
         /// <summary>
         /// global application configuration
         /// </summary>
+        
+        public static Window MainWindow { get; set; }
         #pragma warning disable CS8618 
         public static AppConfig Config
         {
@@ -127,6 +130,21 @@ namespace EasyWord
         {
             Word[] words = Storage.GetWordsByLanguageAndLectures(Language, Lectures.ToList());
             Session = new Session(words);
+        }
+
+        /// <summary>
+        /// Opens a dialog to show the duplicated words
+        /// </summary>
+        /// <param name="duplicates"></param>
+        /// <returns></returns>
+        public static CustomDialog OpenDuplicateDialog(List<Word> duplicates)
+        {
+            CustomDialog customDialog = new CustomDialog()
+            {
+                Owner = MainWindow,
+                Data = duplicates
+            };
+            return customDialog;
         }
     }
 }
