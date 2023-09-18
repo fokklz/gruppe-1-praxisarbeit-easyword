@@ -71,7 +71,6 @@ namespace EasyWord.Pages
 
         private void App_SessionChanged(object? sender, EventArgs e)
         {
-            //MessageBox.Show("Session changed");
             UpdateView();
         }
 
@@ -79,11 +78,7 @@ namespace EasyWord.Pages
         /// Updates the view to reflect the current state of the application
         /// </summary>
         public void UpdateView()
-        {
-            if(App.Session != null && (!App.Session.IsEmpty() && !App.Session.IsInitialized()))
-            {
-                App.CreateSession();
-            }
+        {   
             _updateTitle();
             WordOutput.Text = ActiveWord.Question;
 

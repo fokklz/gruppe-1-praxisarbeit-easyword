@@ -1,4 +1,5 @@
-﻿using EasyWord.Data.Models;
+﻿using EasyWord.Controls;
+using EasyWord.Data.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +9,15 @@ using System.Windows;
 
 namespace EasyWord.Common
 {
+    public class SessionNextEventArgs : EventArgs
+    {
+        public Word CurrentWord { get; }
+
+        public SessionNextEventArgs(Word currentWord)
+        {
+            CurrentWord = currentWord;
+        }
+    }
     /// <summary>
     /// This class represents a session of words which are currently learned
     /// It will keep a "original" Object, and shrink a current object to the current iteration
@@ -23,6 +33,13 @@ namespace EasyWord.Common
     /// </summary>
     public class Session
     {
+
+        /// <summary>
+        /// Local storage for the GUID of the last word to ensure 
+        /// that the same word is not displayed twice in a row
+        /// </summary>
+        private Guid _lastWord = Guid.Empty;
+
         /// <summary>
         /// Random class for shuffling the words
         /// </summary>
@@ -94,6 +111,8 @@ namespace EasyWord.Common
         /// iteration counter
         /// </summary>
         private int _iteration;
+
+        public event EventHandler<SessionNextEventArgs>? Next;
 
         /// <summary>
         /// Constructor for Session
@@ -177,7 +196,9 @@ namespace EasyWord.Common
             if (!IsInitialized()) return null;
             if (_currentWords?.Length != 0)
             {
-                return _currentWords?.First();
+                Word? word = _currentWords?.First();
+                _lastWord = word?.Guid ?? Guid.Empty;
+                return word;
             }
             return null;
         }
@@ -195,13 +216,16 @@ namespace EasyWord.Common
             if (!IsInitialized()) return;
             if (HasWordsLeft())
             {
-                _currentWords = _currentWords?.Where(_filterWord).OrderBy(x => _random.Next()).ToArray();
+                // move last displayed word to the end of the list
+                _currentWords = _currentWords?.Where(_filterWord).OrderBy(x => x.Guid == _lastWord ? 1 : 0).ThenBy(x => _random.Next()).ToArray();
             }
             else
             {
                 _iteration++;
-                _currentWords = _words.Where(_filterWord).OrderBy(x => _random.Next()).ToArray();
+                // move last displayed word to the end of the list
+                _currentWords = _words.Where(_filterWord).OrderBy(x => x.Guid == _lastWord ? 1 : 0).ThenBy(x => _random.Next()).ToArray();
             }
+            Next?.Invoke(this, new SessionNextEventArgs(GetNextWord() ?? new Word()));
         }
 
     }
