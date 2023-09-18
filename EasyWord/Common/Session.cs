@@ -29,9 +29,61 @@ namespace EasyWord.Common
         private Random _random = new Random();
 
         /// <summary>
+        /// Will be set on word change
+        /// Contains the number of word in each bucket for this session
+        /// </summary>
+        public int[] Buckets { get; set; } = new int[5] { 0,0,0,0,0 };
+
+        /// <summary>
         /// All words in the session
         /// </summary>
-        private Word[] _words;
+        protected Word[] Words
+        {
+            get
+            {
+                return _words;
+            }
+            set
+            {
+                _words = value;
+                if(value.Length > 0)
+                {
+                    // get the min and max valid value
+                    int minValid = value.Min(w => w.Valid);
+                    int maxValid = value.Max(w => w.Valid);
+                    // filter the words and set the session valid
+                    // to ensure that words are asked at equal rates
+                    _words = value.Select(w =>
+                    {
+                        if (maxValid == minValid)
+                        {
+                            w.SessionValid = 0;
+                        }
+                        else
+                        {
+                            w.SessionValid = w.Valid - minValid;
+                        }
+                        return w;
+                    }).ToArray();
+
+                    // update the buckets
+                    Buckets = new int[5] {
+                        _words.Where(w => w.Bucket == 1).Count(),
+                        _words.Where(w => w.Bucket == 2).Count(),
+                        _words.Where(w => w.Bucket == 3).Count(),
+                        _words.Where(w => w.Bucket == 4).Count(),
+                        _words.Where(w => w.Bucket == 5).Count()
+                    };
+
+                    // initialize session if not initialized
+                    if(!IsInitialized())
+                    {
+                        Initialize();
+                    }
+                }
+            }
+        }
+        private Word[] _words = new Word[0];
 
         /// <summary>
         /// Current iteration of the session
@@ -49,30 +101,7 @@ namespace EasyWord.Common
         /// <param name="words">All words for this session</param>
         public Session(Word[] words)
         {
-            int minValid = words.Min(w => w.Valid);
-            int maxValid = words.Max(w => w.Valid);
-            _words = words.Select(w =>
-            {
-                if (maxValid == minValid)
-                {
-                    w.SessionValid = 0;
-                }
-                else
-                {
-                    w.SessionValid = w.Valid - minValid;
-                }
-                return w;
-            }).ToArray();
-
-            // initialize the session if valid
-            if (_words.Length > 0)
-            {
-                Initialize();
-            }
-            else
-            {
-                _currentWords = new Word[0];
-            }
+            Words = words;
         }
 
         /// <summary>
@@ -137,21 +166,6 @@ namespace EasyWord.Common
         }
 
         /// <summary>
-        /// Bucket accesstor for the BucketDisplay
-        /// </summary>
-        /// <returns>Array with the number of Buckets for each Bucket</returns>
-        public int[] GetBuckets()
-        {
-            return new int[5] {
-                _words.Where(w => w.Bucket == 1).Count(),
-                _words.Where(w => w.Bucket == 2).Count(),
-                _words.Where(w => w.Bucket == 3).Count(),
-                _words.Where(w => w.Bucket == 4).Count(),
-                _words.Where(w => w.Bucket == 5).Count()
-            };
-        }
-
-        /// <summary>
         /// Switch to the next word in the list and increment 
         /// the iteration stat of the word which was lately done
         /// 
@@ -177,6 +191,7 @@ namespace EasyWord.Common
         /// </summary>
         public void GoNext()
         {
+            if (IsEmpty()) return;
             if (!IsInitialized()) return;
             if (HasWordsLeft())
             {
