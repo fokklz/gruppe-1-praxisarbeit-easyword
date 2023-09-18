@@ -38,6 +38,7 @@ namespace EasyWord
                     _config.Version = "unknown";
                     _config.VersionDate = new DateTime();
                 }
+                ConfigChanged?.Invoke(null, EventArgs.Empty);
                 if (_config.Storage.HasWords) CreateSession();
             }
         }
@@ -76,9 +77,12 @@ namespace EasyWord
             }
         }
 
+
         private static Session? _session = null;
 
         public static event EventHandler? SessionUpdated;
+
+        public static event EventHandler? ConfigChanged;
 
         public App() {
             try

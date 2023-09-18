@@ -1,12 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Xml.Serialization;
 
 namespace EasyWord.Data.Models
 {
+    /// <summary>
+    /// Arguments for the settings change event
+    /// </summary>
+    public class SettingChangedEventArgs: EventArgs
+    {
+        public string Setting {  get; set; }
+        public SettingChangedEventArgs(string setting)
+        {
+            Setting = setting;
+        }
+    }
 
     public class Settings
     {
@@ -45,13 +58,34 @@ namespace EasyWord.Data.Models
         }
         private bool _caseSensitive = false;
 
-        public event EventHandler? SettingsChanged;
+        /// <summary>
+        /// Set current mode
+        /// 0 learning
+        /// 1 editing
+        /// 2 creating
+        /// </summary>
+        [XmlIgnore]
+        public int SessionMode
+        {
+            get
+            {
+                return _sessionMode;
+            }
+            set
+            {
+                _sessionMode = value;
+                OnSettingsChanged();
+            }
+        }
+        private int _sessionMode = 0;
+
+        public event EventHandler<SettingChangedEventArgs>? SettingsChanged;
 
         public Settings(){}
 
-        public void OnSettingsChanged()
+        protected virtual void OnSettingsChanged([CallerMemberName] string propertyName = null)
         {
-            SettingsChanged?.Invoke(this, EventArgs.Empty);
+            SettingsChanged?.Invoke(this, new SettingChangedEventArgs(propertyName));
         }
     }
 }

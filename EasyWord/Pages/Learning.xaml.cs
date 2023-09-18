@@ -17,6 +17,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using EasyWord.Windows;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace EasyWord.Pages
 {
@@ -43,12 +45,14 @@ namespace EasyWord.Pages
     /// <summary>
     /// Interaction logic for Learning.xaml
     /// </summary>
-    public partial class Learning : Page
+    public partial class Learning : Page, INotifyPropertyChanged 
     {
         /// <summary>
         /// if true button will be next
         /// </summary>
         private bool _enableNext = false;
+
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         /// <summary>
         /// The text from the WordInput
@@ -65,9 +69,33 @@ namespace EasyWord.Pages
         {
             InitializeComponent();
             DataContext = this;
+            App.ConfigChanged += App_ConfigChanged;
             App.SessionUpdated += App_SessionChanged;
+            App.Config.SettingsChanged += (sender, e) =>
+            {
+                if (e.Setting.Equals("SessionMode"))
+                { // If greater 0 editing or creating
+                    _updateCard();
+                }
+            };
         }
 
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private void App_ConfigChanged(object? sender, EventArgs e)
+        {
+            App.Config.SettingsChanged += (sender, e) =>
+            {
+                if (e.Setting.Equals("SessionMode"))
+                { // If greater 0 editing or creating
+                    _updateCard();
+                }
+            };
+        }
 
         private void App_SessionChanged(object? sender, EventArgs e)
         {
@@ -80,7 +108,8 @@ namespace EasyWord.Pages
         public void UpdateView()
         {   
             _updateTitle();
-            WordOutput.Text = ActiveWord.Question;
+            _updateCard();
+           // WordOutput.Text = ActiveWord.Question;
 
             if (App.Session != null && App.Session.IsInitialized())
             {
@@ -97,6 +126,20 @@ namespace EasyWord.Pages
 
             SubmitButton.IsEnabled = false;
             WordInput.IsEnabled = false;
+        }
+
+        private void _updateCard()
+        {
+            if (App.Config.SessionMode > 0)
+            {
+                CreateOrModifyElm.Visibility = Visibility.Visible;
+                LearningCardElm.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                CreateOrModifyElm.Visibility = Visibility.Hidden;
+                LearningCardElm.Visibility = Visibility.Visible;
+            }
         }
 
         /// <summary>
@@ -128,7 +171,7 @@ namespace EasyWord.Pages
         private void UpdateWrongOutput()
         {
             Word currentWord = ActiveWord;
-            WrongOutput.Text = $"{currentWord.Iteration - currentWord.Valid}";
+            // WrongOutput.Text = $"{currentWord.Iteration - currentWord.Valid}";
         }
 
         /// <summary>
@@ -202,6 +245,8 @@ namespace EasyWord.Pages
         {
             if (_enableNext)
             { // Go Next
+              // switch to the next word, regardsless if the word was right or not.
+                App.Session?.GoNext();
                 WordInput.IsReadOnly = false;
                 WordInput.Background = Brushes.White;
                 WordInput.Text = "";
@@ -252,8 +297,6 @@ namespace EasyWord.Pages
             SubmitButton.Content = "Next";
             WordInput.IsReadOnly = true;
             SubmitButton.Focus();
-            // switch to the next word, regardsless if the word was right or not.
-            App.Session?.GoNext();
         }
 
         private void BtnLectures_Click(object sender, RoutedEventArgs e)
