@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 using EasyWord;
 using EasyWord.Common;
 
@@ -12,47 +15,112 @@ namespace EasyWord.Data.Models
     /// Represents a word with its translations
     /// also tracks the stats of the word
     /// </summary>
-    public class Word
+    public class Word : INotifyPropertyChanged
     {
         /// <summary>
         /// Foreign language translation
         /// </summary>
-        private string _foreignWord;
+        public string Translation { get { return _translation; } set { _translation = value; } }
+        private string _translation;
 
         /// <summary>
         /// Definition of foreign language
         /// </summary>
+        public string Language { get { return _language; } set { _language = value; } }
         private string _language;
 
         /// <summary>
         /// Definition in which lecture it is
         /// </summary>
+        public string Lecture { get { return _lecture; } set { _lecture = value; } }
         private string _lecture;
 
         /// <summary>
         /// german translation
         /// </summary>
+        public string German { get { return _german; } set { _german = value; } }
         private string _german;
 
         /// <summary>
         /// current query iteration
         /// </summary>
+        public int Iteration { get { return _iteration; } set { _iteration = value; } }
         protected int _iteration;
 
         /// <summary>
         /// amount of correct querys
         /// </summary>
+        public int Valid { get { return _valid; } set { _valid = value; } }
         protected int _valid;
 
         /// <summary>
         /// current bucket position
         /// </summary>
+        public int Bucket { get { return _bucket; } set { _bucket = value; } }
         protected int _bucket;
 
         /// <summary>
         /// GUID to identify the word while running
         /// </summary>
-        private Guid _id;
+        [XmlIgnore]
+        public int SessionValid { get { return _sessionValid; } set { _sessionValid = value; } }
+        private int _sessionValid;
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        /// <summary>
+        /// get translation to ask for
+        /// </summary>
+        /// <returns></returns>
+        [XmlIgnore]
+        public string Question
+        {
+            get
+            {
+                return App.Config.TranslationDirection ? _translation : _german;
+            }
+            set
+            {
+                if(App.Config.TranslationDirection)
+                {
+                    _translation = value;
+                    OnPropertyChanged(nameof(Translation));
+                }
+                else
+                {
+                    _german = value;
+                    OnPropertyChanged(nameof(German));
+                }
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>
+        /// get translation
+        /// </summary>
+        /// <returns></returns>
+        [XmlIgnore]
+        public string Answer
+        {
+            get
+            {
+                return App.Config.TranslationDirection ? _german : _translation;
+            }
+            set
+            {
+                if (App.Config.TranslationDirection)
+                {
+                    _german = value;
+                    OnPropertyChanged(nameof(German));
+                }
+                else
+                {
+                    _translation = value;
+                    OnPropertyChanged(nameof(Translation));
+                }
+                OnPropertyChanged();
+            }
+        }
 
         /// <summary>
         /// Default constructor
@@ -61,11 +129,11 @@ namespace EasyWord.Data.Models
         /// <param name="translation"></param>
         /// <param name="language"></param>
         /// <param name="lecture"></param>
-        public Word(string german, string translation, string language, string lecture, Guid id)
+        public Word(string german, string translation, string language, string lecture)
         {
-            _foreignWord = translation;
+            _translation = translation;
             _german = german;
-            if(language == string.Empty)
+            if (language == string.Empty)
             {
                 language = AppConfig.DEFAULT_LANGUAGE;
             }
@@ -78,10 +146,8 @@ namespace EasyWord.Data.Models
             _iteration = 0;
             _valid = 0;
             _bucket = 3;
-            _id = id;
+            _sessionValid = 0;
         }
-
-        public Word(string german, string translation, string language, string lecture) : this(german, translation, language, lecture, Guid.NewGuid()) {}
 
         /// <summary>
         /// Constructor with 2 items in CSV
@@ -96,45 +162,45 @@ namespace EasyWord.Data.Models
         /// <param name="german"></param>
         /// <param name="translation"></param>
         /// <param name="language"></param>
-        public Word (string german, string translation, string language) : this(german , translation, language, string.Empty) { }
+        public Word(string german, string translation, string language) : this(german, translation, language, string.Empty) { }
 
 
         /// <summary>
         /// Empty ctor for XML serialization
         /// </summary>
-        public Word() : this(string.Empty,string.Empty,string.Empty,string.Empty) { }
-        
-        /// <summary>
-        /// Allow access to private ID
-        /// its a function, because the ID should not be serialized
-        /// </summary>
-        /// <returns>The GUID of the word</returns>
-        public Guid GetID()
-        {
-            return _id;
-        }
+        public Word() : this(string.Empty, string.Empty, string.Empty, string.Empty) { }
 
         /// <summary>
-        /// get translation to ask for
+        /// Helper method to raise the PropertyChanged event
         /// </summary>
-        /// <returns></returns>
-        public string Question {
-            get
-            {
-                return App.Config.TranslationDirection ? _foreignWord : _german;
-            }
+        /// <param name="propertyName"></param>
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        /// <summary>
-        /// get translation
-        /// </summary>
-        /// <returns></returns>
-        public string Translation
+        public bool CheckAnswer(string awnser)
         {
-            get
+            _iteration++;
+            if (string.Equals(awnser, Answer,
+                App.Config.CaseSensitive ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase))
             {
-                return App.Config.TranslationDirection ? _german : _foreignWord;
+                // if answer was correct, increment the valid stat and the iteration stat
+                // also decrement the bucket (bucket 1 == learned completely
+                _valid++;
+                _sessionValid++;
+                if (_bucket > 1)
+                {
+                    _bucket--;
+                }
+                return true;
             }
+            // if answer was wrong, increment the bucket (max. 5)
+            if (_bucket < 5)
+            {
+                _bucket++;
+            }
+            return false;
         }
 
         /// <summary>
@@ -156,76 +222,13 @@ namespace EasyWord.Data.Models
         }
 
         /// <summary>
-        /// Get the changed values and then set these to the correct variable
-        /// deoending on the translation direction in AppConfig.cs
-        /// </summary>
-        /// <param name="direction"></param>
-        /// <param name="changeWordInput"></param>
-        /// <param name="changeTranslationInput"></param>
-        public void EditWord(string changeWordInput, string changeTranslationInput)
-        {
-            // Access the TranslationDirection property from the global AppConfig instance
-            bool direction = App.Config.TranslationDirection;
-
-            if (direction)
-            {
-                ForeignWord = changeWordInput;
-                German = changeTranslationInput;
-            }
-            else
-            {
-                ForeignWord = changeTranslationInput;
-                German = changeWordInput;
-            }
-        }
-
-        /// <summary>
         /// convert word to CSV
         /// </summary>
         /// <returns>CSV line</returns>
         public string ToCSV()
         {
-            if (_lecture != string.Empty)
-            {
-                return $"{_lecture};{_german};{_foreignWord}";
-            }
-            else
-            {
-                return $"{_german};{_foreignWord}";
-            }
+            return $"{_lecture};{_german};{_translation}";
         }
-
-
-        /// <summary>
-        /// Get/Set foreign word translation
-        /// </summary>
-        public string ForeignWord { get { return _foreignWord; } set { _foreignWord = value; } }
-        /// <summary>
-        /// Get/Set german translation
-        /// </summary>
-        public string German { get { return _german; } set { _german = value; } }
-        /// <summary>
-        /// Get/Set iteration
-        /// </summary>
-        public int Iteration { get { return _iteration; } set { _iteration = value; } }
-        /// <summary>
-        /// Get/Set valid
-        /// </summary>
-        public int Valid { get { return _valid; } set { _valid = value; } }
-        /// <summary>
-        /// Get/Set bucket
-        /// </summary>
-        public int Bucket { get { return _bucket; } set { _bucket = value; } }
-
-        /// <summary>
-        /// Get/Set language
-        /// </summary>
-        public string Language { get { return _language; } set { _language = value; } }
-
-        /// <summary>
-        /// Get/Set Lecture
-        /// </summary>
-        public string Lecture { get { return _lecture; } set { _lecture = value; } }
 
     }
 }

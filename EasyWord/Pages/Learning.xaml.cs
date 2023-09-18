@@ -27,14 +27,14 @@ namespace EasyWord.Pages
     {
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
         {
-            SessionWord? currentWord = App.Session?.GetNextWord();
+            Word? currentWord = App.Session?.GetNextWord();
             if (currentWord?.CheckAnswer(value?.ToString() ?? "") ?? false)
             {
                 return ValidationResult.ValidResult;
             }
             else
             {
-                return new ValidationResult(false, $"Korrekt wäre: {currentWord?.Translation}");
+                return new ValidationResult(false, $"Korrekt wäre: {currentWord?.Answer}");
             }
         }
     }
@@ -54,6 +54,8 @@ namespace EasyWord.Pages
         /// </summary>
         public string WordInputText { get; set; } 
 
+        public Word ActiveWord => App.Session?.GetNextWord() ?? new Word();
+
         /// <summary>
         /// Initialize the component, set the first word, set the input fields and finally update the view
         /// so the user can start learning
@@ -62,7 +64,7 @@ namespace EasyWord.Pages
         {
             InitializeComponent();
             DataContext = this;
-            App.SessionChanged += App_SessionChanged;
+            App.SessionUpdated += App_SessionChanged;
         }
 
 
@@ -77,9 +79,9 @@ namespace EasyWord.Pages
         /// </summary>
         public void UpdateView()
         {
-            if (App.Session != null && !App.Session.IsInitialized()) App.CreateSession();
+            if (App.Session == null || !App.Session.IsInitialized()) App.CreateSession();
             _updateTitle();
-            WordOutput.Text = App.Session?.GetNextWord().Question;
+            WordOutput.Text = ActiveWord.Question;
 
             if (App.Session != null)
             {
@@ -111,9 +113,8 @@ namespace EasyWord.Pages
             string title = "Bitte csv Datei importieren";
             if (App.Config.Storage.HasWords)
             {
-                string lectures = string.Join(",", App.Config.Lectures.Distinct());
                 title = App.Config.Language;
-                SubTitle.Text = $"Lektionen: {lectures}";
+                SubTitle.Text = $"{string.Join(",", App.Config.Lectures)}";
                 SubTitle.Visibility = Visibility.Visible;
                 SubTitle.Height = double.NaN;
             }
@@ -130,8 +131,8 @@ namespace EasyWord.Pages
         /// </summary>
         private void UpdateWrongOutput()
         {
-            Word? currentWord = App.Session?.GetNextWord();
-            WrongOutput.Text = $"{currentWord?.Iteration - currentWord?.Valid}";
+            Word currentWord = ActiveWord;
+            WrongOutput.Text = $"{currentWord.Iteration - currentWord.Valid}";
         }
 
         /// <summary>

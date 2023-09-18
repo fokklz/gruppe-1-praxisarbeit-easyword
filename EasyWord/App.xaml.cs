@@ -17,7 +17,28 @@ namespace EasyWord
         /// global application configuration
         /// </summary>
         #pragma warning disable CS8618 
-        public static AppConfig Config { get; private set; }
+        public static AppConfig Config
+        {
+            get => _config;
+            set
+            {
+                _config = value;
+                try
+                {
+                    var (version, lastModified) = VersionProvider.GetVersion();
+                    _config.Version = version;
+                    _config.VersionDate = lastModified;
+                }
+                catch
+                {
+                    // set to unknown if any errors while reading
+                    _config.Version = "unknown";
+                    _config.VersionDate = new DateTime();
+                }
+                if (_config.Storage.HasWords) CreateSession();
+            }
+        }
+        private static AppConfig _config;
         #pragma warning restore CS8618
 
         /// <summary>
@@ -48,50 +69,29 @@ namespace EasyWord
             set
             {
                 _session = value;
-                OnSessionChanged();
+                OnSessionUpdated();
             }
         }
 
         private static Session? _session = null;
 
-        public static event EventHandler? SessionChanged;
+        public static event EventHandler? SessionUpdated;
 
-        public App()
-        { 
-            _load();
-        }
-
-        private static void OnSessionChanged()
-        {
-            SessionChanged?.Invoke(null, EventArgs.Empty);
-        }
-
-        private static void _load()
-        {
+        public App() {
             try
             {
-                Config = FileProvider.LoadConfig<AppConfig>("config.xml", true);
+                _config = FileProvider.LoadConfig<AppConfig>("config.xml", true);
             }
             catch
             {
                 // Use default if any errors while import
-                Config = new AppConfig();
+                _config = new AppConfig();
             }
-            try
-            {
-                var (version, lastModified) = VersionProvider.GetVersion();
-                Config.Version = version;
-                Config.VersionDate = lastModified;
-            }
-            catch
-            {
-                // set to unknown if any errors while reading
-                Config.Version = "unknown";
-                Config.VersionDate = new DateTime();
-            }
+        }
 
-            // Initialize a Session if words are available
-            if (Storage.HasWords) CreateSession();
+        private static void OnSessionUpdated()
+        {
+            SessionUpdated?.Invoke(null, EventArgs.Empty);
         }
 
         /// <summary>
@@ -102,13 +102,6 @@ namespace EasyWord
             FileProvider.SaveConfig(Config, "config.xml", true);
         }
 
-
-        public static void ReloadSettings()
-        {
-            SaveSettings();
-            _load();
-
-        }
 
         public static void ExportState(string filePath)
         {
@@ -133,10 +126,7 @@ namespace EasyWord
         public static void CreateSession()
         {
             Word[] words = Storage.GetWordsByLanguageAndLectures(Language, Lectures.ToList());
-            if (words.Length > 0)
-            {
-                Session = new Session(words);
-            }
+            Session = new Session(words);
         }
     }
 }
