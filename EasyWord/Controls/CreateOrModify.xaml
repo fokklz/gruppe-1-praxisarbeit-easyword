@@ -1,0 +1,65 @@
+﻿<UserControl x:Class="EasyWord.Controls.CreateOrModify"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:EasyWord.Controls"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid
+        Background="{DynamicResource PrimaryHueLightBrush}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="1.4*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1.1*" MinHeight="30"/>
+            <RowDefinition Height="1*" MinHeight="30" />
+            <RowDefinition Height="1*" MinHeight="30" />
+            <RowDefinition Height="1.2*" MinHeight="40"/>
+        </Grid.RowDefinitions>
+
+        <TextBox
+            VerticalAlignment="Center"
+            materialDesign:HintAssist.Hint="Lektion"
+            Margin="0,0,10,0"
+            Text="{Binding DataContext.Word.Lecture}"
+            Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
+
+        <local:SelectLanguage 
+            Grid.Column="1"
+            Margin="10,0,0,0"
+            LanguageChanged="SelectLanguage_LanguageChanged"
+            />
+
+        <TextBox
+            Grid.Row="1" Grid.ColumnSpan="2"
+            VerticalAlignment="Center"
+            materialDesign:HintAssist.Hint="{Binding DataContext.QuestionLabel}"
+            Text="{Binding DataContext.Word.Question}"
+            Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
+
+        <TextBox
+            Grid.Row="2" Grid.ColumnSpan="2"
+            VerticalAlignment="Center"
+            materialDesign:HintAssist.Hint="{Binding DataContext.AnswerLabel}"
+            Text="{Binding DataContext.Word.Answer}"
+            Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
+
+        <StackPanel Grid.Row="4" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,10">
+            <Button
+                x:Name="Cancel"
+                Content="Abbrechen"
+                Margin="0,0,10,0"
+                Style="{StaticResource MaterialDesignPaperButton}"
+                ToolTip="Resource name: MaterialDesignPaperDarkButton" Click="Cancel_Click"/>
+            <Button
+                x:Name="Save"
+                Content="Speichern"
+                Margin="10,0,0,0"
+                Style="{StaticResource MaterialDesignRaisedDarkButton}"
+                ToolTip="Resource name: MaterialDesignRaisedLightDarkButton" Click="Save_Click" />
+        </StackPanel>
+    </Grid>
+</UserControl>

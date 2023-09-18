@@ -1,0 +1,61 @@
+﻿<UserControl x:Class="EasyWord.Controls.LearninCard"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:EasyWord.Controls"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid Background="{DynamicResource PrimaryHueLightBrush}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="80"/>
+            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.8*"/>
+            <RowDefinition Height="3*"/>
+            <RowDefinition Height="0.8*"/>
+        </Grid.RowDefinitions>
+        <Button Name="BtnEdit"
+                Grid.Column="2"
+                Style="{StaticResource MaterialDesignIconButton}" 
+                ToolTip="Wort bearbeiten" 
+                HorizontalAlignment="Center" VerticalAlignment="Center" Click="BtnEdit_Click" >
+            <materialDesign:PackIcon Kind="Pencil" />
+        </Button>
+        <!-- Word output -->
+        <TextBlock
+     Name="WordOutput"
+     Grid.Row="1" Grid.ColumnSpan="3"
+     FontSize="20" TextAlignment="Center" VerticalAlignment="Center" >
+     <Run Language="de-ch" Text="{Binding DataContext.Word.Question}"/>
+        </TextBlock>
+        <!-- Bucket Display -->
+        <local:Emoticon Grid.Row="2" VerticalAlignment="Center" Values="2,3,5,6,8" Active="3" Margin="0,-10,0,0" >
+            <local:Emoticon.RenderTransform>
+                <ScaleTransform ScaleX="1.6" ScaleY="1.6"/>
+            </local:Emoticon.RenderTransform>
+        </local:Emoticon>
+
+        <!-- Wrong output -->
+        <StackPanel Grid.Column="1" Grid.Row="3" Grid.ColumnSpan="2" Opacity="0.8" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom"  >
+            <TextBlock
+         x:Name="WrongOutput"
+         Style="{StaticResource MaterialDesignBody2TextBlock}"
+         Text="10"
+         VerticalAlignment="Bottom"/>
+            <TextBlock
+         Style="{StaticResource MaterialDesignBody2TextBlock}"
+         Text=" x"
+         VerticalAlignment="Bottom"/>
+
+            <materialDesign:PackIcon Kind="AlphabeticalVariantOff"
+         Opacity="0.6"
+         Height="23" Width="32"
+         Margin="0,0,0,-3"/>
+        </StackPanel>
+    </Grid>
+    
+</UserControl>
