@@ -86,32 +86,6 @@ namespace EasyWord.Pages
 
         public void UpdateView()
         {
-            int index = 0;
-            int activeIndex = 0;
-            FilledComboBox.Items.Clear();
-            foreach (var item in App.Storage.GetAvailableLanguagesAsComboItem())
-            {
-                if (item.Content == null) continue;
-                string? lang = item.Content?.ToString();
-                if (lang == null) continue;
-                if(lang.Equals(App.Config.Language, StringComparison.OrdinalIgnoreCase))
-                {
-                    activeIndex = index;
-                    item.IsSelected = true;
-                }
-                FilledComboBox.Items.Add(item);
-                index++;
-            }
-            FilledComboBox.SelectedIndex = activeIndex;
-        }
-
-        /// <summary>
-        /// Hook will be called on Language selection Change
-        /// 
-        /// Will be triggered atlaest once on ViewUpdate
-        /// </summary>
-        private void _updateLectures()
-        {
             LectureWrapPanel.Children.Clear();
             foreach (var item in App.Storage.GetAvailableLecturesByLanguageAsCard(App.Language))
             {
@@ -148,25 +122,6 @@ namespace EasyWord.Pages
         }
 
         /// <summary>
-        /// Will update the Config and the Displayed Lectures
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void FilledComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (FilledComboBox.SelectedItem == null) return;
-            string? lang = (FilledComboBox.SelectedItem as ComboBoxItem)?.Content?.ToString();
-            if (lang == null) return;
-            if(!lang.Equals(App.Config.Language, StringComparison.OrdinalIgnoreCase))
-            {
-                App.Config.Language = lang;
-                App.SaveSettings();
-            }
-
-            _updateLectures();
-        }
-
-        /// <summary>
         /// Will set all lectures and navigate to the learning page
         /// </summary>
         /// <param name="sender"></param>
@@ -197,6 +152,23 @@ namespace EasyWord.Pages
             App.Config.Lectures = lectures;
             App.SaveSettingsAndCreateSession();
             ViewHandler.NavigateToPage();
+        }
+
+        /// <summary>
+        /// Hook to update the language and the session
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SelectLanguage_LanguageChanged(object sender, LanguageChangedEventArgs e)
+        {
+            string lang = e.SelectedLanguage;
+            if (!lang.Equals(App.Config.Language, StringComparison.OrdinalIgnoreCase))
+            {
+                App.Config.Language = lang;
+                App.SaveSettings();
+                App.CreateSession();
+                UpdateView();
+            }
         }
     }
 }
