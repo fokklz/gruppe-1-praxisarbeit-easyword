@@ -26,11 +26,19 @@ jobs:
       - name: Publish WPF App x86
         run: dotnet publish -r win-x86 -c Release /p:PublishSingleFile=true /p:PublishTrimmed=false --self-contained true
 
-      - name: Load version from file
+      - name: Update version file
         id: load_version
-        # Should be the newer way, but is not working
-        # run: echo "version=$(cat EasyWord/VERSION | tr -d '\n')" >> $GITHUB_OUTPUT
-        run: echo "::set-output name=version::$(cat EasyWord/VERSION | tr -d '\n')"
+        run: |
+          VERSION_FILE="EasyWord/VERSION"
+          CURRENT_DATE=$(date +"%Y-%m-%d %H:%M:%S")
+
+          # Read the existing version number
+          VERSION_NUMBER=$(head -n 1 $VERSION_FILE)
+          echo "::set-output name=version::$VERSION_NUMBER"
+
+          # Write the version number and current date back to the version file
+          echo -e "$VERSION_NUMBER\n$CURRENT_DATE" > $VERSION_FILE
+        shell: bash
 
       - name: Create Release
         id: create_release

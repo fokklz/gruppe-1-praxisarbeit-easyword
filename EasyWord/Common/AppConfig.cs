@@ -6,6 +6,13 @@ using System.Threading.Tasks;
 
 namespace EasyWord.Common
 {
+    /// <summary>
+    /// This is the core configuration for the application
+    /// It should be used via the static instance in the App class
+    /// App.Config
+    /// 
+    /// This class and all classes inside have to be serializable
+    /// </summary>
     public class AppConfig
     {
         public static string DEFAULT_LANGUAGE = "Englisch";
@@ -20,6 +27,11 @@ namespace EasyWord.Common
         /// Version of the Application
         /// </summary>
         public string Version { get; set; }
+
+        /// <summary>
+        /// Version date for the Application
+        /// </summary>
+        public DateTime VersionDate { get; set; }
 
         /// <summary>
         /// Developer information
@@ -44,11 +56,6 @@ namespace EasyWord.Common
         public bool CaseSensitive { get; set; } = false;
 
         /// <summary>
-        /// Imported words
-        /// </summary>
-        public WordList Words { get; set; } = new WordList();
-
-        /// <summary>
         /// The Language the user is Currently trying to learn
         /// Resets Lectures when setted
         /// </summary>
@@ -58,7 +65,7 @@ namespace EasyWord.Common
             }
             set {
                 _language = value;
-                Lectures.Clear();
+                Lectures = new HashSet<string>();
             } 
         }
 

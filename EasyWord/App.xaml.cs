@@ -17,39 +17,84 @@ namespace EasyWord
         /// <summary>
         /// global application configuration
         /// </summary>
-        public static AppConfig Config { get; private set; }
+        
         public static Window MainWindow { get; set; }
+        #pragma warning disable CS8618 
+        public static AppConfig Config
+        {
+            get => _config;
+            set
+            {
+                _config = value;
+                try
+                {
+                    var (version, lastModified) = VersionProvider.GetVersion();
+                    _config.Version = version;
+                    _config.VersionDate = lastModified;
+                }
+                catch
+                {
+                    // set to unknown if any errors while reading
+                    _config.Version = "unknown";
+                    _config.VersionDate = new DateTime();
+                }
+                if (_config.Storage.HasWords) CreateSession();
+            }
+        }
+        private static AppConfig _config;
+        #pragma warning restore CS8618
+
+        /// <summary>
+        /// Global Storage of words
+        /// Shortcut to Config.Storage
+        /// </summary>
+        public static Storage Storage => Config.Storage;
+
+        /// <summary>
+        /// Currently active language
+        /// Shortcut to Config.Language
+        /// </summary>
+        public static string Language => Config.Language;
+
+        /// <summary>
+        /// Currently active lectures
+        /// Shortcut to Config.Lectures
+        /// </summary>
+        public static HashSet<string> Lectures => Config.Lectures;
+
+        /// <summary>
+        /// Public Session with Event to notify about changes
+        /// Allows for automatic view updates
+        /// </summary>
         public static Session? Session
         {
             get => _session;
             set
             {
                 _session = value;
-                OnSessionChanged();
+                OnSessionUpdated();
             }
         }
 
         private static Session? _session = null;
 
-        public static event EventHandler SessionChanged;
+        public static event EventHandler? SessionUpdated;
 
-        public App()
-        {
-            LoadSettings();
-
+        public App() {
             try
             {
-                Config.Version = VersionProvider.getVersion();
-            } catch
+                _config = FileProvider.LoadConfig<AppConfig>("config.xml", true);
+            }
+            catch
             {
-                // set to unknown if any errors while reading
-                Config.Version = "unknown";
+                // Use default if any errors while import
+                _config = new AppConfig();
             }
         }
 
-        private static void OnSessionChanged()
+        private static void OnSessionUpdated()
         {
-            SessionChanged?.Invoke(null, EventArgs.Empty);
+            SessionUpdated?.Invoke(null, EventArgs.Empty);
         }
 
         /// <summary>
@@ -57,27 +102,25 @@ namespace EasyWord
         /// </summary>
         public static void SaveSettings()
         {
-            FileProvider.SaveConfig(Config, "config.xml");
+            FileProvider.SaveConfig(Config, "config.xml", true);
         }
 
-        public static void LoadSettings()
+
+        public static void ExportState(string filePath)
         {
-            try
-            {
-                Config = FileProvider.LoadConfig<AppConfig>("config.xml", true);
-            }
-            catch
-            {
-                // Use default if any errors while import
-                Config = new AppConfig();
-            }
-            if (Config.Storage.HasWords) CreateSession();
+            FileProvider.SaveConfig(Config, filePath);
         }
 
-        public static void ReloadSettings()
+        public static void LoadState(string filePath)
+        {
+            Config = FileProvider.LoadConfig<AppConfig>(filePath);
+            SaveSettingsAndCreateSession();
+        }
+
+        public static void SaveSettingsAndCreateSession()
         {
             SaveSettings();
-            LoadSettings();
+            if (Storage.HasWords) CreateSession();
         }
 
         /// <summary>
@@ -85,11 +128,8 @@ namespace EasyWord
         /// </summary>
         public static void CreateSession()
         {
-            Word[] words = Config.Storage.GetWordsByLanguageAndLectures(Config.Language, Config.Lectures.ToList());
-            if (words.Length > 0)
-            {
-                Session = new Session(words);
-            }
+            Word[] words = Storage.GetWordsByLanguageAndLectures(Language, Lectures.ToList());
+            Session = new Session(words);
         }
 
         /// <summary>
