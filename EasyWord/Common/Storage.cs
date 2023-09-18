@@ -193,6 +193,13 @@ namespace EasyWord.Common
             }
 
             MergeWords(words);
+
+            // update the config to switch to newly imported language
+            App.Config.Language = langauge;
+            var lecturesSet = new HashSet<string>();
+            _ = lecturesSet.Add(GetDefaultLectureByLanguage(langauge));
+            App.Config.Lectures = lecturesSet;
+
             // return duplicates, will be handled by the caller
             return containedWords;
         }
@@ -256,6 +263,23 @@ namespace EasyWord.Common
         }
 
         /// <summary>
+        /// Get the default lecture for a language
+        /// The AppDefault will be prioritized, if it is not available, the first available lecture will be returned
+        /// </summary>
+        /// <param name="language"></param>
+        /// <returns></returns>
+        public string GetDefaultLectureByLanguage(string language)
+        {
+            string[] availableLectures = GetAvailableLecturesByLanguage(language);
+            string lecture = AppConfig.DEFAULT_LECTURE;
+            if (!availableLectures.Contains(AppConfig.DEFAULT_LECTURE) && availableLectures.Length > 0)
+            {
+                lecture = availableLectures[0];
+            }
+            return lecture;
+        }
+
+        /// <summary>
         /// Implementation of LectureCard to simplify implementation
         /// Also calculates the word count for each lecture
         /// </summary>
@@ -304,7 +328,7 @@ namespace EasyWord.Common
             {
                 string[] availableLectures = GetAvailableLecturesByLanguage(language);
                 string lecture = AppConfig.DEFAULT_LECTURE;
-                if (!availableLectures.Contains(AppConfig.DEFAULT_LECTURE))
+                if (!availableLectures.Contains(AppConfig.DEFAULT_LECTURE) && availableLectures.Length > 0)
                 {
                     lecture = availableLectures[0];
                 }
