@@ -68,34 +68,6 @@ namespace EasyWord.Common
         }
 
         /// <summary>
-        /// Deletes a specific word in the list
-        /// </summary>
-        /// <param name="id">The guid of the word to delete</param>
-        public void DeleteWord(Guid id)
-        {
-            _words = _words.Where(w => w.GetID() != id).ToArray();
-        }
-
-        /// <summary>
-        /// Let us change the Data of each word
-        /// The word will be identify with the uid
-        /// </summary>
-        /// <param name="id">The guid of the word to change</param>
-        /// <param name="german">The new german content</param>
-        /// <param name="translation">The new translation content</param>
-        /// <param name="lecture">The new lecture for the word</param>
-        public void ChangeWordData(Guid id, string german, string translation, string lecture)
-        {
-            var word = _words.FirstOrDefault(w => w.GetID() == id);
-            if (word != null)
-            {
-                word.German = german;
-                word.ForeignWord = translation;
-                word.Lecture = lecture;
-            }
-        }
-
-        /// <summary>
         /// Create a new Word and add it to the array
         /// </summary>
         /// <param name="german">The german version</param>
@@ -115,60 +87,6 @@ namespace EasyWord.Common
             else
             {
                 throw new DuplicateWordException();
-            }
-        }
-
-        /// <summary>
-        /// Hook function:
-        /// Will execute by SessionWord.cs
-        /// There the iteration is handled for the current session
-        /// and then will set the latest iteration value to the 
-        /// list in this storage class with this
-        /// </summary>
-        /// <param name="id">The guid of the word</param>
-        /// <param name="iteration">The iteration count to set</param>
-        public void SetIteration(Guid id, int iteration)
-        {
-            var word = _words.FirstOrDefault(w => w.GetID() == id);
-            if (word != null)
-            {
-                word.Iteration = iteration;
-            }
-        }
-
-        /// <summary>
-        /// Hook function:
-        /// Will execute by SessionWord.cs
-        /// There the valid value is handled for the current session
-        /// and then will set the latest valid value to the list
-        /// in this storage class with this
-        /// </summary>
-        /// <param name="id">The guid of the word</param>
-        /// <param name="valid">The valid count to set</param>
-        public void SetValid(Guid id, int valid)
-        {
-            var word = _words.FirstOrDefault(w => w.GetID() == id);
-            if (word != null)
-            {
-                word.Valid = valid;
-            }
-        }
-
-        /// <summary>
-        /// Hook funtion:
-        /// Will execute by SessionWord.cs
-        /// There the bucket is handled for the current session
-        /// and then will set the latest bucket value to the
-        /// list in this storage class with this
-        /// </summary>
-        /// <param name="id">The guid of the word</param>
-        /// <param name="bucket">The bucket to set the word to</param>
-        public void SetBucket(Guid id, int bucket)
-        {
-            var word = _words.FirstOrDefault(w => w.GetID() == id);
-            if (word != null)
-            {
-                word.Bucket = bucket;
             }
         }
 
@@ -193,7 +111,7 @@ namespace EasyWord.Common
         {
             return _words.Any(w =>
                 _compareIgnoreCase(w.German, word.German) &&
-                _compareIgnoreCase(w.ForeignWord, word.ForeignWord) &&
+                _compareIgnoreCase(w.Translation, word.Translation) &&
                 _compareIgnoreCase(w.Language, word.Language) &&
                 _compareIgnoreCase(w.Lecture, word.Lecture));
         }

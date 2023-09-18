@@ -85,6 +85,7 @@
                 <Button Name="BtnEdit" IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}" Style="{StaticResource MaterialDesignIconButton}" ToolTip="MaterialDesignIconButton" HorizontalAlignment="Center" VerticalAlignment="Top" Click="BtnSettings_Click" Grid.Column="1"> <materialDesign:PackIcon Kind="Pencil" /></Button>
                 -->
                 <!-- Word output -->
+                <TextBox Text="{Binding DataContext.ActiveWord.Answer}" />  <!--Example for editing binding-->
                 <TextBlock
                     Name="WordOutput"
                     Grid.Row="1" Grid.ColumnSpan="3"
