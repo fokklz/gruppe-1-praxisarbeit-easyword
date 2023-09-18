@@ -26,15 +26,8 @@
         <Rectangle Grid.Row="0" Grid.ColumnSpan="5" Fill="#19000000"/>
 
         <!--Dropdown Language-->
-        <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="10,0,0,0">
-            <ComboBox
-                x:Name="FilledComboBox"
-                Width="256"
-                materialDesign:HintAssist.Hint="Sprache"
-                Style="{StaticResource MaterialDesignFilledComboBox}" SelectionChanged="FilledComboBox_SelectionChanged">
-            </ComboBox>
-        </StackPanel>
-        
+        <ctls:SelectLanguage Grid.Column="1" LanguageChanged="SelectLanguage_LanguageChanged"/>
+
         <!--Button select all lections to learn-->
         <StackPanel 
             Orientation="Horizontal"
