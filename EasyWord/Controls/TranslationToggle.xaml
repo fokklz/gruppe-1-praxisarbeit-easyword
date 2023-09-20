@@ -34,7 +34,7 @@
             Grid.Column="2"
             VerticalAlignment="Center" HorizontalAlignment="Left"
             Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
-            Text="{Binding LearningLanguage}" Height="22" Width="0"
+            Text="{Binding LearningLanguage}" Height="22"
     />
 
 

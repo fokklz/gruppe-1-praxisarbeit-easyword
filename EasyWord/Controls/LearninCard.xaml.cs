@@ -82,9 +82,16 @@ namespace EasyWord.Controls
             App.Session.Next += (sender, e) =>
             {
                 Word = e.CurrentWord;
+                _updateWrongOutput(Word.Iteration - Word.Valid);
             };
             Word = App.Session.GetNextWord() ?? new Word();
+            _updateWrongOutput(Word.Iteration - Word.Valid);
             UpdateView();
+        }
+
+        private void _updateWrongOutput(int wrongCount)
+        {
+            WrongOutput.Text = wrongCount.ToString();
         }
 
         /// <summary>

@@ -241,8 +241,21 @@ namespace EasyWord.Common
                 _iteration++;
                 // move last displayed word to the end of the list
                 _currentWords = _words.Where(_filterWord).OrderBy(x => x.Guid == _lastWord ? 1 : 0).ThenBy(x => _random.Next()).ToArray();
+                if(_currentWords.Length == 0)
+                {
+                    MessageBox.Show("Geschaft!!!");
+                }
             }
             App.Config.SessionMode = 0;
+            
+            // update the buckets
+            Buckets = new int[5] {
+                        _words.Where(w => w.Bucket == 1).Count(),
+                        _words.Where(w => w.Bucket == 2).Count(),
+                        _words.Where(w => w.Bucket == 3).Count(),
+                        _words.Where(w => w.Bucket == 4).Count(),
+                        _words.Where(w => w.Bucket == 5).Count()
+                    };
             Next?.Invoke(this, new SessionNextEventArgs(GetNextWord() ?? new Word()));
         }
 

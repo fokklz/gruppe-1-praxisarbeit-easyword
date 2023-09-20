@@ -47,7 +47,7 @@
             Background="{DynamicResource MaterialDesignTextFieldBoxBackground}"
             Style="{StaticResource MaterialDesignIconButton}"
             ToolTip="Einstellungen"
-            Grid.Column="3" Click="BtnSettings_Click">
+            Grid.Column="4" Click="BtnSettings_Click">
             <materialDesign:PackIcon
             Kind="Cog" />
         </Button>
@@ -58,7 +58,7 @@
           Background="{DynamicResource MaterialDesignTextFieldBoxBackground}"
           Style="{StaticResource MaterialDesignIconButton}"
           ToolTip="Lektionen"
-          Grid.Column="4" Click="BtnLectures_Click">
+          Grid.Column="3" Click="BtnLectures_Click">
                   <materialDesign:PackIcon Kind="SelectGroup" />
         </Button>
         <!-- Textinput card -->

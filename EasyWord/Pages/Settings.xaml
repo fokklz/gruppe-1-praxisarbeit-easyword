@@ -81,7 +81,7 @@
             </Button>
             <Button 
                 x:Name="ResetBuckets"
-                Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2"
+                Grid.Column="1" Grid.Row="0"
                 HorizontalAlignment="Center"
                 Style="{StaticResource MaterialDesignRaisedButton}" Click="ResetBuckets_Click">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
@@ -91,14 +91,26 @@
             </Button>
             <Button 
                 x:Name="ResetAll"
-                Grid.Column="2"
+                Grid.Column="0" Grid.Row="1" 
                 HorizontalAlignment="Center"
                 Style="{StaticResource MaterialDesignRaisedButton}" Click="ResetAll_Click">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                     <materialDesign:PackIcon Kind="Delete" Margin="0,2.5,5,0"/>
-                    <TextBlock Text="Daten Löschen"/>
+                    <TextBlock Text="Daten Löschen"/>                    
                 </StackPanel>
             </Button>
+
+            <Button 
+                x:Name="DeleteLanguage"
+                Grid.Column="1" Grid.Row="1" 
+                HorizontalAlignment="Center"
+                Style="{StaticResource MaterialDesignRaisedButton}" Click="DeleteLanguage_Click">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <materialDesign:PackIcon Kind="Delete" Margin="0,2.5,5,0"/>
+                    <TextBlock Text="Sprache Löschen"/>
+                </StackPanel>
+            </Button>
+
         </Grid>
 
         <!--English settings-->
@@ -107,16 +119,15 @@
             Grid.Row="2" Grid.Column="3" 
             VerticalAlignment="Center" 
             IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
-            Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
-            ToolTip="MaterialDesignFloatingActionMiniButton" Click="ToggleLanguageDirection_Click">
-            <materialDesign:PackIcon
+            Style="{StaticResource MaterialDesignPaperButton}" Margin="0,0,20,0"
+            ToolTip="MaterialDesignFloatingActionMiniButton" Click="ToggleLanguageDirection_Click"> 
+            <materialDesign:PackIcon 
                      Kind="Autorenew" />
         </Button>
 
         <ctls:TranslationToggle
             x:Name="TranslationToggle"
             Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2"
-            Rotated="True"
             Margin="10,0,0,0"
             VerticalAlignment="Center"
             />

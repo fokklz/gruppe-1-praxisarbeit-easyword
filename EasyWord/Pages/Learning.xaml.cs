@@ -120,11 +120,13 @@ namespace EasyWord.Pages
                 SubmitButton.IsEnabled = false;
                 WordInput.IsEnabled = false;
                 DeleteLabel.Visibility = Visibility.Hidden;
+                BtnLectures.IsEnabled = false;
                 return;
             }
 
             SubmitButton.IsEnabled = true;
             WordInput.IsEnabled = true;
+            BtnLectures.IsEnabled = true;
             DeleteLabel.Visibility = Visibility.Visible;
 
             // reset validation and focus input
