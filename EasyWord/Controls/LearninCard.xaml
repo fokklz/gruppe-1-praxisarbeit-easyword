@@ -36,11 +36,11 @@
         </TextBlock>
         
         <!-- Bucket Display -->
-        <local:Emoticon x:Name="BucketDisplay" Grid.Row="2" Values="2,3,5,6,8" Active="3" Margin="0,0,0,-20" >
-            <local:Emoticon.RenderTransform>
+        <local:BucketDisplay x:Name="BucketDisplay" Grid.Row="2" Margin="0,0,0,-20" >
+            <local:BucketDisplay.RenderTransform>
                 <ScaleTransform ScaleX="1.6" ScaleY="1.6"/>
-            </local:Emoticon.RenderTransform>
-        </local:Emoticon>
+            </local:BucketDisplay.RenderTransform>
+        </local:BucketDisplay>
 
         <!-- Wrong output -->
         <StackPanel 

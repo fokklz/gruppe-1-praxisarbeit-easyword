@@ -24,28 +24,66 @@ namespace EasyWord.Controls
         public bool Rotated {  
             get
             {
-                return _rotated ;
+                return _rotated;
             } 
             set 
             {
-                if (value)
-                {
-                    ArrowDirection.Kind = MaterialDesignThemes.Wpf.PackIconKind.ArrowLeftThin;
-                }else
-                {
-                    ArrowDirection.Kind = MaterialDesignThemes.Wpf.PackIconKind.ArrowRightThin;
-                }
                 _rotated = value;
-                
+                _upateRotation();
             } 
         }
 
-        public string LearningLanguage { get; set; } = "English";
+        public string LearningLanguage { get; set; } = App.Language;
+
+
 
         public TranslationToggle()
         {
             InitializeComponent();
             DataContext = this;
+            App.SessionUpdated += (sender, e) =>
+            {
+                LearningLanguage = App.Language;
+            };
+
+            App.Config.SettingsChanged += (sender, e) =>
+            {
+                
+                if (e.Setting == "TranslationDirection")
+                {
+                    _rotated = App.Config.TranslationDirection;
+                    _upateRotation();
+                }
+
+            };
+
+            App.ConfigChanged += (sender, e) =>
+            {
+                App.Config.SettingsChanged += (sender, e) =>
+                {
+                    
+                    if (e.Setting == "TranslationDirection")
+                    {
+                        _rotated = App.Config.TranslationDirection;
+                        _upateRotation();
+                    }
+
+                };
+            };
+           _upateRotation();
+
+        }
+
+        private void _upateRotation()
+        {
+            if (_rotated)
+            {
+                ArrowDirection.Kind = MaterialDesignThemes.Wpf.PackIconKind.ArrowLeftThin;
+            }
+            else
+            {
+                ArrowDirection.Kind = MaterialDesignThemes.Wpf.PackIconKind.ArrowRightThin;
+            }
         }
     }
 }

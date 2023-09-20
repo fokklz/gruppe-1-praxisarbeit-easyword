@@ -178,7 +178,21 @@ namespace EasyWord.Pages
 
         private void ToggleLanguageDirection_Click(object sender, RoutedEventArgs e)
         {
-            TranslationToggle.Rotated = !TranslationToggle.Rotated;
+            if(App.Config.TranslationDirection)
+            {
+                App.Config.TranslationDirection = false;
+            }
+            else
+            {
+                App.Config.TranslationDirection = true;
+            }
+            
+        }
+
+        private void DeleteLanguage_Click(object sender, RoutedEventArgs e)
+        {
+            App.Storage.Clear(App.Language);
+            App.SaveSettingsAndCreateSession();
         }
     }
 }
