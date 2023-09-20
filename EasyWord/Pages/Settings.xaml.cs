@@ -75,8 +75,8 @@ namespace EasyWord.Pages
         /// <param name="e"></param>
         private void ResetAll_Click(object sender, RoutedEventArgs e)
         {
-            App.Storage.ClearAll();
-            App.SaveSettings();
+            App.Config = new AppConfig();
+            App.SaveSettingsAndCreateSession();
         }
 
         /// <summary>
@@ -95,7 +95,7 @@ namespace EasyWord.Pages
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ExportState_Click(object sender, RoutedEventArgs e)
+        private async void ExportState_Click(object sender, RoutedEventArgs e)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.Filter = "XML Files (*.xml)|*.xml";
@@ -107,9 +107,8 @@ namespace EasyWord.Pages
             {
                 try
                 {
-                    string exportFilePath = saveFileDialog.FileName;
-                    App.ExportState(exportFilePath);
-                    MessageBox.Show($"Exportieren zu XML erfolgreich. Datei gespeichert in: {exportFilePath}", "Export erfolgreich", MessageBoxButton.OK, MessageBoxImage.Information);
+                    await Task.Run(() => App.ExportState(saveFileDialog.FileName));
+                    MessageBox.Show($"Der Stand wurde erfolreich Exportiert, in die Datei: \n{saveFileDialog.FileName}", "Import erfolgreich", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 catch
                 {
@@ -124,7 +123,7 @@ namespace EasyWord.Pages
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ImportState_Click(object sender, RoutedEventArgs e)
+        private async void ImportState_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog importPath = new OpenFileDialog();
             importPath.Filter = "XML Files (*.xml)|*.xml";
@@ -135,7 +134,8 @@ namespace EasyWord.Pages
             {
                 try
                 {
-                    App.LoadState(importPath.FileName);
+                    await Task.Run(() => App.LoadState(importPath.FileName));
+                    MessageBox.Show("Der Stand wurde erfolreich Importiert", "Import erfolgreich", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 catch
                 {

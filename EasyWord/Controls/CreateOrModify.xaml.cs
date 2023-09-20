@@ -46,6 +46,11 @@ namespace EasyWord.Controls
             get => _word;
             set
             {
+                if(_originalWord != null)
+                {
+                    // cancle changes on new word without saving
+                    Cancel_Click(null, null);
+                }
                 _originalWord = new Word(value.German, value.Translation, value.Language, value.Lecture);
                 _word = value;
                 OnPropertyChanged();
@@ -54,7 +59,7 @@ namespace EasyWord.Controls
             }
         }
         private Word _word = new Word();
-        private Word _originalWord = new Word();
+        private Word? _originalWord = null;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -133,8 +138,9 @@ namespace EasyWord.Controls
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Cancel_Click(object sender, RoutedEventArgs e)
+        private void Cancel_Click(object? sender, RoutedEventArgs? e)
         {
+            if(_originalWord == null) return;
             Word.Question = _originalWord.Question;
             Word.Answer = _originalWord.Answer;
             Word.Lecture = _originalWord.Lecture;
@@ -147,7 +153,13 @@ namespace EasyWord.Controls
 
         private void Save_Click(object sender, RoutedEventArgs e)
         {
+            if (_originalWord == null) return;
+            if(_originalWord.Lecture != Word.Lecture || _originalWord.Language != Word.Language)
+            {
+                App.Session?.CleanUp();
+            }
             App.Config.SessionMode = 0;
+            _originalWord = null;
         }
     }
 }

@@ -41,6 +41,7 @@ namespace EasyWord.Controls
             InitializeComponent();
             DataContext = this;
             App.SessionUpdated += App_SessionChanged;
+            App.ConfigChanged += App_ConfigChanged;
         }
 
         /// <summary>
@@ -51,6 +52,24 @@ namespace EasyWord.Controls
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
+        /// <summary>
+        /// Called when the Configuration changed 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void App_ConfigChanged(object? sender, EventArgs e)
+        {
+            App.Config.SettingsChanged += (sender, e) =>
+            {
+                if (e.Setting == "SessionMode" || e.Setting == "TranslationDirection")
+                {
+                    UpdateView();
+                }
+            };
+            UpdateView();
+        }
+
 
         /// <summary>
         /// Handles session changes
@@ -65,6 +84,26 @@ namespace EasyWord.Controls
                 Word = e.CurrentWord;
             };
             Word = App.Session.GetNextWord() ?? new Word();
+            UpdateView();
+        }
+
+        /// <summary>
+        /// Will update the view based on the current session state
+        /// </summary>
+        private void UpdateView()
+        {
+            if (App.Session != null && App.Session.IsInitialized() && App.Storage.HasWords)
+            {
+                BucketDisplay.Visibility = Visibility.Visible;
+                BtnEdit.Visibility = Visibility.Visible;
+                WrongDisplay.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                BucketDisplay.Visibility = Visibility.Hidden;
+                BtnEdit.Visibility = Visibility.Hidden;
+                WrongDisplay.Visibility = Visibility.Hidden;
+            }
         }
 
         /// <summary>

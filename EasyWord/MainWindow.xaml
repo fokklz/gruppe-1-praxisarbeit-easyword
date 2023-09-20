@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EasyWord"
         mc:Ignorable="d"
-        Title="EasyWord" Width="500" Height="500" MinWidth="500" MinHeight="500">
+        Title="EasyWord" Width="500" Height="500" MinWidth="500" MinHeight="500"
+        WindowStartupLocation="CenterOwner">
     <Grid>
         <Frame Name="MainFrame" NavigationUIVisibility="Hidden" />
     </Grid>

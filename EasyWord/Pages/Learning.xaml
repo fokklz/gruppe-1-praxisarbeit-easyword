@@ -22,7 +22,8 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="1*"/>
             <RowDefinition Height="3*"/>
-            <RowDefinition Height="1*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="1.2*"/>
         </Grid.RowDefinitions>
 
         <!-- Title -->
@@ -34,9 +35,8 @@
         <Button
             Name="BtnCsvImport"
             Background="{DynamicResource MaterialDesignTextFieldBoxBackground}"
-            IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
             Style="{StaticResource MaterialDesignIconButton}"
-            ToolTip="MaterialDesignIconButton"
+            ToolTip="CSV Importieren"
             Grid.Column="2" Click="BtnCsvImport_Click">
             <materialDesign:PackIcon
             Kind="TrayArrowUp" />
@@ -45,9 +45,8 @@
         <Button
             Name="BtnSettings"
             Background="{DynamicResource MaterialDesignTextFieldBoxBackground}"
-            IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
             Style="{StaticResource MaterialDesignIconButton}"
-            ToolTip="MaterialDesignIconButton"
+            ToolTip="Einstellungen"
             Grid.Column="3" Click="BtnSettings_Click">
             <materialDesign:PackIcon
             Kind="Cog" />
@@ -57,12 +56,10 @@
         <Button
           Name="BtnLectures"
           Background="{DynamicResource MaterialDesignTextFieldBoxBackground}"
-          IsEnabled="{Binding DataContext.ControlsEnabled, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
           Style="{StaticResource MaterialDesignIconButton}"
-          ToolTip="MaterialDesignIconButton"
+          ToolTip="Lektionen"
           Grid.Column="4" Click="BtnLectures_Click">
-                  <materialDesign:PackIcon
-          Kind="SelectGroup" />
+                  <materialDesign:PackIcon Kind="SelectGroup" />
         </Button>
         <!-- Textinput card -->
         <materialDesign:Card
@@ -77,15 +74,29 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-
-
-                <ctls:CreateOrModify x:Name="CreateOrModifyElm" Grid.Column="0" Grid.Row="0" VerticalAlignment="Stretch" Panel.ZIndex="2" Padding="0,0,0,10" />
-                <ctls:LearninCard x:Name="LearningCardElm" Grid.Column="0" Grid.Row="0" VerticalAlignment="Stretch" Panel.ZIndex="0" Padding="0,0,0,10"/>
+                <ctls:CreateOrModify x:Name="CreateOrModifyElm" 
+                                     Grid.Column="0" Grid.Row="0" 
+                                     VerticalAlignment="Stretch" Panel.ZIndex="2" Padding="0,0,0,10" />
+                <ctls:LearninCard x:Name="LearningCardElm" 
+                                  Grid.Column="0" Grid.Row="0" 
+                                  VerticalAlignment="Stretch" Panel.ZIndex="0" Padding="0,0,0,10"/>
             </Grid>
         </materialDesign:Card>
         
+        <!-- Delete Word -->
+        <TextBlock 
+            x:Name="DeleteLabel"
+            Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="2"
+            FontWeight="Medium"
+            FontSize="16"
+            HorizontalAlignment="Left" VerticalAlignment="Top" 
+            Margin="20,-10,0,0"
+            Background="Transparent" 
+            Foreground="Red"
+            Text="Löschen" MouseLeftButtonUp="DeleteLabel_MouseLeftButtonUp" />
+
         <!-- Word input -->
-        <StackPanel Grid.Column="1"  Grid.Row="2" Grid.ColumnSpan="2" VerticalAlignment="Top" Margin="10, 25, 15, 20">
+        <StackPanel Grid.Column="1"  Grid.Row="3" Grid.ColumnSpan="2" VerticalAlignment="Top" Margin="10, 25, 15, 20">
             <TextBox
                 Name="WordInput"
                 materialDesign:HintAssist.Hint="Übersetzung"
@@ -105,7 +116,7 @@
         <!-- Button Check -->
         <Button 
             Name="SubmitButton" 
-            Grid.Column="3" Grid.Row="2" Grid.ColumnSpan="2"
+            Grid.Column="3" Grid.Row="3" Grid.ColumnSpan="2"
             Content="Check" 
             HorizontalAlignment="Center" VerticalAlignment="Top"
             Height="42" Width="102" Visibility="Visible" Margin="0,27,10,0" 
