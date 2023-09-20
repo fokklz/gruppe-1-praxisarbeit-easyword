@@ -11,12 +11,13 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="80"/>
             <ColumnDefinition Width="3*"/>
-            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="0.8*"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="3*"/>
-            <RowDefinition Height="0.8*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="30"/>
         </Grid.RowDefinitions>
         <Button Name="BtnEdit"
                 Grid.Column="2"
@@ -25,36 +26,41 @@
                 HorizontalAlignment="Center" VerticalAlignment="Center" Click="BtnEdit_Click" >
             <materialDesign:PackIcon Kind="Pencil" />
         </Button>
+        
         <!-- Word output -->
         <TextBlock
-     Name="WordOutput"
-     Grid.Row="1" Grid.ColumnSpan="3"
-     FontSize="20" TextAlignment="Center" VerticalAlignment="Center" >
-     <Run Language="de-ch" Text="{Binding DataContext.Word.Question}"/>
+             Name="WordOutput"
+             Grid.Row="1" Grid.ColumnSpan="3"
+             FontSize="20" TextAlignment="Center" VerticalAlignment="Center" >
+             <Run Language="de-ch" Text="{Binding DataContext.Word.Question}"/>
         </TextBlock>
+        
         <!-- Bucket Display -->
-        <local:Emoticon Grid.Row="2" VerticalAlignment="Center" Values="2,3,5,6,8" Active="3" Margin="0,-10,0,0" >
+        <local:Emoticon x:Name="BucketDisplay" Grid.Row="2" Values="2,3,5,6,8" Active="3" Margin="0,0,0,-20" >
             <local:Emoticon.RenderTransform>
                 <ScaleTransform ScaleX="1.6" ScaleY="1.6"/>
             </local:Emoticon.RenderTransform>
         </local:Emoticon>
 
         <!-- Wrong output -->
-        <StackPanel Grid.Column="1" Grid.Row="3" Grid.ColumnSpan="2" Opacity="0.8" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom"  >
+        <StackPanel 
+            x:Name="WrongDisplay" 
+            Grid.Column="2" Grid.Row="3"
+            Opacity="0.8" Orientation="Horizontal" VerticalAlignment="Bottom" Margin="0,0,10,0"  >
             <TextBlock
-         x:Name="WrongOutput"
-         Style="{StaticResource MaterialDesignBody2TextBlock}"
-         Text="10"
-         VerticalAlignment="Bottom"/>
+                x:Name="WrongOutput"
+                Style="{StaticResource MaterialDesignBody2TextBlock}"
+                Text="10"
+                VerticalAlignment="Bottom"/>
             <TextBlock
-         Style="{StaticResource MaterialDesignBody2TextBlock}"
-         Text=" x"
-         VerticalAlignment="Bottom"/>
+                Style="{StaticResource MaterialDesignBody2TextBlock}"
+                Text=" x"
+                VerticalAlignment="Bottom"/>
 
             <materialDesign:PackIcon Kind="AlphabeticalVariantOff"
-         Opacity="0.6"
-         Height="23" Width="32"
-         Margin="0,0,0,-3"/>
+                 Opacity="0.6"
+                 Height="23" Width="32"
+                 Margin="0,0,0,-3"/>
         </StackPanel>
     </Grid>
     

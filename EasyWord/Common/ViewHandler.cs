@@ -15,7 +15,7 @@ namespace EasyWord.Common
     /// 
     /// When using the class a initial navigation has to be triggered
     /// </summary>
-    public class ViewHandler
+    public static class ViewHandler
     {
         /// <summary>
         /// The main frame of the application
@@ -62,15 +62,14 @@ namespace EasyWord.Common
             {
                 case "Settings":
                     MainFrame.Navigate(settingsPage);
-                    //settingsPage.UpdateView();
+                    settingsPage.UpdateView();
                     break;
                 case "Lectures":
                     MainFrame.Navigate(lecturesPage);
-                    //lecturesPage.UpdateView();
+                    lecturesPage.UpdateView();
                     break;
                 default:
                     MainFrame.Navigate(learningPage);
-                    //learningPage.UpdateView();
                     App.CreateSession();
                     break;
             }

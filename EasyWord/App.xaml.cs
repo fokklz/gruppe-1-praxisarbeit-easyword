@@ -132,8 +132,7 @@ namespace EasyWord
         /// </summary>
         public static void CreateSession()
         {
-            Word[] words = Storage.GetWordsByLanguageAndLectures(Language, Lectures.ToList());
-            Session = new Session(words);
+            Session = new Session(Language, Lectures.ToList());
         }
 
         /// <summary>

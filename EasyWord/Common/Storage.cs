@@ -98,6 +98,17 @@ namespace EasyWord.Common
             }
         }
 
+        /// <summary>
+        /// Delete a word from the array
+        /// </summary>
+        /// <param name="word">The word to delete</param>
+        public void DeleteWord(Word word)
+        {
+            List<Word> words = _words.ToList();
+            words.Remove(word);
+            _words = words.ToArray();
+        }
+
 
         /// <summary>
         /// Compares two strings with ignoring case sensitive
@@ -217,7 +228,10 @@ namespace EasyWord.Common
                 }
             }
 
-            MergeWords(words);
+            // merge words with current array
+            List<Word> listWords = _words.ToList();
+            listWords.AddRange(words);
+            _words = listWords.ToArray();
 
             // update the config to switch to newly imported language
             App.Config.Language = langauge;

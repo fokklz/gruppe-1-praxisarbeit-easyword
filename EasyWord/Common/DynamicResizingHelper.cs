@@ -18,7 +18,7 @@ namespace EasyWord.Common
     /// 
     /// a basic implementation can be found on each Page
     /// </summary>
-    public class DynamicResizingHelper
+    public static class DynamicResizingHelper
     {
         /// <summary>
         /// Set min widths for columns
