@@ -55,13 +55,10 @@ namespace EasyWord.Pages
         public event PropertyChangedEventHandler? PropertyChanged;
 
         /// <summary>
-        /// The text from the WordInput
+        /// The text of the input field
         /// </summary>
-        public string WordInputText { get; set; } 
+        public string WordInputText { get; set; } = "";
 
-        public Word ActiveWord => App.Session?.GetNextWord() ?? new Word();
-
-        /// <summary>
         /// Initialize the component, set the first word, set the input fields and finally update the view
         /// so the user can start learning
         /// </summary>
@@ -71,32 +68,38 @@ namespace EasyWord.Pages
             DataContext = this;
             App.ConfigChanged += App_ConfigChanged;
             App.SessionUpdated += App_SessionChanged;
-            App.Config.SettingsChanged += (sender, e) =>
-            {
-                if (e.Setting.Equals("SessionMode"))
-                { // If greater 0 editing or creating
-                    _updateCard();
-                }
-            };
+            App_ConfigChanged(null, EventArgs.Empty);
         }
 
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        /// <summary>
+        /// Hook to simplify the event emitting
+        /// </summary>
+        /// <param name="propertyName">The name of the property (should be inferred when inside a setter)</param>
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        /// <summary>
+        /// Hook called when the configuration changed
+        /// Will update the listeners to update the view
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void App_ConfigChanged(object? sender, EventArgs e)
         {
             App.Config.SettingsChanged += (sender, e) =>
             {
-                if (e.Setting.Equals("SessionMode"))
-                { // If greater 0 editing or creating
-                    _updateCard();
-                }
+                UpdateView();
             };
+            UpdateView();
         }
 
+        /// <summary>
+        /// Update the view on session changes
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void App_SessionChanged(object? sender, EventArgs e)
         {
             UpdateView();
@@ -106,28 +109,34 @@ namespace EasyWord.Pages
         /// Updates the view to reflect the current state of the application
         /// </summary>
         public void UpdateView()
-        {   
+        {
             _updateTitle();
             _updateCard();
-           // WordOutput.Text = ActiveWord.Question;
 
-            if (App.Session != null && App.Session.IsInitialized())
+            if (App.Session == null
+                || !App.Session.IsInitialized()
+                || !App.Storage.HasWords)
             {
-                SubmitButton.IsEnabled = true;
-                WordInput.IsEnabled = true;
-
-
-                Validation.ClearInvalid(WordInput.GetBindingExpression(TextBox.TextProperty));
-                WordInput.Focus();
-
-                UpdateWrongOutput();
+                SubmitButton.IsEnabled = false;
+                WordInput.IsEnabled = false;
+                DeleteLabel.Visibility = Visibility.Hidden;
+                BtnLectures.IsEnabled = false;
                 return;
             }
 
-            SubmitButton.IsEnabled = false;
-            WordInput.IsEnabled = false;
+            SubmitButton.IsEnabled = true;
+            WordInput.IsEnabled = true;
+            BtnLectures.IsEnabled = true;
+            DeleteLabel.Visibility = Visibility.Visible;
+
+            // reset validation and focus input
+            Validation.ClearInvalid(WordInput.GetBindingExpression(TextBox.TextProperty));
+            WordInput.Focus();
         }
 
+        /// <summary>
+        /// Update the card and the inputs based on the current session mode
+        /// </summary>
         private void _updateCard()
         {
             if (App.Config.SessionMode > 0)
@@ -140,7 +149,16 @@ namespace EasyWord.Pages
                 CreateOrModifyElm.Visibility = Visibility.Hidden;
                 LearningCardElm.Visibility = Visibility.Visible;
             }
+            if(App.Config.SessionMode > 0)
+            {
+                SubmitButton.IsEnabled = false;
+                WordInput.IsEnabled = false;
+                return;
+            }
+            SubmitButton.IsEnabled = true;
+            WordInput.IsEnabled = true;
         }
+
 
         /// <summary>
         /// Helper function to update the title of the page
@@ -153,25 +171,16 @@ namespace EasyWord.Pages
             if (App.Config.Storage.HasWords)
             {
                 title = App.Config.Language;
-                SubTitle.Text = $"{string.Join(",", App.Config.Lectures)}";
-                SubTitle.Visibility = Visibility.Visible;
-                SubTitle.Height = double.NaN;
+                LearningSubTitle.Text = $"{string.Join(",", App.Config.Lectures)}";
+                LearningSubTitle.Visibility = Visibility.Visible;
+                LearningSubTitle.Height = double.NaN;
             }
             else
             {
-                SubTitle.Visibility = Visibility.Hidden;
-                SubTitle.Height = 0;
+                LearningSubTitle.Visibility = Visibility.Hidden;
+                LearningSubTitle.Height = 0;
             }
-            Title.Text = title;
-        }
-
-        /// Updates WrongOutputs with the number of incorrect attempts for the
-        /// current word.
-        /// </summary>
-        private void UpdateWrongOutput()
-        {
-            Word currentWord = ActiveWord;
-            // WrongOutput.Text = $"{currentWord.Iteration - currentWord.Valid}";
+            LearningTitle.Text = title;
         }
 
         /// <summary>
@@ -195,11 +204,21 @@ namespace EasyWord.Pages
         }
 
         /// <summary>
+        /// Navigate to the lectures page
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void BtnLectures_Click(object sender, RoutedEventArgs e)
+        {
+            ViewHandler.NavigateToPage("Lectures");
+        }
+
+        /// <summary>
         /// Event handler for the "btnCsvImport" button click
         /// </summary>
         /// <param name="sender">The object that triggered the event</param>
         /// <param name="e">Additional event data</param>
-        private void BtnCsvImport_Click(object sender, RoutedEventArgs e)
+        private async void BtnCsvImport_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -210,18 +229,18 @@ namespace EasyWord.Pages
                 {
                     try
                     {
-                        List<Word> duplicates = App.Config.Storage.ImportFromCSV(openFileDialog.FileName);
+                        List<Word> duplicates = await Task.Run(() => App.Config.Storage.ImportFromCSV(openFileDialog.FileName));
 
                         if (duplicates.Count > 0)
                         {
                             CustomDialog customDialog = new CustomDialog()
                             {
-                                Owner = App.MainWindow,
+                                Owner = Application.Current.MainWindow,
                                 Data = duplicates
                             };
                             customDialog.ShowDialog();
                         }
-                    } catch (CancelByUser ex)
+                    } catch (CancelByUser)
                     {
                         return;
                     }
@@ -299,9 +318,21 @@ namespace EasyWord.Pages
             SubmitButton.Focus();
         }
 
-        private void BtnLectures_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Label action to delete the current word with a confirmation dialog
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void DeleteLabel_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            ViewHandler.NavigateToPage("Lectures");
+            Word? word = App.Session?.GetNextWord();
+            if (word == null) return;
+
+            var confirm = MessageBox.Show($"Möchtest du das Wort {word.German}/{word.Translation} wirklich löschen?", "Wort löschen", MessageBoxButton.YesNo);
+            if(confirm == MessageBoxResult.No) return;
+
+            App.Storage.DeleteWord(word);
+            App.CreateSession();
         }
     }
 }

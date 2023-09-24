@@ -42,7 +42,7 @@ namespace EasyWord.Controls
         /// <summary>
         /// Event handler for language changed
         /// </summary>
-        public event EventHandler<LanguageChangedEventArgs> LanguageChanged;
+        public event EventHandler<LanguageChangedEventArgs>? LanguageChanged;
 
         public SelectLanguage()
         {
@@ -63,9 +63,6 @@ namespace EasyWord.Controls
         /// <param name="e"></param>
         private void OnSessionUpdated(object? sender, EventArgs? e)
         {
-            // only update if the languages count changed since initialization
-            if (_languages == string.Join(",", App.Storage.GetAvailableLanguages())) return;
-
             int index = 0;
             int activeIndex = 0;
             LanguageSelect.Items.Clear();

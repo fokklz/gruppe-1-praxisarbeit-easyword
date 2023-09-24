@@ -24,28 +24,51 @@ namespace EasyWord.Controls
         public bool Rotated {  
             get
             {
-                return _rotated ;
+                return _rotated;
             } 
             set 
             {
-                if (value)
-                {
-                    ArrowDirection.Kind = MaterialDesignThemes.Wpf.PackIconKind.ArrowLeftThin;
-                }else
-                {
-                    ArrowDirection.Kind = MaterialDesignThemes.Wpf.PackIconKind.ArrowRightThin;
-                }
                 _rotated = value;
-                
+                _upateRotation();
             } 
         }
 
-        public string LearningLanguage { get; set; } = "English";
+        public string LearningLanguage { get; set; } = App.Language;
+
+
 
         public TranslationToggle()
         {
             InitializeComponent();
             DataContext = this;
+            App.SessionUpdated += App_SessionUpdated;
+            App.RegisterSettingsChangedEventListener(Config_SettingsChanged, true);
+        }
+
+        private void App_SessionUpdated(object? sender, EventArgs e)
+        {
+            LearningLanguage = App.Language;
+        }
+
+        private void Config_SettingsChanged(object? sender, Data.Models.SettingChangedEventArgs e)
+        {
+            if (e.Setting == "TranslationDirection" || e.Setting == "*")
+            {
+                _rotated = App.Config.TranslationDirection;
+                _upateRotation();
+            }
+        }
+
+        private void _upateRotation()
+        {
+            if (_rotated)
+            {
+                ArrowDirection.Kind = MaterialDesignThemes.Wpf.PackIconKind.ArrowLeftThin;
+            }
+            else
+            {
+                ArrowDirection.Kind = MaterialDesignThemes.Wpf.PackIconKind.ArrowRightThin;
+            }
         }
     }
 }

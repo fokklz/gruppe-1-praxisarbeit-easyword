@@ -75,8 +75,8 @@ namespace EasyWord.Pages
         /// <param name="e"></param>
         private void ResetAll_Click(object sender, RoutedEventArgs e)
         {
-            App.Storage.ClearAll();
-            App.SaveSettings();
+            App.Config = new AppConfig();
+            App.SaveSettingsAndCreateSession();
         }
 
         /// <summary>
@@ -87,7 +87,75 @@ namespace EasyWord.Pages
         private void ResetStats_Click(object sender, RoutedEventArgs e)
         {
             App.Storage.ResetAllStatistics();
-            App.SaveSettings();
+            App.SaveSettingsAndCreateSession();
+        }
+
+
+        /// <summary>
+        /// Reset all buckets
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ResetBuckets_Click(object sender, RoutedEventArgs e)
+        {
+            App.Storage.ResetAllBuckets();
+            App.SaveSettingsAndCreateSession();
+        }
+
+        /// <summary>
+        /// Delete the selected language
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void DeleteLanguage_Click(object sender, RoutedEventArgs e)
+        {
+            App.Storage.Clear(App.Language);
+
+            string[] languages = App.Storage.GetAvailableLanguages();
+            if(languages.Length > 0)
+            {
+                App.Config.Language = languages[0];
+            }
+
+            App.SaveSettingsAndCreateSession();
+        }
+
+        /// <summary>
+        /// enable for case sensitive
+        /// </summary>
+        /// <param name="sender">The sender of the event</param>
+        /// <param name="e">The rounted event args</param>
+        private void CaseSensitive_Checked(object sender, RoutedEventArgs e)
+        {
+            App.Config.CaseSensitive = true;
+        }
+
+        /// <summary>
+        /// disable for case sensitive
+        /// </summary>
+        /// <param name="sender">The sender of the event</param>
+        /// <param name="e">The rounted event args</param>
+        private void CaseSensitive_Unchecked(object sender, RoutedEventArgs e)
+        {
+            App.Config.CaseSensitive = false;
+        }
+
+        /// <summary>
+        /// Handle the change of the translation direction
+        /// </summary>
+        /// <param name="sender">The sender of the event</param>
+        /// <param name="e">The rounted event args</param>
+        private void ToggleLanguageDirection_Click(object sender, RoutedEventArgs e)
+        {
+            if(App.Config.TranslationDirection)
+            {
+                App.Config.TranslationDirection = false;
+            }
+            else
+            {
+                App.Config.TranslationDirection = true;
+            }
+
         }
 
         /// <summary>
@@ -95,7 +163,7 @@ namespace EasyWord.Pages
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ExportState_Click(object sender, RoutedEventArgs e)
+        private async void ExportState_Click(object sender, RoutedEventArgs e)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.Filter = "XML Files (*.xml)|*.xml";
@@ -107,9 +175,8 @@ namespace EasyWord.Pages
             {
                 try
                 {
-                    string exportFilePath = saveFileDialog.FileName;
-                    App.ExportState(exportFilePath);
-                    MessageBox.Show($"Exportieren zu XML erfolgreich. Datei gespeichert in: {exportFilePath}", "Export erfolgreich", MessageBoxButton.OK, MessageBoxImage.Information);
+                    await Task.Run(() => App.ExportState(saveFileDialog.FileName));
+                    MessageBox.Show($"Der Stand wurde erfolreich Exportiert, in die Datei: \n{saveFileDialog.FileName}", "Import erfolgreich", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 catch
                 {
@@ -122,9 +189,9 @@ namespace EasyWord.Pages
         /// <summary>
         /// Import Words with stats
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ImportState_Click(object sender, RoutedEventArgs e)
+        /// <param name="sender">The sender of the event</param>
+        /// <param name="e">The rounted event args</param>
+        private async void ImportState_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog importPath = new OpenFileDialog();
             importPath.Filter = "XML Files (*.xml)|*.xml";
@@ -135,50 +202,14 @@ namespace EasyWord.Pages
             {
                 try
                 {
-                    App.LoadState(importPath.FileName);
+                    await Task.Run(() => App.LoadState(importPath.FileName));
+                    MessageBox.Show("Der Stand wurde erfolreich Importiert", "Import erfolgreich", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 catch
                 {
                     MessageBox.Show("Fehler beim Laden der Datei", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
-        }
-
-        /// <summary>
-        /// enable for case sensitive
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void CaseSensitive_Checked(object sender, RoutedEventArgs e)
-        {
-            App.Config.CaseSensitive = true;
-        }
-
-        /// <summary>
-        /// disable for case sensitive
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void CaseSensitive_Unchecked(object sender, RoutedEventArgs e)
-        {
-            App.Config.CaseSensitive = false;
-        }
-
-
-        /// <summary>
-        /// Reset all buckets
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ResetBuckets_Click(object sender, RoutedEventArgs e)
-        {
-            App.Storage.ResetAllBuckets();
-            App.SaveSettings();
-        }
-
-        private void ToggleLanguageDirection_Click(object sender, RoutedEventArgs e)
-        {
-            TranslationToggle.Rotated = !TranslationToggle.Rotated;
         }
     }
 }

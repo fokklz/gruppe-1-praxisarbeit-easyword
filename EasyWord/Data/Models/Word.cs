@@ -67,7 +67,7 @@ namespace EasyWord.Data.Models
         private int _sessionValid;
 
         [XmlIgnore]
-        public Guid Guid { get; set; } = Guid.NewGuid();
+        public Guid Guid { get; private set; } = Guid.NewGuid();
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -180,6 +180,29 @@ namespace EasyWord.Data.Models
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        /// <summary>
+        /// Equals override to use the Guid for comparison
+        /// </summary>
+        /// <param name="obj">The Object to match</param>
+        /// <returns>The result of the comparison</returns>
+        public override bool Equals(object? obj)
+        {
+            if (obj is Word otherWord)
+            {
+                return otherWord.Guid == Guid;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Override GetHashCode to use the Guid
+        /// </summary>
+        /// <returns></returns>
+        public override int GetHashCode()
+        {
+            return Guid.GetHashCode();
         }
 
         public bool CheckAnswer(string awnser)

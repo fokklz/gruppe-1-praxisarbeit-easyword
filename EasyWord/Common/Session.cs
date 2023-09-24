@@ -1,5 +1,6 @@
 ﻿using EasyWord.Controls;
 using EasyWord.Data.Models;
+using EasyWord.Pages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,10 @@ using System.Windows;
 
 namespace EasyWord.Common
 {
+    /// <summary>
+    /// EventArgs for the Next event
+    /// Will supply the current word to the event
+    /// </summary>
     public class SessionNextEventArgs : EventArgs
     {
         public Word CurrentWord { get; }
@@ -18,6 +23,7 @@ namespace EasyWord.Common
             CurrentWord = currentWord;
         }
     }
+
     /// <summary>
     /// This class represents a session of words which are currently learned
     /// It will keep a "original" Object, and shrink a current object to the current iteration
@@ -108,19 +114,30 @@ namespace EasyWord.Common
         private Word[]? _currentWords;
 
         /// <summary>
-        /// iteration counter
+        /// Iteration counter
         /// </summary>
         private int _iteration;
+        /// <summary>
+        /// Language for the session
+        /// </summary>
+        private string _language;
+        /// <summary>
+        /// Lectures for the session
+        /// </summary>
+        private List<string> _lecures;
 
         public event EventHandler<SessionNextEventArgs>? Next;
 
         /// <summary>
-        /// Constructor for Session
+        /// Default constructor for a session
         /// </summary>
-        /// <param name="words">All words for this session</param>
-        public Session(Word[] words)
+        /// <param name="language">The language of the Session</param>
+        /// <param name="list">The List of the Session</param>
+        public Session(string language, List<string> list)
         {
-            Words = words;
+            _language = language;
+            _lecures = list;
+            Words = App.Storage.GetWordsByLanguageAndLectures(_language, _lecures);
         }
 
         /// <summary>
@@ -224,9 +241,62 @@ namespace EasyWord.Common
                 _iteration++;
                 // move last displayed word to the end of the list
                 _currentWords = _words.Where(_filterWord).OrderBy(x => x.Guid == _lastWord ? 1 : 0).ThenBy(x => _random.Next()).ToArray();
+                if(_currentWords.Length == 0)
+                {
+                    MessageBox.Show("Geschaft!!!");
+                }
             }
+            App.Config.SessionMode = 0;
+            
+            // update the buckets
+            Buckets = new int[5] {
+                        _words.Where(w => w.Bucket == 1).Count(),
+                        _words.Where(w => w.Bucket == 2).Count(),
+                        _words.Where(w => w.Bucket == 3).Count(),
+                        _words.Where(w => w.Bucket == 4).Count(),
+                        _words.Where(w => w.Bucket == 5).Count()
+                    };
             Next?.Invoke(this, new SessionNextEventArgs(GetNextWord() ?? new Word()));
         }
 
+        private bool _sessionFilter(Word w)
+        {
+            if(w.Language == _language && _lecures.Contains(w.Lecture))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public void CleanUp()
+        {
+            bool hasChanges = false;
+            if (IsEmpty()) return;
+            if (!IsInitialized()) return;
+            // remove words not same lecture or language
+            _words = _words.Where(w =>
+            {
+                if (w.Language == _language && _lecures.Contains(w.Lecture))
+                {
+                    return true;
+                }
+                hasChanges = true;
+                return false;
+            }).ToArray();
+            _currentWords = _words.Where(w =>
+            {
+                if (w.Language == _language && _lecures.Contains(w.Lecture))
+                {
+                    return true;
+                }
+                hasChanges = true;
+                return false;
+            }).ToArray();
+
+            if (hasChanges)
+            {
+                GoNext();
+            }
+        }
     }
 }

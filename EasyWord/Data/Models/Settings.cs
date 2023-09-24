@@ -12,12 +12,16 @@ namespace EasyWord.Data.Models
     /// <summary>
     /// Arguments for the settings change event
     /// </summary>
-    public class SettingChangedEventArgs: EventArgs
+    public class SettingChangedEventArgs : EventArgs
     {
+        /// <summary>
+        /// Name of the setting which changed
+        /// </summary>
         public string Setting {  get; set; }
-        public SettingChangedEventArgs(string setting)
+
+        public SettingChangedEventArgs(string? setting)
         {
-            Setting = setting;
+            Setting = setting ?? "*";
         }
     }
 
@@ -73,8 +77,12 @@ namespace EasyWord.Data.Models
             }
             set
             {
-                _sessionMode = value;
-                OnSettingsChanged();
+                // prevent setting the same value
+                if(_sessionMode != value)
+                {
+                    _sessionMode = value;
+                    OnSettingsChanged();
+                }
             }
         }
         private int _sessionMode = 0;
@@ -83,7 +91,7 @@ namespace EasyWord.Data.Models
 
         public Settings(){}
 
-        protected virtual void OnSettingsChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnSettingsChanged([CallerMemberName] string? propertyName = null)
         {
             SettingsChanged?.Invoke(this, new SettingChangedEventArgs(propertyName));
         }

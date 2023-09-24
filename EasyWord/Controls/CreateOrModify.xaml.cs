@@ -46,6 +46,11 @@ namespace EasyWord.Controls
             get => _word;
             set
             {
+                if(_originalWord != null)
+                {
+                    // cancle changes on new word without saving
+                    Cancel_Click(null, null);
+                }
                 _originalWord = new Word(value.German, value.Translation, value.Language, value.Lecture);
                 _word = value;
                 OnPropertyChanged();
@@ -54,7 +59,7 @@ namespace EasyWord.Controls
             }
         }
         private Word _word = new Word();
-        private Word _originalWord = new Word();
+        private Word? _originalWord = null;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -88,38 +93,33 @@ namespace EasyWord.Controls
         {
             DataContext = this;
             InitializeComponent();
-            App.SessionUpdated += App_SessionUpdated;
+            App.RegisterNextEventListener(Session_Next, true);
         }
 
         /// <summary>
         /// Helper to invoke property change event
         /// </summary>
         /// <param name="propertyName"></param>
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         /// <summary>
-        /// Handler for app session changes
+        /// Session update handler to update the current word of this control
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void App_SessionUpdated(object? sender, EventArgs e)
+        /// <param name="sender">The sender of the event</param>
+        /// <param name="e">The params of the event</param>
+        private void Session_Next(object? sender, Common.SessionNextEventArgs e)
         {
-            if (App.Session == null) return;
-            App.Session.Next += (sender, e) =>
-            {
-                Word = e.CurrentWord;
-            };
-            Word = App.Session.GetNextWord() ?? new Word();
+            Word = e.CurrentWord;
         }
 
         /// <summary>
         /// Handler for language selection change
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The sender of the event</param>
+        /// <param name="e">The params of the event</param>
         private void SelectLanguage_LanguageChanged(object sender, LanguageChangedEventArgs e)
         {
             Word.Language = e.SelectedLanguage;
@@ -133,8 +133,9 @@ namespace EasyWord.Controls
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Cancel_Click(object sender, RoutedEventArgs e)
+        private void Cancel_Click(object? sender, RoutedEventArgs? e)
         {
+            if(_originalWord == null) return;
             Word.Question = _originalWord.Question;
             Word.Answer = _originalWord.Answer;
             Word.Lecture = _originalWord.Lecture;
@@ -147,7 +148,13 @@ namespace EasyWord.Controls
 
         private void Save_Click(object sender, RoutedEventArgs e)
         {
+            if (_originalWord == null) return;
+            if(_originalWord.Lecture != Word.Lecture || _originalWord.Language != Word.Language)
+            {
+                App.Session?.CleanUp();
+            }
             App.Config.SessionMode = 0;
+            _originalWord = null;
         }
     }
 }

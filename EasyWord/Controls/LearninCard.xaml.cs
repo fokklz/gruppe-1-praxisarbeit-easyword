@@ -32,7 +32,7 @@ namespace EasyWord.Controls
                 OnPropertyChanged();
             }
         }
-        private Word _word;
+        private Word _word = new Word();
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -40,31 +40,72 @@ namespace EasyWord.Controls
         {
             InitializeComponent();
             DataContext = this;
-            App.SessionUpdated += App_SessionChanged;
+            App.ConfigChanged += App_ConfigChanged;
+            App.RegisterNextEventListener(Session_Next, true);
+            UpdateView();
         }
 
         /// <summary>
         /// Helper to invoke property changes
         /// </summary>
         /// <param name="propertyName"></param>
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         /// <summary>
-        /// Handles session changes
+        /// Called when the Configuration changed 
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void App_SessionChanged(object? sender, EventArgs e)
+        /// <param name="sender">The sender of the event</param>
+        /// <param name="e">The params of the event</param>
+        private void App_ConfigChanged(object? sender, EventArgs e)
         {
-            if (App.Session == null) return;
-            App.Session.Next += (sender, e) =>
+            App.Config.SettingsChanged += (sender, e) =>
             {
-                Word = e.CurrentWord;
+                if (e.Setting == "SessionMode" || e.Setting == "TranslationDirection")
+                {
+                    UpdateView();
+                }
             };
-            Word = App.Session.GetNextWord() ?? new Word();
+            UpdateView();
+        }
+
+
+        /// <summary>
+        /// Handler for the next event of the session to update the current word in this control
+        /// </summary>
+        /// <param name="sender">The sender of the event</param>
+        /// <param name="e">The params of the event</param>
+        private void Session_Next(object? sender, Common.SessionNextEventArgs e)
+        {
+            Word = e.CurrentWord;
+            _updateWrongOutput(Word.Iteration - Word.Valid);
+            UpdateView();
+        }
+
+        private void _updateWrongOutput(int wrongCount)
+        {
+            WrongOutput.Text = wrongCount.ToString();
+        }
+
+        /// <summary>
+        /// Will update the view based on the current session state
+        /// </summary>
+        private void UpdateView()
+        {
+            if (App.Session != null && App.Session.IsInitialized() && App.Storage.HasWords && !App.Session.IsEmpty())
+            {
+                BucketDisplay.Visibility = Visibility.Visible;
+                BtnEdit.Visibility = Visibility.Visible;
+                WrongDisplay.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                BucketDisplay.Visibility = Visibility.Hidden;
+                BtnEdit.Visibility = Visibility.Hidden;
+                WrongDisplay.Visibility = Visibility.Hidden;
+            }
         }
 
         /// <summary>
