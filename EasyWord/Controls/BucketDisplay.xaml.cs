@@ -20,12 +20,10 @@ namespace EasyWord.Controls
     /// <summary>
     /// Interaction logic for Emoticon.xaml
     /// </summary>
-    public partial class BucketDisplay : UserControl, INotifyPropertyChanged
+    
+    public partial class BucketDisplay : UserControl
     {
         private int _active;
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
         /// <summary>
         /// Change all Buckets to 0.3 Opacity, when word is true or false
         /// the bucket change the opacity
@@ -65,14 +63,7 @@ namespace EasyWord.Controls
         {
             InitializeComponent();
             DataContext = this;
-            App.SessionUpdated += App_SessionUpdated;
-        }
-
-        private void App_SessionUpdated(object? sender, EventArgs e)
-        {
-            if (App.Session == null) return;
-            App.Session.Next += Session_Next;
-            Session_Next(null, new Common.SessionNextEventArgs(new Word()));
+            App.RegisterNextEventListener(Session_Next, true);
         }
 
         private void Session_Next(object? sender, Common.SessionNextEventArgs e)

@@ -41,37 +41,22 @@ namespace EasyWord.Controls
         {
             InitializeComponent();
             DataContext = this;
-            App.SessionUpdated += (sender, e) =>
+            App.SessionUpdated += App_SessionUpdated;
+            App.RegisterSettingsChangedEventListener(Config_SettingsChanged, true);
+        }
+
+        private void App_SessionUpdated(object? sender, EventArgs e)
+        {
+            LearningLanguage = App.Language;
+        }
+
+        private void Config_SettingsChanged(object? sender, Data.Models.SettingChangedEventArgs e)
+        {
+            if (e.Setting == "TranslationDirection" || e.Setting == "*")
             {
-                LearningLanguage = App.Language;
-            };
-
-            App.Config.SettingsChanged += (sender, e) =>
-            {
-                
-                if (e.Setting == "TranslationDirection")
-                {
-                    _rotated = App.Config.TranslationDirection;
-                    _upateRotation();
-                }
-
-            };
-
-            App.ConfigChanged += (sender, e) =>
-            {
-                App.Config.SettingsChanged += (sender, e) =>
-                {
-                    
-                    if (e.Setting == "TranslationDirection")
-                    {
-                        _rotated = App.Config.TranslationDirection;
-                        _upateRotation();
-                    }
-
-                };
-            };
-           _upateRotation();
-
+                _rotated = App.Config.TranslationDirection;
+                _upateRotation();
+            }
         }
 
         private void _upateRotation()

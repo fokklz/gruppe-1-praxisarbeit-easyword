@@ -19,9 +19,9 @@ namespace EasyWord.Data.Models
         /// </summary>
         public string Setting {  get; set; }
 
-        public SettingChangedEventArgs(string setting)
+        public SettingChangedEventArgs(string? setting)
         {
-            Setting = setting;
+            Setting = setting ?? "*";
         }
     }
 
@@ -91,7 +91,7 @@ namespace EasyWord.Data.Models
 
         public Settings(){}
 
-        protected virtual void OnSettingsChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnSettingsChanged([CallerMemberName] string? propertyName = null)
         {
             SettingsChanged?.Invoke(this, new SettingChangedEventArgs(propertyName));
         }

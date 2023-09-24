@@ -57,7 +57,7 @@ namespace EasyWord.Pages
         /// <summary>
         /// The text of the input field
         /// </summary>
-        public string WordInputText { get; set; } 
+        public string WordInputText { get; set; } = "";
 
         /// Initialize the component, set the first word, set the input fields and finally update the view
         /// so the user can start learning
@@ -75,7 +75,7 @@ namespace EasyWord.Pages
         /// Hook to simplify the event emitting
         /// </summary>
         /// <param name="propertyName">The name of the property (should be inferred when inside a setter)</param>
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -171,16 +171,16 @@ namespace EasyWord.Pages
             if (App.Config.Storage.HasWords)
             {
                 title = App.Config.Language;
-                SubTitle.Text = $"{string.Join(",", App.Config.Lectures)}";
-                SubTitle.Visibility = Visibility.Visible;
-                SubTitle.Height = double.NaN;
+                LearningSubTitle.Text = $"{string.Join(",", App.Config.Lectures)}";
+                LearningSubTitle.Visibility = Visibility.Visible;
+                LearningSubTitle.Height = double.NaN;
             }
             else
             {
-                SubTitle.Visibility = Visibility.Hidden;
-                SubTitle.Height = 0;
+                LearningSubTitle.Visibility = Visibility.Hidden;
+                LearningSubTitle.Height = 0;
             }
-            Title.Text = title;
+            LearningTitle.Text = title;
         }
 
         /// <summary>
@@ -235,12 +235,12 @@ namespace EasyWord.Pages
                         {
                             CustomDialog customDialog = new CustomDialog()
                             {
-                                Owner = App.MainWindow,
+                                Owner = Application.Current.MainWindow,
                                 Data = duplicates
                             };
                             customDialog.ShowDialog();
                         }
-                    } catch (CancelByUser ex)
+                    } catch (CancelByUser)
                     {
                         return;
                     }

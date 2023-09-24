@@ -2,6 +2,7 @@
 using EasyWord.Data.Models;
 using EasyWord.Data.Repository;
 using EasyWord.Windows;
+using MaterialDesignThemes.Wpf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,11 +15,6 @@ namespace EasyWord
     /// </summary>
     public partial class App : Application
     {
-        /// <summary>
-        /// global application configuration
-        /// </summary>
-        
-        public static Window MainWindow { get; set; }
         #pragma warning disable CS8618 
         public static AppConfig Config
         {
@@ -37,6 +33,12 @@ namespace EasyWord
                     // set to unknown if any errors while reading
                     _config.Version = "unknown";
                     _config.VersionDate = new DateTime();
+                }
+
+                // register listeners again
+                foreach (var listener in settingChangedListeners)
+                {
+                    _config.SettingsChanged += listener;
                 }
                 ConfigChanged?.Invoke(null, EventArgs.Empty);
                 if (_config.Storage.HasWords) CreateSession();
@@ -77,12 +79,24 @@ namespace EasyWord
             }
         }
 
+        /// <summary>
+        /// Listener for the next event
+        /// </summary>
+        private static List<EventHandler<SessionNextEventArgs>> nextEventListeners = new List<EventHandler<SessionNextEventArgs>>();
+        
+        /// <summary>
+        /// Listener for the settings changed event
+        /// </summary>
+        private static List<EventHandler<SettingChangedEventArgs>> settingChangedListeners = new List<EventHandler<SettingChangedEventArgs>>();
+
 
         private static Session? _session = null;
 
         public static event EventHandler? SessionUpdated;
 
         public static event EventHandler? ConfigChanged;
+
+        public static SnackbarMessageQueue MessageQueue { get; } = new SnackbarMessageQueue(TimeSpan.FromSeconds(3));
 
         public App() {
             try
@@ -124,15 +138,58 @@ namespace EasyWord
         public static void SaveSettingsAndCreateSession()
         {
             SaveSettings();
-            if (Storage.HasWords) CreateSession();
+            CreateSession();
         }
 
         /// <summary>
-        /// Create a new Session based on current settings
+        /// Register a listener for the next event which will presist between sessions
+        /// </summary>
+        /// <param name="listener">The listener to add</param>
+        public static void RegisterNextEventListener(EventHandler<SessionNextEventArgs> listener, bool invoke)
+        {
+            if (listener != null)
+            {
+                nextEventListeners.Add(listener);
+                if(Session != null && invoke)
+                {
+                    Session.Next += listener;
+                    listener.Invoke(null, new SessionNextEventArgs(new Word()));
+                }
+            }
+        }
+        
+        /// <summary>
+        /// Register a listener for the settings changed event presist between sessions
+        /// </summary>
+        /// <param name="listener">The listener to add</param>
+        public static void RegisterSettingsChangedEventListener(EventHandler<SettingChangedEventArgs> listener, bool invoke)
+        {
+            if (listener != null)
+            {
+                settingChangedListeners.Add(listener);
+                if (invoke)
+                {
+                    Config.SettingsChanged += listener;
+                    listener.Invoke(null, new SettingChangedEventArgs("*"));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Create a new Session based on current settings and copy the invocations
         /// </summary>
         public static void CreateSession()
         {
-            Session = new Session(Language, Lectures.ToList());
+            Session newSession = new Session(Language, Lectures.ToList());
+            Session = newSession;
+            if (Session!= null)
+            {
+                foreach (var listener in nextEventListeners)
+                {
+                    Session.Next += listener;
+                }
+                Session.GoNext();
+            }
         }
 
         /// <summary>
@@ -144,10 +201,15 @@ namespace EasyWord
         {
             CustomDialog customDialog = new CustomDialog()
             {
-                Owner = MainWindow,
+                Owner = Current.MainWindow,
                 Data = duplicates
             };
             return customDialog;
+        }
+
+        public static void ShowMessage(string message)
+        {
+            MessageQueue.Enqueue(message, "Close", () => { });
         }
     }
 }

@@ -42,7 +42,7 @@ namespace EasyWord.Controls
         /// <summary>
         /// Event handler for language changed
         /// </summary>
-        public event EventHandler<LanguageChangedEventArgs> LanguageChanged;
+        public event EventHandler<LanguageChangedEventArgs>? LanguageChanged;
 
         public SelectLanguage()
         {

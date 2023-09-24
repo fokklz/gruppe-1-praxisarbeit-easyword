@@ -93,6 +93,8 @@
                 x:Name="ResetAll"
                 Grid.Column="0" Grid.Row="1" 
                 HorizontalAlignment="Center"
+                Foreground="#B71C1C"
+                Background="#FFCDD2"
                 Style="{StaticResource MaterialDesignRaisedButton}" Click="ResetAll_Click">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                     <materialDesign:PackIcon Kind="Delete" Margin="0,2.5,5,0"/>
@@ -104,6 +106,8 @@
                 x:Name="DeleteLanguage"
                 Grid.Column="1" Grid.Row="1" 
                 HorizontalAlignment="Center"
+                Foreground="#B71C1C"
+                Background="#FFCDD2"
                 Style="{StaticResource MaterialDesignRaisedButton}" Click="DeleteLanguage_Click">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                     <materialDesign:PackIcon Kind="Delete" Margin="0,2.5,5,0"/>
