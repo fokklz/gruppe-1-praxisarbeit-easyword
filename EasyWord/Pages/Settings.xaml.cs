@@ -80,6 +80,7 @@ namespace EasyWord.Pages
             App.Config = new AppConfig();
             App.SaveSettingsAndCreateSession();
             App.ShowMessage("Die Applikation wurde erfolgreich zurückgesetzt!");
+            UpdateView();
         }
 
         /// <summary>
