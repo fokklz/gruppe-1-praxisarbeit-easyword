@@ -54,8 +54,6 @@ namespace EasyWord.Controls
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        /// <summary>
-        /// Called when the Configuration changed 
         /// </summary>
         /// <param name="sender">The sender of the event</param>
         /// <param name="e">The params of the event</param>
@@ -94,7 +92,7 @@ namespace EasyWord.Controls
         /// </summary>
         private void UpdateView()
         {
-            if (App.Session != null && App.Session.IsInitialized() && App.Storage.HasWords && !App.Session.IsEmpty())
+          if (App.Session != null && App.Session.IsInitialized() && App.Storage.HasWords && !App.Session.IsEmpty())
             {
                 BucketDisplay.Visibility = Visibility.Visible;
                 BtnEdit.Visibility = Visibility.Visible;
