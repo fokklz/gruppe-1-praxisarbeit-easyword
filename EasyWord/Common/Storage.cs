@@ -83,9 +83,8 @@ namespace EasyWord.Common
         /// <param name="language">The language</param>
         /// <param name="lecture">The lecture</param>
         /// <exception cref="DuplicateWordException">Thrown when the word already exists</exception>
-        public void CreateWord(string german, string translation, string language, string lecture)
+        public void CreateWord(Word word)
         {
-            Word word = new Word(german, translation, language, lecture);
             if (!HasWord(word))
             {
                 List<Word> words = _words.ToList();

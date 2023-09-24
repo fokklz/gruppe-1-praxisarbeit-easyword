@@ -111,7 +111,7 @@
                 Style="{StaticResource MaterialDesignRaisedButton}" Click="DeleteLanguage_Click">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                     <materialDesign:PackIcon Kind="Delete" Margin="0,2.5,5,0"/>
-                    <TextBlock Text="Sprache Löschen"/>
+                    <TextBlock x:Name="DeleteLanguageLabel" Text="Sprache Löschen"/>
                 </StackPanel>
             </Button>
 

@@ -46,7 +46,7 @@
             Background="{DynamicResource MaterialDesignTextFieldBoxBackground}"
             Style="{StaticResource MaterialDesignIconButton}"
             ToolTip="Erstellen" Margin="5,0,5,0"
-            Grid.Column="3">
+            Grid.Column="3" Click="BtnCreate_Click">
             <materialDesign:PackIcon Kind="Add" />
         </Button>
         <!-- Output button -->

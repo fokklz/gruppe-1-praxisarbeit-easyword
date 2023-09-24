@@ -91,6 +91,19 @@ namespace EasyWord.Pages
             App.Config.SettingsChanged += (sender, e) =>
             {
                 UpdateView();
+
+                if (App.Config.SessionMode == 0)
+                {
+                    DeleteLabel.Visibility = Visibility.Visible;
+                    SubmitButton.IsEnabled = true;
+                    WordInput.IsEnabled = true;
+                }
+                else
+                {
+                    DeleteLabel.Visibility = Visibility.Hidden;
+                    SubmitButton.IsEnabled = false;
+                    WordInput.IsEnabled = false;
+                }
             };
             UpdateView();
         }
@@ -333,6 +346,12 @@ namespace EasyWord.Pages
 
             App.Storage.DeleteWord(word);
             App.CreateSession();
+            App.ShowMessage($"Das Wort {word.German}/{word.Translation} wurde erfolgreich gelöscht");
+        }
+
+        private void BtnCreate_Click(object sender, RoutedEventArgs e)
+        {
+            App.Config.SessionMode = 2;
         }
     }
 }

@@ -20,10 +20,10 @@ namespace EasyWord.Controls
     /// <summary>
     /// Interaction logic for Emoticon.xaml
     /// </summary>
-    
     public partial class BucketDisplay : UserControl
     {
         private int _active;
+
         /// <summary>
         /// Change all Buckets to 0.3 Opacity, when word is true or false
         /// the bucket change the opacity

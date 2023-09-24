@@ -28,12 +28,14 @@ namespace EasyWord.Pages
         public Settings()
         {
             InitializeComponent();
+            UpdateView();
         }
 
         public void UpdateView()
         {
             CaseSensitive.IsChecked = App.Config.CaseSensitive;
-            TranslationToggle.LearningLanguage = "English";
+            TranslationToggle.LearningLanguage = App.Language;
+            DeleteLanguageLabel.Text = $"{App.Language} Löschen";
         }
 
         /// <summary>
@@ -77,6 +79,7 @@ namespace EasyWord.Pages
         {
             App.Config = new AppConfig();
             App.SaveSettingsAndCreateSession();
+            App.ShowMessage("Die Applikation wurde erfolgreich zurückgesetzt!");
         }
 
         /// <summary>
@@ -88,6 +91,7 @@ namespace EasyWord.Pages
         {
             App.Storage.ResetAllStatistics();
             App.SaveSettingsAndCreateSession();
+            App.ShowMessage("Alle Statistiken wurden erfolgreich zurückgesetzt!");
         }
 
 
@@ -100,6 +104,8 @@ namespace EasyWord.Pages
         {
             App.Storage.ResetAllBuckets();
             App.SaveSettingsAndCreateSession();
+
+            App.ShowMessage("Alle Buckets wurden erfolgreich zurückgesetzt!");
         }
 
         /// <summary>
@@ -109,15 +115,23 @@ namespace EasyWord.Pages
         /// <param name="e"></param>
         private void DeleteLanguage_Click(object sender, RoutedEventArgs e)
         {
-            App.Storage.Clear(App.Language);
+            string clearing = App.Language;
+            App.Storage.Clear(clearing);
 
             string[] languages = App.Storage.GetAvailableLanguages();
             if(languages.Length > 0)
             {
                 App.Config.Language = languages[0];
             }
+            else
+            {
+                App.Config.Language = AppConfig.DEFAULT_LANGUAGE;
+            }
 
             App.SaveSettingsAndCreateSession();
+
+            App.ShowMessage($"Die Sprache {clearing} wurde erfolgreich gelöscht!");
+            UpdateView();
         }
 
         /// <summary>
@@ -155,7 +169,6 @@ namespace EasyWord.Pages
             {
                 App.Config.TranslationDirection = true;
             }
-
         }
 
         /// <summary>
@@ -186,6 +199,7 @@ namespace EasyWord.Pages
                 // Provide feedback to the user
             }
         }
+
         /// <summary>
         /// Import Words with stats
         /// </summary>
@@ -210,6 +224,7 @@ namespace EasyWord.Pages
                     MessageBox.Show("Fehler beim Laden der Datei", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
+            UpdateView();
         }
     }
 }

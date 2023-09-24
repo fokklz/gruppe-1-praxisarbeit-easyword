@@ -1,4 +1,5 @@
-﻿using EasyWord.Data.Models;
+﻿using EasyWord.Common;
+using EasyWord.Data.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -32,7 +33,6 @@ namespace EasyWord.Controls
             set
             {
                 _createMode = value;
-                Word = new Word();
                 OnPropertyChanged();
             }
         }
@@ -46,7 +46,7 @@ namespace EasyWord.Controls
             get => _word;
             set
             {
-                if(_originalWord != null)
+                if(_originalWord != null && !_createMode)
                 {
                     // cancle changes on new word without saving
                     Cancel_Click(null, null);
@@ -94,6 +94,23 @@ namespace EasyWord.Controls
             DataContext = this;
             InitializeComponent();
             App.RegisterNextEventListener(Session_Next, true);
+            App.RegisterSettingsChangedEventListener(Config_SettingsChanged, true);
+        }
+
+        private void Config_SettingsChanged(object? sender, SettingChangedEventArgs e)
+        {
+            if(e.Setting == "SessionMode")
+            {
+                if(App.Config.SessionMode == 2)
+                {
+                    CreateMode = true;
+                    Word = new Word();
+                }
+                else
+                {
+                    CreateMode = false;
+                }
+            }
         }
 
         /// <summary>
@@ -135,24 +152,56 @@ namespace EasyWord.Controls
         /// <param name="e"></param>
         private void Cancel_Click(object? sender, RoutedEventArgs? e)
         {
-            if(_originalWord == null) return;
-            Word.Question = _originalWord.Question;
-            Word.Answer = _originalWord.Answer;
-            Word.Lecture = _originalWord.Lecture;
-            Word.Language = _originalWord.Language;
+            if(_originalWord != null)
+            {
+                Word.Question = _originalWord.Question;
+                Word.Answer = _originalWord.Answer;
+                Word.Lecture = _originalWord.Lecture;
+                Word.Language = _originalWord.Language;
+            }
             OnPropertyChanged("QuestionLabel");
             OnPropertyChanged("AnswerLabel");
             OnPropertyChanged("Word");
             App.Config.SessionMode = 0;
+            _originalWord = null;
         }
 
         private void Save_Click(object sender, RoutedEventArgs e)
         {
-            if (_originalWord == null) return;
-            if(_originalWord.Lecture != Word.Lecture || _originalWord.Language != Word.Language)
+            if(!_createMode)
             {
-                App.Session?.CleanUp();
+                if (_originalWord != null)
+                {
+                    if (_originalWord.Lecture != Word.Lecture || _originalWord.Language != Word.Language)
+                    {
+                        App.Session?.CleanUp();
+                    }
+                }
+                App.ShowMessage($"Das Wort {Word.German}/{Word.Translation} wurde erfolgreich angepasst!");
             }
+            else
+            {
+                try
+                {
+                    App.Storage.CreateWord(Word);
+
+                    if (App.Language == Word.Language && App.Config.Lectures.Contains(Word.Lecture))
+                    {
+                        App.SaveSettingsAndCreateSession();
+                    }
+                    else
+                    {
+                        App.SaveSettings();
+                    }
+
+                    App.ShowMessage($"Das Wort {Word.German}/{Word.Translation} wurde erfolgreich erstellt!");
+                }
+                catch (DuplicateWordException)
+                {
+                    App.ShowMessage($"Das Wort {Word.German}/{Word.Translation} existiert bereits!");
+                }
+            }
+
             App.Config.SessionMode = 0;
             _originalWord = null;
         }
