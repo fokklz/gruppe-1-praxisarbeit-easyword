@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -18,9 +20,12 @@ namespace EasyWord.Controls
     /// <summary>
     /// Interaction logic for TranslationToggle.xaml
     /// </summary>
-    public partial class TranslationToggle : UserControl
+    public partial class TranslationToggle : UserControl, INotifyPropertyChanged
     {
-        private bool _rotated = false; 
+        private bool _rotated = false;
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
         public bool Rotated {  
             get
             {
@@ -33,7 +38,14 @@ namespace EasyWord.Controls
             } 
         }
 
-        public string LearningLanguage { get; set; } = App.Language;
+        public string LearningLanguage { 
+            get => _learningLanguage; 
+            set {
+                _learningLanguage = value;
+                OnPropertyChanged();
+            } 
+        }
+        private string _learningLanguage = App.Language;
 
 
 
@@ -41,13 +53,16 @@ namespace EasyWord.Controls
         {
             InitializeComponent();
             DataContext = this;
-            App.SessionUpdated += App_SessionUpdated;
             App.RegisterSettingsChangedEventListener(Config_SettingsChanged, true);
         }
 
-        private void App_SessionUpdated(object? sender, EventArgs e)
+        /// <summary>
+        /// Helper to invoke property change event
+        /// </summary>
+        /// <param name="propertyName"></param>
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
-            LearningLanguage = App.Language;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         private void Config_SettingsChanged(object? sender, Data.Models.SettingChangedEventArgs e)
